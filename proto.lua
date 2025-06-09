@@ -3,7 +3,7 @@ local Proto = {}
 
 --- Initializes an empty object.
 function Proto:init(...)
-	--error("Method `init` must be implemented by a subclass.", 2)
+	error("Method `init` must be implemented by a subclass.", 2)
 	return self
 end
 --- Happens every frame.

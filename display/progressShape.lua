@@ -33,6 +33,7 @@ function ProgressShape:init(x, y, dir)
 end
 
 function ProgressShape:update(dt)
+	return self
 end
 
 function ProgressShape:setProgress(value)

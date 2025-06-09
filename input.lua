@@ -17,8 +17,6 @@ function Input.update(delta)
 	released = {}
 end
 
--- TODO: add a function to check when a key was in the current frame.
-
 --- Checks if one of the action keys is being held down.
 --- @return boolean true/false depending on if the key is held down.
 function Input.isDown(actionName)

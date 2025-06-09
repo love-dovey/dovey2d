@@ -79,7 +79,6 @@ end
 --- Loops through every item in the Canvas.
 ---
 --- @param fun 			Function to run on the objects looped.
---- @param exclusions	Adds non-drawable objects to the loop.
 function Canvas:forEach(fun)
 	if fun then
 		for _, o in ipairs(self.objects) do fun(o) end
