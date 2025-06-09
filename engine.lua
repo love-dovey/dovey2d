@@ -35,7 +35,7 @@ end
 
 function Engine.info()
 	return {
-		engineName = "Dövey",
+		engineName = "dövey",
 		verName = tostring(Engine.version),
 		loveVer = tostring(love.getVersion()),
 	}
