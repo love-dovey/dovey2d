@@ -32,10 +32,6 @@ function ProgressShape:init(x, y, dir)
 	return self
 end
 
-function ProgressShape:update(dt)
-	return self
-end
-
 function ProgressShape:setProgress(value)
 	self.current = math.max(self.minimum, math.min(self.maximum, value))
 	if self.rounded then self.current = math.floor(self.current + 0.5) end

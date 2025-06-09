@@ -27,10 +27,6 @@ function Sprite:init(x, y, texture)
 	return self
 end
 
-function Sprite:update(dt)
-	return self
-end
-
 local _white = {1,1,1,1}
 
 function Sprite:draw()

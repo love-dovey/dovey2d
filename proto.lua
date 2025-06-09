@@ -3,25 +3,31 @@ local Proto = {}
 
 --- Initializes an empty object.
 function Proto:init(...)
-	error("Method `init` must be implemented by a subclass.", 2)
+	Log.error("Method `init` must be implemented by a subclass.", 2)
 	return self
 end
 --- Happens every frame.
-function Proto:update(delta) error("Method `update` must be implemented by a subclass.", 2) end
+function Proto:update(delta) Log.warn("Method `update` must be implemented by a subclass.", true) end
 --- Used to draw the object to the screen.
-function Proto:draw() error("Method `draw` must be implemented by a subclass.", 2) end
+function Proto:draw() Log.warn("Method `draw` must be implemented by a subclass.", true) end
 --- Used to get rid of the object and release it from memory.
-function Proto:dispose() error("Method `dispose` must be implemented by a subclass.", 2) end
+function Proto:dispose() Log.warn("Method `dispose` must be implemented by a subclass.", true) end
 
 --- Used to extend Object A for Object B
 --- Example:
 ---
 --- ```lua
 --- local MyObject = Proto:extend({
+---		-- public variables
 ---		myDefaultVariable1 = 0,
 ---		myDefaultVariable2 = "Example",
 ---	})
----
+--- -- private variables
+--- local myPrivateVariable1 = { "Elem1", "Elem2" }
+--- function MyObject:setPrivateVariable1(tbl)
+---		myPrivateVariable1 = tbl or {} --- failsafe to empty table.
+---		return self --- allow chaining, i.e: MyObject:new():setPrivateVariable({ "Elem1" })
+--- end
 --- return MyObject
 --- ```
 function Proto.extend(from, defaults)

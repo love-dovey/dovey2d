@@ -1,11 +1,13 @@
-Enum = require("dovey.data.enum")
-Vec2 = require("dovey.util.vec2")
+--These must be imported first--
+Enum = require("dovey.util.enum")
+Log = require("dovey.util.log")
 Rect2 = require("dovey.util.rect2")
+Vec2 = require("dovey.util.vec2")
+Proto = require("dovey.proto")
+-- Objects --
 Input = require("dovey.input")
-
-Proto = require("dovey.proto") -- Base Object.
-Canvas = require("dovey.canvas") -- Scene/State Object.
-Sprite = require("dovey.display.sprite") -- Sprite Object.
+Canvas = require("dovey.canvas")
+Sprite = require("dovey.display.sprite")
 Signal = require("dovey.util.signal")
 
 local Engine = {
