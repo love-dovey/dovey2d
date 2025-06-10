@@ -1,5 +1,6 @@
 --These must be imported first--
 Enum = require("dovey.util.enum")
+Tint = require("dovey.util.tint")
 Log = require("dovey.util.log")
 Rect2 = require("dovey.util.rect2")
 Vec2 = require("dovey.util.vec2")
@@ -28,7 +29,12 @@ local Engine = {
 	},
 	maxFPS = 60,
 	version = "1.0.0",
+	clearTint = {0.1, 0.1, 0.1, 1},
 }
+
+function Engine.setClearTint(tint)
+	Engine.clearTint = tint or {0.1, 0.1, 0.1, 1}
+end
 
 function Engine.getVersion()
 	local i = Engine.info()
@@ -56,6 +62,7 @@ function Engine.begin(startingCanvas)
 		Input.update(delta)
 	end
 	love.draw = function()
+		love.graphics.clear(Engine.clearTint)
 		if Engine.activeCanvas then Engine.activeCanvas:draw() end
 		for _, v in pairs(Engine.layeredObjects) do
 			if v and v.draw then

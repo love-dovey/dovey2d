@@ -18,7 +18,7 @@ end
 --- @param texture 	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
 	-- these have to be set here, setting it on :extend crashes :(
-	self.tint = { love.math.colorFromBytes(255, 255, 255, 255) }
+	self.tint = { Tint.fromRGB(255, 255, 255, 255) }
 	self.position = Vec2(x or 0, y or 0)
 	self.scale = Vec2(1, 1)
 	self.origin = Vec2(0, 0)
@@ -115,7 +115,7 @@ end
 --- @param b 		How much Blue (range is: 0-255)
 --- @param a 		How much Alpha (range is: 0-255)
 function Sprite:setTint(r, g, b, a)
-	self.tint = { love.math.colorFromBytes(r or 255, g or 255, b or 255, a or 255) }
+	self.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
 	return self
 end
 

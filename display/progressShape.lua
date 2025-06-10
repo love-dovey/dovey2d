@@ -3,7 +3,6 @@ Direction = Enum("LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizo
 	Shape = Enum("RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
 }
 
-local _white = {1,1,1,1}
 local _defaultTint = {
 	{ 0, 0.5, 0, 1 }, -- Dark Green
 	{ 0, 1.0, 0, 1 }, -- Green
@@ -11,7 +10,7 @@ local _defaultTint = {
 local ProgressShape = Proto:extend({
 	position = Vec2(0, 0), --- Position to render the ProgressShape at.
 	scale = Vec2(1, 1), --- How much to stretch the ProgressShape to.
-	size = Vec2(150, 30), -- Width and Height of the shape.
+	size = Vec2(350, 25), -- Width and Height of the shape.
 	angle = 0, --- Rotation Angle
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?
 	smooth = false, --- Smoothly transitions between colour 1 and 2 when rendering.
@@ -53,7 +52,7 @@ function ProgressShape:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
-		love.graphics.setColor(border.tint or _white)
+		love.graphics.setColor(border.tint or Tint.WHITE)
 		love.graphics.setLineWidth(border.thickness or 1)
 		love.graphics.rectangle("line", 0, 0, self.size.x, self.size.y)
 	end
@@ -68,7 +67,7 @@ function ProgressShape:draw()
 	end
 	love.graphics.rectangle("fill", 0, 0, self.size.x * sizeProg, self.size.y)
 
-	love.graphics.setColor(_white)
+	love.graphics.setColor(Tint.WHITE)
 	love.graphics.setLineWidth(1)
 	love.graphics.pop()
 end
@@ -123,7 +122,7 @@ end
 --- @param b 		How much Blue (range is: 0-255)
 --- @param a 		How much Alpha (range is: 0-255)
 function ProgressShape:setBackgroundTint(r, g, b, a)
-	tints[1] = { love.math.colorFromBytes(r or 0, g or 100, b or 0, a or 255) }
+	tints[1] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
 	return self
 end
 
@@ -133,7 +132,7 @@ end
 --- @param b 		How much Blue (range is: 0-255)
 --- @param a 		How much Alpha (range is: 0-255)
 function ProgressShape:setProgressTint(r, g, b, a)
-	tints[2] = { love.math.colorFromBytes(r or 0, g or 100, b or 0, a or 255) }
+	tints[2] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
 	return self
 end
 
@@ -153,7 +152,7 @@ end
 --- @param b 		How much Blue (range is: 0-255)
 --- @param a 		How much Alpha (range is: 0-255)
 function ProgressShape:setBorderTint(r, g, b, a)
-	border.tint = { love.math.colorFromBytes(r or 0, g or 100, b or 0, a or 255) }
+	border.tint = { Tint.fromRGB(r or 0, g or 0, b or 0, a or 255) }
 	return self
 end
 
