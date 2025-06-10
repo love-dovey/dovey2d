@@ -65,28 +65,39 @@ return {
 	--- Darkens a colour by a percentage (0-1)
 	darken = function(value, amount)
 		return {
-			math.max(0, value[1] - amount),
-			math.max(0, value[2] - amount),
-			math.max(0, value[3] - amount),
-			value[4] or 1
+			math.max(0, value[1] - amount), -- Red
+			math.max(0, value[2] - amount), -- Green
+			math.max(0, value[3] - amount), -- Blue
+			value[4] or 1 -- Alpha
 		}
 	end,
 	--- Lightens a colour by a percentage (0-1)
 	lighten = function(value, amount)
 		return {
-			math.min(1, value[1] + amount),
-			math.min(1, value[2] + amount),
-			math.min(1, value[3] + amount),
-			value[4] or 1
+			math.min(1, value[1] + amount), -- Red
+			math.min(1, value[2] + amount), -- Green
+			math.min(1, value[3] + amount), -- Blue
+			value[4] or 1 -- Alpha
 		}
 	end,
 	--- Multiplies colours A and B.
 	multiply = function(a, b)
 		return {
-			a[1] * b[1],
-			a[2] * b[2],
-			a[3] * b[3],
-			(a[4] or 1) * (b[4] or 1)
+			a[1] * b[1], -- Red
+			a[2] * b[2], -- Green
+			a[3] * b[3], -- Blue
+			(a[4] or 1) * (b[4] or 1) -- Alpha
+		}
+	end,
+	lerp = function(a, b, weight)
+		weight = math.max(0, math.min(1, weight)) -- make sure it's not lower than 0 nor higher than 1
+		local aAlpha = a[4] or 1
+		local bAlpha = b[4] or 1
+		return {
+			a[1] + (b[1] - a[1]) * weight, -- Red
+			a[2] + (b[2] - a[2]) * weight, -- Green
+			a[3] + (b[3] - a[3]) * weight, -- Blue
+			aAlpha + (bAlpha - aAlpha) * weight, -- Alpha
 		}
 	end,
 }

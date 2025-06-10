@@ -7,11 +7,17 @@ function Proto:init(...)
 	return self
 end
 --- Happens every frame.
-function Proto:update(delta) Log.warn("Method `update` must be implemented by a subclass.", true) end
+function Proto:update(delta)
+	--Log.warn("Method `update` must be implemented by a subclass.", true)
+end
 --- Used to draw the object to the screen.
-function Proto:draw() Log.warn("Method `draw` must be implemented by a subclass.", true) end
+function Proto:draw()
+	--Log.warn("Method `draw` must be implemented by a subclass.", true)
+end
 --- Used to get rid of the object and release it from memory.
-function Proto:dispose() Log.warn("Method `dispose` must be implemented by a subclass.", true) end
+function Proto:dispose()
+	--Log.warn("Method `dispose` must be implemented by a subclass.", true)
+end
 
 --- Used to extend Object A for Object B
 --- Example:

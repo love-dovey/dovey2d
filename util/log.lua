@@ -7,11 +7,12 @@ local asciiCodes = {
 }
 local _warned = {}
 local function printRich(msg, level)
+	msg = tostring(msg)
 	level = LogLevel.resolve(level)
 	local info = debug.getinfo(2, "Sl")
 	local line = info.short_src..":"..info.currentline
 	if arg[#arg] == "-subl" then -- no colours in sublime text.
-		io.stderr:write("[Dövey:"..LogLevel.str(level).."] "..msg.." (at: "..line..")\n")
+		io.stderr:write("["..(Engine.engineName or "dövey")..":"..LogLevel.str(level).."] "..msg.." (at: "..line..")\n")
 		return
 	end
 	local col = asciiCodes.white

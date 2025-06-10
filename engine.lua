@@ -1,3 +1,15 @@
+--Overriding defaults--
+function string.tablestring(tbl)
+	local str = "\n"
+	local function continuestr(k, v)
+		return str.."	"..tostring(k).."="..tostring(v)..",\n"
+	end
+	for k,v in pairs(tbl or {}) do
+		if v == nil then return end
+		str = continuestr(k,v)
+	end
+	return tostring(tbl).." {"..str.."}\n"
+end
 --These must be imported first--
 Enum = require("dovey.util.enum")
 Tint = require("dovey.util.tint")
@@ -8,28 +20,17 @@ Proto = require("dovey.proto")
 -- Objects --
 Input = require("dovey.input")
 Canvas = require("dovey.canvas")
-Sprite = require("dovey.display.sprite")
 Signal = require("dovey.util.signal")
+AnimationPlayer = require("dovey.animation.animationPlayer")
+Sprite = require("dovey.display.sprite")
 
 local Engine = {
 	activeCanvas = nil,
 	layeredObjects = {},
-	Utils = {
-		stringifyTable = function(tbl)
-			local str = "\n"
-			for k,v in pairs(tbl or {}) do
-				if type(v) == "table" then
-					str = str..stringifyTable(v)
-					return
-				end
-				str = str.."	"..k.."="..tostring(v)..",\n"
-			end
-			return tostring(tbl).." {"..str.."}"
-		end
-	},
-	maxFPS = 60,
-	version = "1.0.0",
 	clearTint = {0.1, 0.1, 0.1, 1},
+	enginName = "dövey",
+	version = "1.0.0",
+	maxFPS = 60,
 }
 
 function Engine.setClearTint(tint)
@@ -43,7 +44,7 @@ end
 
 function Engine.info()
 	return {
-		engineName = "dövey",
+		engineName = Engine.engineName or "dövey",
 		verName = tostring(Engine.version),
 		loveVer = tostring(love.getVersion()),
 	}
