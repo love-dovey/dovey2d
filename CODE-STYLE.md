@@ -18,17 +18,19 @@ This style guide is really only valid if you're making Pull Requests as we'd pre
 	- Constant variables (even if in a local scope) must use UPPER_SNAKE_CASE
 	- Tables or Metatables that get returned must use PascalCase
 	- Tables or Metatables that have instance functions must use `self` and not `TableName`
+	- Private variables must start with a dash
 	- Non-constant variables must use camelCase
 	- Script names must use camelCase
 
 ### Code example:
 ```lua
 local CONSTANT_VALUE = 1
-local privateVariable = "I'm private."
+local _privateVariable = "I'm private."
 --- This is an example.
 --- @class CodeStyleExample
 local CodeStyleExample = {
-	publicVariable = "However, I'm public."
+	publicVariable = "However, I'm public.",
+	_instancePrivate = "I'm private, but also part of this instance.",
 }
 
 --- This function returns a public value defined inside `CodeStyleExample`.
@@ -37,10 +39,12 @@ function CodeStyleExample:instanceFunction()
 	return self.publicVariable
 end
 
---- This function returns a static string value which is defined within itself.
+--- This function returns a static string value which is passed to it, or defined in itself it unspecified.
+--- @param value String 		This value gets returned.
 --- @return String
-function CodeStyleExample.staticFunction()
-	return "value"
+function CodeStyleExample.staticFunction(value)
+	value = value or "value"
+	return value
 end
 
 -- Non-doc comments can just have 2 dashes instead.
