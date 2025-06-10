@@ -6,8 +6,8 @@ I made this for my own personal projects.
 ### recommended usage:
 just create a submodule for the engine in your LÖVE2D project with the following commands
 ```sh
-git submoule init
-git submoule add https://github.com/pisayesiwsi/dovey2d.git dovey
+git submodule init
+git submodule add https://github.com/pisayesiwsi/dovey2d.git dovey
 ```
 though if you prefer using SSH verification, change the link in the last command to `git@github.com:pisayesiwsi/dovey2d.git`
 
