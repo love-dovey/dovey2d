@@ -5,6 +5,7 @@ local TintRectangle = Proto:extend({
 	size = Vec2(50, 50),
 	shear = Vec2(0, 0),
 	tint = {1, 1, 1, 1},
+	thickness = 0,
 	mode = nil,
 	angle = 0,
 })
@@ -33,9 +34,12 @@ function TintRectangle:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.setColor(self.tint or Tint.WHITE) -- Colouring
+	love.graphics.setLineWidth(self.thickness or 1) -- Line Thickness
+
 	local mode = RectangleRenderMode.str(self.mode):lower()
 	love.graphics.rectangle(mode, 0, 0, self.size.x, self.size.y)
 	love.graphics.setColor(Tint.WHITE)
+	love.graphics.setLineWidth(1)
 	love.graphics.pop()
 end
 
@@ -64,8 +68,10 @@ end
 ---
 --- "fill"|1 Draws a filled shape, while "line"|2 Draws a outlined shape.
 --- @param mode string|number
-function TintRectangle:setMode(mode)
+--- @param lineThickness number 		How thick should hte line be (for mode "line"|2)
+function TintRectangle:setMode(mode, lineThickness)
 	self.mode = RectangleRenderMode.resolve(mode)
+	self.thickness = lineThickness or 1
 	return self
 end
 
