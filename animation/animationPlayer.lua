@@ -39,7 +39,7 @@ end
 
 function AnimationPlayer:seek(time)
 	if not self.currentAnimation then
-		Log.warn("Tried to seek(), but no animation is playing.")
+		Log.warn("Tried to seek(), but no animation is set.")
 		return
 	end
 	self.currentAnimation.time = time or 0.0
@@ -47,9 +47,19 @@ function AnimationPlayer:seek(time)
 end
 
 function AnimationPlayer:pause()
+	if not self.currentAnimation then
+		Log.warn("Tried to pause(), but no animation is set.")
+		return
+	end
+	self.currentAnimation.paused = true
 end
 
 function AnimationPlayer:resume()
+	if not self.currentAnimation then
+		Log.warn("Tried to resume(), but no animation is set.")
+		return
+	end
+	self.currentAnimation.paused = false
 end
 
 return AnimationPlayer

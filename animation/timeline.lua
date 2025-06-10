@@ -27,17 +27,25 @@ function Timeline:update(delta)
 	self.time = math.min(self.time + delta * (self.speed or 1.0), self.length)
 	for index, track in ipairs(self.tracks) do
 		local frame = math.floor(self.time * self.frameRate + 0.5) + 1
-		local value = track.values[frame]
-		if value ~= nil then
-			if track.setter then
-				track.setter(value)
-			else
-				track.target[track.property] = value
-			end
+		local fireCallback = false
+		if not track.values then
+			fireCallback = true
 		else
-			if track.callback then
-				track.callback()
+			local value = track.values[frame]
+			if value ~= nil then
+				if track.setter then
+					track.setter(value)
+				else
+					track.target[track.property] = value
+				end
+			else
+				if track.callback then
+					track.callback()
+				end
 			end
+		end
+		if fireCallback and track.callback then
+			track.callback()
 		end
 	end
 	if self.time >= self.length then
@@ -45,12 +53,6 @@ function Timeline:update(delta)
 		self.finished = true
 		--self.signals.finished.emit(self) -- I'll do it later ok.
 	end
-end
-
-function Timeline.createTrack(values)
-	return {
-		values = values or {},
-	}
 end
 
 return Timeline
