@@ -34,18 +34,18 @@ function Timeline:update(delta)
 			local value = track.values[frame]
 			if value ~= nil then
 				if track.setter then
-					track.setter(value)
+					track.setter(value, delta, frame)
 				else
 					track.target[track.property] = value
 				end
 			else
 				if track.callback then
-					track.callback()
+					track.callback(delta, frame)
 				end
 			end
 		end
 		if fireCallback and track.callback then
-			track.callback()
+			track.callback(delta, frame)
 		end
 	end
 	if self.time >= self.length then
