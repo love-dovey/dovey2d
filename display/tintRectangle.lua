@@ -10,11 +10,11 @@ local TintRectangle = Proto:extend({
 })
 
 --- Creates a Tinted Rectangle.
---- @param x 		Initial X Position.
---- @param y 		Initial Y Position.
---- @param tint 	Colour.
---- @param sx 		Size (X).
---- @param sy 		Size (Y).
+--- @param x number		Initial X position
+--- @param y number		Initial Y position
+--- @param tint table	Colour { r, g, b, a }
+--- @param sx number	Initial X size
+--- @param sy number	Initial Y size
 function TintRectangle:init(x, y, tint, sx, sy)
 	self.position = Vec2(x or self.position.x, y or self.position.y)
 	if tint then
@@ -46,8 +46,8 @@ function TintRectangle:setPosition(x, y)
 end
 
 --- Positions the TintRectangle at the center of the screen
---- @param x 		How much to offset the X position when centering.
---- @param y 		How much to offset the Y position when centering.
+--- @param x number		How much to offset the X position when centering.
+--- @param y number		How much to offset the Y position when centering.
 function TintRectangle:centerPosition(x, y)
 	x, y = x or 0, y or 0
 	local slx, sly = self.scale.get() -- X, Y
