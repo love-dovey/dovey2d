@@ -1,10 +1,10 @@
 local Sprite = Proto:extend({
-	tint = nil, --- Colour of the Sprite when rendering.
+	tint = { 1,1,1,1 }, --- Colour of the Sprite when rendering.
 	texture = nil, --- Texture to render the Sprite with.
-	scale = nil, --- Display Size of the Texture.
-	position = nil, --- Screen coordinates where the Texture renders.
-	origin = nil, --- Texture Pivot Offset.
-	shear = nil, --- Skew/Shear Factor.
+	scale = Vec2(1, 1), --- Display Size of the Texture.
+	position = Vec2(0, 0), --- Screen coordinates where the Texture renders.
+	origin = Vec2(0, 0), --- Texture Pivot Offset.
+	shear = Vec2(0, 0), --- Skew/Shear Factor.
 	angle = 0, --- Texture Rotation Angle.
 })
 
@@ -13,21 +13,14 @@ local function resetTransform(self)
 end
 
 --- Creates a Sprite (must be added to a Canvas to be displayed).
---- @param x 		(Initial) X Coordinates to Display the Sprite at.
---- @param y 		(Initial) Y Coordinates to Display the Sprite at.
---- @param texture 	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
+--- @param x number		(Initial) X Coordinates to Display the Sprite at.
+--- @param y number		(Initial) Y Coordinates to Display the Sprite at.
+--- @param texture love.graphics.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
-	-- these have to be set here, setting it on :extend crashes :(
-	self.tint = { Tint.fromRGB(255, 255, 255, 255) }
-	self.position = Vec2(x or 0, y or 0)
-	self.scale = Vec2(1, 1)
-	self.origin = Vec2(0, 0)
-	self.shear = Vec2(0, 0)
+	self.position = Vec2(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
 	return self
 end
-
-local _white = {1,1,1,1}
 
 function Sprite:draw()
 	love.graphics.push("all")
@@ -37,16 +30,17 @@ function Sprite:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
-	love.graphics.setColor(self.tint or _white) -- Colouring
+	love.graphics.setColor(self.tint or Tint.WHITE) -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
-	love.graphics.setColor(_white)
+	love.graphics.setColor(Tint.WHITE)
 	love.graphics.pop()
 end
 
 --- Loads a Texture to The Sprite in order to render it.
 ---
 --- Caching the texture beforehand is recommended if you're not doing it frequently.
+--- @param tex love.graphics.Texture
 function Sprite:loadTexture(tex)
 	self.texture = type(tex) == "string" and love.graphics.newTexture(tex) or tex
 	return self
@@ -73,8 +67,8 @@ function Sprite:getWidth() return self.texture and self.texture:getWidth() or 1 
 function Sprite:getHeight() return self.texture and self.texture:getHeight() or 1 end
 
 --- Positions the Sprite at the center of the screen
---- @param x 		How much to offset the X position when centering.
---- @param y 		How much to offset the Y position when centering.
+--- @param x number		How much to offset the X position when centering.
+--- @param y number		How much to offset the Y position when centering.
 function Sprite:centerPosition(x, y)
 	x, y = x or 0, y or 0
 	local slx, sly = self.scale.get() -- X, Y
@@ -88,32 +82,33 @@ function Sprite:centerPosition(x, y)
 end
 
 --- Scales the Sprite's texture.
---- @param x 		How much to scale the Sprite on the X axis.
---- @param y 		How much to scale the Sprite on the Y axis.
+--- @param x number		How much to scale the Sprite on the X axis.
+--- @param y number		How much to scale the Sprite on the Y axis.
 function Sprite:setScale(x, y)
 	self.scale.set(x or 1, y or 1)
 	return self
 end
 
 --- Applies a shear factor (skew) to the Sprite.
---- @param x 		How much to shear the Sprite on the X axis.
---- @param y 		How much to shear the Sprite on the Y axis.
+--- @param x number		How much to shear the Sprite on the X axis.
+--- @param y number		How much to shear the Sprite on the Y axis.
 function Sprite:setShear(x, y)
 	self.shear.set(x or 0, y or 0)
 	return self
 end
 
 --- Applies a new rotation angle to the Sprite.
+--- @param angle number
 function Sprite:setAngle(angle)
 	self.angle = angle or 0
 	return self
 end
 
 --- Changes the render colour of the Sprite.
---- @param r 		How much Red (range is: 0-255)
---- @param g 		How much Green (range is: 0-255)
---- @param b 		How much Blue (range is: 0-255)
---- @param a 		How much Alpha (range is: 0-255)
+--- @param r number		How much Red (range is: 0-255)
+--- @param g number		How much Green (range is: 0-255)
+--- @param b number		How much Blue (range is: 0-255)
+--- @param a number		How much Alpha (range is: 0-255)
 function Sprite:setTint(r, g, b, a)
 	self.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
 	return self

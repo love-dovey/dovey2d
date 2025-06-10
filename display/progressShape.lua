@@ -28,18 +28,28 @@ local border = { --- Handles the border behind the main colours.
 	thickness = 3,
 }
 
+--- Creates a ProgressShape, which is a special type of Display Object
+--- which has the capacity to render as a Health/Progress meter.
+---
+--- @param x number
+--- @param y number
+--- @param dir string|number 		Options: "LeftRight"|1, "RightLeft"|2, "TopBottom"|3, "BottomTop"|4
 function ProgressShape:init(x, y, dir)
 	self.position = Vec2(x or self.position.x, y or self.position.y)
 	self.direction = ProgressStyling.Direction.resolve(dir or self.direction)
 	return self
 end
 
+--- Sets the current progress value.
+--- @param value number
 function ProgressShape:setProgress(value)
 	self.current = math.max(self.minimum, math.min(self.maximum, value))
 	if self.rounded then self.current = math.floor(self.current + 0.5) end
 	return self
 end
+--- Checks if we've reached the end of the progress meter.
 function ProgressShape:isFull() return self.current >= self.maximum end
+--- Checks if we are at the start of the progress meter.
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
 function ProgressShape:draw()
@@ -75,6 +85,8 @@ end
 -- just copied from sprite.lua lol
 
 --- Repositions the ProgressBar elsewhere.
+--- @param x number
+--- @param y number
 function ProgressShape:setPosition(x, y)
 	self.position.set(x or 0, y or 0)
 	return self
@@ -88,8 +100,8 @@ function ProgressShape:getWidth() return self.size.x or 1 end
 function ProgressShape:getHeight() return self.size.y or 1 end
 
 --- Positions the ProgressShape at the center of the screen
---- @param x 		How much to offset the X position when centering.
---- @param y 		How much to offset the Y position when centering.
+--- @param x number		How much to offset the X position when centering.
+--- @param y number		How much to offset the Y position when centering.
 function ProgressShape:centerPosition(x, y)
 	x, y = x or 0, y or 0
 	local slx, sly = self.scale.get() -- X, Y
@@ -103,42 +115,43 @@ function ProgressShape:centerPosition(x, y)
 end
 
 --- Scales the Sprite's texture.
---- @param x 		How much to scale the Sprite on the X axis.
---- @param y 		How much to scale the Sprite on the Y axis.
+--- @param x number		How much to scale the Sprite on the X axis.
+--- @param y number		How much to scale the Sprite on the Y axis.
 function ProgressShape:setScale(x, y)
 	self.scale.set(x or 1, y or 1)
 	return self
 end
 
 --- Applies a new rotation angle to the Sprite.
+--- @param angle number
 function ProgressShape:setAngle(angle)
 	self.angle = angle or 0
 	return self
 end
 
 --- Changes the render colour for the background.
---- @param r 		How much Red (range is: 0-255)
---- @param g 		How much Green (range is: 0-255)
---- @param b 		How much Blue (range is: 0-255)
---- @param a 		How much Alpha (range is: 0-255)
+--- @param r number		How much Red (range is: 0-255)
+--- @param g number		How much Green (range is: 0-255)
+--- @param b number		How much Blue (range is: 0-255)
+--- @param a number		How much Alpha (range is: 0-255)
 function ProgressShape:setBackgroundTint(r, g, b, a)
 	tints[1] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
 	return self
 end
 
 --- Changes the render colour for the foreground/progress.
---- @param r 		How much Red (range is: 0-255)
---- @param g 		How much Green (range is: 0-255)
---- @param b 		How much Blue (range is: 0-255)
---- @param a 		How much Alpha (range is: 0-255)
+--- @param r number		How much Red (range is: 0-255)
+--- @param g number		How much Green (range is: 0-255)
+--- @param b number		How much Blue (range is: 0-255)
+--- @param a number		How much Alpha (range is: 0-255)
 function ProgressShape:setProgressTint(r, g, b, a)
 	tints[2] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
 	return self
 end
 
 --- Sets the border's tint and thickness at the same time.
---- @param tint 		Table with 4 values { r, g, b, a }
---- @param thickness 	Thickness of the border, a low value is recommended.
+--- @param tint table[3|4]		Table with 3 or 4 values { r, g, b, a }
+--- @param thickness number 	Thickness of the border, a low value is recommended.
 --- @see https://love2d.org/wiki/love.math.colorFromBytes to use RGB(0-255).
 function ProgressShape:setBorder(tint, thickness)
 	border.tint = tint or { 1, 1, 1, 1 }
@@ -147,16 +160,17 @@ function ProgressShape:setBorder(tint, thickness)
 end
 
 --- Changes the render colour for the border.
---- @param r 		How much Red (range is: 0-255)
---- @param g 		How much Green (range is: 0-255)
---- @param b 		How much Blue (range is: 0-255)
---- @param a 		How much Alpha (range is: 0-255)
+--- @param r number		How much Red (range is: 0-255)
+--- @param g number		How much Green (range is: 0-255)
+--- @param b number		How much Blue (range is: 0-255)
+--- @param a number		How much Alpha (range is: 0-255)
 function ProgressShape:setBorderTint(r, g, b, a)
 	border.tint = { Tint.fromRGB(r or 0, g or 0, b or 0, a or 255) }
 	return self
 end
 
 --- Changes how thick the border behind the background and fill tints should be.
+--- @param x number
 function ProgressShape:setBorderThickness(x)
 	border.thickness = x or 0
 	return self

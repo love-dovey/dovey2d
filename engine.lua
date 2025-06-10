@@ -21,6 +21,7 @@ Proto = require("dovey.proto")
 Input = require("dovey.input")
 Canvas = require("dovey.canvas")
 Signal = require("dovey.util.signal")
+TintRectangle = require("dovey.display.tintRectangle")
 AnimationPlayer = require("dovey.animation.animationPlayer")
 Sprite = require("dovey.display.sprite")
 

@@ -1,7 +1,7 @@
 local Timeline = require("dovey.animation.timeline")
 local AnimationPlayer = Proto:extend({
 	currentAnimation = nil,
-	timelines = {},
+	animations = {},
 })
 local _latestAnimation = nil
 
@@ -16,11 +16,11 @@ function AnimationPlayer:update(delta)
 end
 
 function AnimationPlayer:addAnimation(name, tracks, frameRate, length)
-	self.timelines[name] = Timeline:new(name, tracks, frameRate, length)
+	self.animations[name] = Timeline:new(name, tracks, frameRate, length)
 end
 
 function AnimationPlayer:findAnimation(name)
-	return self.timelines[name]
+	return self.animations[name]
 end
 
 function AnimationPlayer:play(name, speed, force)
