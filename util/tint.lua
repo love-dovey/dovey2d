@@ -21,8 +21,8 @@ local function toBytes(r, g, b, a)
 end
 
 return {
-	WHITE = {1, 1, 1, 1},
-	BLACK = {0, 0, 0, 1},
+	WHITE = love.math.colorFromBytes(255, 255, 255, 255),
+	BLACK = love.math.colorFromBytes(0, 0, 0, 255),
 	--- Converts a colour table to numbers.
 	toNumbers = function(rgba)
 		rgba = rgba or {1, 1, 1, 1}

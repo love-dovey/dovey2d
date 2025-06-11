@@ -27,7 +27,7 @@ function TintRectangle:init(x, y, tint, sx, sy)
 end
 
 function TintRectangle:draw()
-	local prevTint = love.graphics.getColor()
+	local prevTint = { love.graphics.getColor() }
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position.get()) -- Positioning
@@ -39,7 +39,7 @@ function TintRectangle:draw()
 
 	local mode = RectangleRenderMode.str(self.mode):lower()
 	love.graphics.rectangle(mode, 0, 0, self.size.x, self.size.y)
-	love.graphics.setColor(prevTint)
+	love.graphics.setColor(prevTint or Tint.WHITE)
 	love.graphics.setLineWidth(1)
 	love.graphics.pop()
 end

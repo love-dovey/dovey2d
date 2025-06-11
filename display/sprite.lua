@@ -23,7 +23,7 @@ function Sprite:init(x, y, texture)
 end
 
 function Sprite:draw()
-	local prevTint = love.graphics.getColor()
+	local prevTint = { love.graphics.getColor() }
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position.get()) -- Positioning
@@ -34,7 +34,7 @@ function Sprite:draw()
 	love.graphics.setColor(self.tint or prevTint) -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
-	love.graphics.setColor(prevTint)
+	--love.graphics.setColor(prevTint or Tint.WHITE)
 	love.graphics.pop()
 end
 

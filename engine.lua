@@ -32,6 +32,8 @@ TintRectangle = require("dovey.display.tintRectangle")
 AnimationPlayer = require("dovey.animation.animationPlayer")
 Sprite = require("dovey.display.sprite")
 
+local VSyncMode = Enum("Disable", "Enable", "Adaptive")
+
 local Engine = {
 	activeCanvas = nil,
 	layeredObjects = {},
@@ -57,6 +59,47 @@ function Engine.info()
 		loveVer = tostring(love.getVersion()),
 	}
 end
+
+local function limitedRun()
+	-- yeah, yeah we're doing this.
+	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
+	if love.timer then love.timer.step() end
+	local minDelta = 1/Engine.maxFPS
+	local nextTime = love.timer.getTime()
+	local curDelta = 0
+	while true do
+		if love.timer then
+			local curTime = love.timer.getTime()
+			if nextTime < curTime - minDelta then
+				nextTime = curTime
+			end
+			if nextTime > curTime then
+				love.timer.sleep(nextTime - curTime)
+			end
+		end
+		if love.event then
+			love.event.pump()
+			for e, a, b, c, d in love.event.poll() do
+				if e == "quit" and (not love.quit or not love.quit()) then
+					return a or 0
+				end
+				local handler = love.handlers[e]
+				if handler then handler(e,a,b,c,d) end
+			end
+		end
+		if love.timer then curDelta = love.timer.step() end
+		if love.update then love.update(curDelta) end
+		if love.graphics and love.graphics.isActive() then
+			love.graphics.origin()
+			--love.graphics.clear(Engine.clearTint)
+			if love.draw then love.draw() end
+			love.graphics.present()
+		end
+		nextTime = nextTime + minDelta
+	end
+end
+
+function love.run() return limitedRun() end
 
 function Engine.begin(startingCanvas)
 	love.update = function(delta)
@@ -160,14 +203,12 @@ function Engine.errorhandler(msg)
 	end
 	if love.audio then love.audio.stop() end
 	love.graphics.reset()
-	local fonts = {
-		error = love.graphics.newFont("resources/test.ttf", 20),
-		emoticon = love.graphics.newFont("resources/test.ttf", 64),
-		default = love.graphics.getFont(),
-	}
 	love.graphics.setColor(1,1,1,1)
-	local stack = debug.traceback()
 	love.graphics.origin()
+
+	local stack = debug.traceback()
+	local width, height = love.graphics.getDimensions()
+
 	return function()
 		love.event.pump()
 		for e, a, b, c in love.event.poll() do
@@ -177,21 +218,35 @@ function Engine.errorhandler(msg)
 				return 1
 			end
 		end
+		love.graphics.clear(0.2, 0.2, 0.2, 1)
+
 		love.graphics.push("all")
-		love.graphics.clear(love.math.colorFromBytes(15,15,15,255))
 
-		love.graphics.setFont(fonts.emoticon)
-		love.graphics.print("Oh!",5,5)
+		-- draw error screen --
+			love.graphics.setColor(0.1, 0.1, 0.5, 0.8)
+			love.graphics.rectangle("fill", 0, 0, width, height)
 
-		love.graphics.setFont(fonts.error)
-		love.graphics.print((
-			msg.."\nThis is an error, please report!\n\n"..
-			tostring(stack).."\n\nPress ESCAPE to close"),
-		5,100)
+			-- fancy line around screen
+			love.graphics.setLineWidth(3)
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.rectangle("line", 5, 5, width - 10, height - 10)
+
+			-- header
+			love.graphics.setColor(1,1,1,1)
+			love.graphics.setFont(love.graphics.newFont(24))
+			love.graphics.printf("[ Crash Report ]", 0, 5, width - 10, "center")
+			-- error
+			love.graphics.setFont(love.graphics.newFont(16))
+			love.graphics.printf(msg, 50, 15 + 24, width - 10, "left")
+			-- stack
+			love.graphics.printf(tostring(stack), 50, height / 8, width - 10, "left")
+
+			-- instructions
+			love.graphics.printf("\n\nPress ESCAPE to close", 0, height - 80, width - 10, "center")
 
 		love.graphics.present()
-		love.graphics.setFont(fonts.default)
 		love.graphics.pop()
+
 		if love.timer then
 			love.timer.sleep(0.1)
 		end
