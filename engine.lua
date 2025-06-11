@@ -1,4 +1,11 @@
 --Overriding defaults--
+function table.copy(tbl)
+	local copy = {}
+	for k, v in ipairs(tbl) do
+		copy[k] = v
+	end
+	return copy
+end
 function string.tablestring(tbl)
 	local str = "\n"
 	local function continuestr(k, v)

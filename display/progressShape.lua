@@ -53,6 +53,7 @@ function ProgressShape:isFull() return self.current >= self.maximum end
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
 function ProgressShape:draw()
+	local prevTint = love.graphics.getColor()
 	love.graphics.push("all")
 	-- rlly basic rendering should do it for now.
 	-- reminder that Vec2.get() returns X and Y.
@@ -62,7 +63,7 @@ function ProgressShape:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
-		love.graphics.setColor(border.tint or Tint.WHITE)
+		love.graphics.setColor(border.tint or prevTint)
 		love.graphics.setLineWidth(border.thickness or 1)
 		love.graphics.rectangle("line", 0, 0, self.size.x, self.size.y)
 	end
@@ -77,7 +78,7 @@ function ProgressShape:draw()
 	end
 	love.graphics.rectangle("fill", 0, 0, self.size.x * sizeProg, self.size.y)
 
-	love.graphics.setColor(Tint.WHITE)
+	love.graphics.setColor(prevTint)
 	love.graphics.setLineWidth(1)
 	love.graphics.pop()
 end

@@ -23,6 +23,7 @@ function Sprite:init(x, y, texture)
 end
 
 function Sprite:draw()
+	local prevTint = love.graphics.getColor()
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position.get()) -- Positioning
@@ -30,10 +31,10 @@ function Sprite:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
-	love.graphics.setColor(self.tint or Tint.WHITE) -- Colouring
+	love.graphics.setColor(self.tint or prevTint) -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
-	love.graphics.setColor(Tint.WHITE)
+	love.graphics.setColor(prevTint)
 	love.graphics.pop()
 end
 
