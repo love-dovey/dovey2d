@@ -68,7 +68,7 @@ local function limitedRun()
 	local nextTime = love.timer.getTime()
 	local curDelta = 0
 	while true do
-		if love.timer then
+		if love.timer and Engine.maxFPS > 0 then
 			local curTime = love.timer.getTime()
 			if nextTime < curTime - minDelta then
 				nextTime = curTime
@@ -96,6 +96,9 @@ local function limitedRun()
 			love.graphics.present()
 		end
 		nextTime = nextTime + minDelta
+		if Engine.maxFPS <= 0 then
+			love.timer.sleep(0.001)
+		end
 	end
 end
 

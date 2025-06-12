@@ -3,12 +3,16 @@ dövey2d (all lowercase) is a very tiny extension for LÖVE2D that makes it slig
 
 I made this for my own personal projects.
 
-### recommended usage:
+### recommended usage
 just create a submodule for the engine in your LÖVE2D project with the following commands
 ```sh
 git submodule init
 git submodule add https://github.com/pisayesiwsi/dovey2d.git dovey
 ```
 though if you prefer using SSH verification, change the link in the last command to `git@github.com:pisayesiwsi/dovey2d.git`
+
+if these instructions aren't enough, here's an example game you could use as a reference point
+
+**[dovey-template](https://github.com/pisayesiwsi/dovey-template)**
 
 ---
