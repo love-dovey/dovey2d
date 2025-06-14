@@ -10,7 +10,7 @@ local Sprite = Proto:extend({
 })
 
 local function resetTransform(self)
-	return self.position.get(), self.angle, self.scale.get(), self.origin.get(), self.shear.get()
+	return self.position:get(), self.angle, self.scale:get(), self.origin:get(), self.shear:get()
 end
 
 --- Creates a Sprite (must be added to a Canvas to be displayed).
@@ -18,7 +18,7 @@ end
 --- @param y number		(Initial) Y Coordinates to Display the Sprite at.
 --- @param texture love.graphics.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
-	self.position.set(x or self.position.x, y or self.position.y)
+	self.position:set(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
 	return self
 end
@@ -26,9 +26,9 @@ end
 function Sprite:draw()
 	love.graphics.push("all")
 
-	love.graphics.translate(self.position.get()) -- Positioning
+	love.graphics.translate(self.position:get()) -- Positioning
 	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale.get()) -- Scale
+	love.graphics.scale(self.scale:get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
 	love.graphics.setColor(self.tint) -- Colouring
@@ -48,7 +48,7 @@ end
 
 --- Repositions the Sprite elsewhere.
 function Sprite:setPosition(x, y)
-	self.position.set(x or 0, y or 0)
+	self.position:set(x or 0, y or 0)
 	return self
 end
 
@@ -101,7 +101,7 @@ end
 --- @param x number		How much to scale the Sprite on the X axis.
 --- @param y number		How much to scale the Sprite on the Y axis.
 function Sprite:setScale(x, y)
-	self.scale.set(x or 1, y or 1)
+	self.scale:set(x or 1, y or 1)
 	return self
 end
 
@@ -109,7 +109,7 @@ end
 --- @param x number		How much to shear the Sprite on the X axis.
 --- @param y number		How much to shear the Sprite on the Y axis.
 function Sprite:setShear(x, y)
-	self.shear.set(x or 0, y or 0)
+	self.shear:set(x or 0, y or 0)
 	return self
 end
 

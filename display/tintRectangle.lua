@@ -18,7 +18,7 @@ local TintRectangle = Proto:extend({
 --- @param sx number	Initial X size
 --- @param sy number	Initial Y size
 function TintRectangle:init(x, y, tint, sx, sy)
-	self.position.set(x or self.position.x, y or self.position.y)
+	self.position:set(x or self.position.x, y or self.position.y)
 	if tint then
 		self.tint = tint or { Tint.fromRGB(tint[1], tint[2], tint[3], tint[4] or 255) }
 	end
@@ -29,9 +29,9 @@ end
 
 function TintRectangle:draw()
 	love.graphics.push("all")
-	love.graphics.translate(self.position.get()) -- Positioning
+	love.graphics.translate(self.position:get()) -- Positioning
 	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale.get()) -- Scale
+	love.graphics.scale(self.scale:get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.setColor(self.tint) -- Colouring
 	love.graphics.setLineWidth(self.thickness or 1) -- Line Thickness
@@ -42,7 +42,7 @@ end
 
 --- Repositions the TintRectangle elsewhere.
 function TintRectangle:setPosition(x, y)
-	self.position.set(x or 0, y or 0)
+	self.position:set(x or 0, y or 0)
 	return self
 end
 
@@ -51,10 +51,10 @@ end
 --- @param y number		How much to offset the Y position when centering.
 function TintRectangle:centerPosition(x, y)
 	x, y = x or 0, y or 0
-	local slx, sly = self.scale.get() -- X, Y
+	local slx, sly = self.scale:get() -- X, Y
 	local szx, szy = self.size.x, self.size.y -- Width, Height
 	local wx, wy = love.window.getMode() -- Same as szx and szy
-	self.position.set(
+	self.position:set(
 		(wx - (szx * slx)) * 0.5 + x,
 		(wy - (szy * sly)) * 0.5 + y
 	)
@@ -76,7 +76,7 @@ end
 --- @param x number		How much to scale the TintRectangle on the X axis.
 --- @param y number		How much to scale the TintRectangle on the Y axis.
 function TintRectangle:setScale(x, y)
-	self.scale.set(x or 1, y or 1)
+	self.scale:set(x or 1, y or 1)
 	return self
 end
 
@@ -84,7 +84,7 @@ end
 --- @param x number		How much to scale the TintRectangle on the X axis.
 --- @param y number		How much to scale the TintRectangle on the Y axis.
 function TintRectangle:setSize(x, y)
-	self.size.set(x or 1, y or 1)
+	self.size:set(x or 1, y or 1)
 	return self
 end
 
@@ -92,7 +92,7 @@ end
 --- @param x number		How much to shear the TintRectangle on the X axis.
 --- @param y number		How much to shear the TintRectangle on the Y axis.
 function TintRectangle:setShear(x, y)
-	self.shear.set(x or 0, y or 0)
+	self.shear:set(x or 0, y or 0)
 	return self
 end
 

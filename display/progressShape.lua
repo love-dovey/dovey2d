@@ -35,7 +35,7 @@ local border = { --- Handles the border behind the main colours.
 --- @param y number
 --- @param dir string|number 		Options: "LeftRight"|1, "RightLeft"|2, "TopBottom"|3, "BottomTop"|4
 function ProgressShape:init(x, y, dir)
-	self.position.set(x or self.position.x, y or self.position.y)
+	self.position:set(x or self.position.x, y or self.position.y)
 	self.direction = ProgressStyling.Direction.resolve(dir or self.direction)
 	return self
 end
@@ -55,11 +55,11 @@ function ProgressShape:isEmpty() return self.current <= self.minimum end
 function ProgressShape:draw()
 	love.graphics.push("all")
 	-- rlly basic rendering should do it for now.
-	-- reminder that Vec2.get() returns X and Y.
+	-- reminder that Vec2:get() returns X and Y.
 
-	love.graphics.translate(self.position.get()) -- Positioning
+	love.graphics.translate(self.position:get()) -- Positioning
 	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale.get()) -- Scale
+	love.graphics.scale(self.scale:get()) -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)
@@ -84,7 +84,7 @@ end
 --- @param x number
 --- @param y number
 function ProgressShape:setPosition(x, y)
-	self.position.set(x or 0, y or 0)
+	self.position:set(x or 0, y or 0)
 	return self
 end
 
@@ -100,10 +100,10 @@ function ProgressShape:getHeight() return self.size.y or 1 end
 --- @param y number		How much to offset the Y position when centering.
 function ProgressShape:centerPosition(x, y)
 	x, y = x or 0, y or 0
-	local slx, sly = self.scale.get() -- X, Y
+	local slx, sly = self.scale:get() -- X, Y
 	local szx, szy = self:getDimensions() -- Width, Height
 	local wx, wy = love.window.getMode() -- Same as szx and szy
-	self.position.set(
+	self.position:set(
 		(wx - (szx * slx)) * 0.5 + x,
 		(wy - (szy * sly)) * 0.5 + y
 	)
@@ -114,7 +114,7 @@ end
 --- @param x number		How much to scale the Sprite on the X axis.
 --- @param y number		How much to scale the Sprite on the Y axis.
 function ProgressShape:setScale(x, y)
-	self.scale.set(x or 1, y or 1)
+	self.scale:set(x or 1, y or 1)
 	return self
 end
 

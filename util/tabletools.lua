@@ -5,19 +5,25 @@
 ---
 --- @param tbl   table    The table to make a copy of.
 --- @param deep? boolean  Whether or not all nested subtables should be deeply copied. If not, a shallow copy is performed, where only the top-level elements are copied.
+--- @param been? table    A tracking table to deal with circular references properly, can be omitted.
 ---
 --- @return table|nil
 ---
-function table.copy(tbl, deep)
+function table.copy(tbl, deep, been)
 	if type(tbl) ~= "table" then return nil end
+	been = been or {}
+	if been[tbl] then return been[tbl] end
 	local copied = {}
+	been[tbl] = copied
 	for k, v in pairs(tbl) do
 		if type(v) == "table" then
-			copied[k] = deep and table.copy(v, true) or v
+			copied[k] = deep and table.copy(v, true, seen) or v
 		else
 			copied[k] = v
 		end
 	end
+	local mt = getmetatable(tbl)
+	if mt then setmetatable(copied, mt) end
 	return copied
 end
 
