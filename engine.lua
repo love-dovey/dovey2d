@@ -34,9 +34,10 @@ Proto = require("dovey.proto")
 Input = require("dovey.input")
 Canvas = require("dovey.canvas")
 Signal = require("dovey.util.signal")
-TintRectangle = require("dovey.display.tintRectangle")
 AnimationPlayer = require("dovey.animation.animationPlayer")
+TintRectangle = require("dovey.display.tintRectangle")
 Sprite = require("dovey.display.sprite")
+TextDisplay = require("dovey.display.textDisplay")
 
 local VSyncMode = Enum("Disable", "Enable", "Adaptive")
 
@@ -46,7 +47,6 @@ local Engine = {
 	clearTint = {0.1, 0.1, 0.1, 1},
 	enginName = "dövey",
 	version = "1.0.0",
-	loveVer = "12.0",
 	maxFPS = 60,
 }
 
@@ -63,7 +63,7 @@ function Engine.info()
 	return {
 		engineName = Engine.engineName or "dövey",
 		verName = tostring(Engine.version),
-		loveVer = tostring(love.getVersion()),
+		loveVer = love.getVersion(),
 	}
 end
 
@@ -190,6 +190,9 @@ end
 
 local function traceback(msg) -- I was having issues with LÖVE12 and debug.traceback so this will have to work.
 	msg = tostring(msg or "")
+	if love.getVersion() >= 12 then
+		return debug.traceback(msg)
+	end
 	local level = 2
 	local tb = msg
 	while true do

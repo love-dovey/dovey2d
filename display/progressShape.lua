@@ -2,7 +2,6 @@ ProgressStyling = {
 Direction = Enum("LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
 	Shape = Enum("RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
 }
-
 local _defaultTint = {
 	{ 0, 0.5, 0, 1 }, -- Dark Green
 	{ 0, 1.0, 0, 1 }, -- Green
@@ -53,7 +52,6 @@ function ProgressShape:isFull() return self.current >= self.maximum end
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
 function ProgressShape:draw()
-	local prevTint = { love.graphics.getColor() }
 	love.graphics.push("all")
 	-- rlly basic rendering should do it for now.
 	-- reminder that Vec2.get() returns X and Y.
@@ -63,23 +61,19 @@ function ProgressShape:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
-		love.graphics.setColor(border.tint or prevTint)
+		love.graphics.setColor(border.tint)
 		love.graphics.setLineWidth(border.thickness or 1)
 		love.graphics.rectangle("line", 0, 0, self.size.x, self.size.y)
 	end
 
 	love.graphics.setColor(tints[1] or _defaultTint[1]) -- Draw Background
 	love.graphics.rectangle("fill", 0, 0, self.size.x, self.size.y)
-
 	local sizeProg = (self.current - self.minimum) / (self.maximum - self.minimum) -- I think, i hope.
 	love.graphics.setColor(tints[2] or _defaultTint[2]) -- Draw Progress
 	if self.direction == ProgressStyling.Direction.RightLeft then
 		sizeProg = 1 - sizeProg
 	end
 	love.graphics.rectangle("fill", 0, 0, self.size.x * sizeProg, self.size.y)
-
-	love.graphics.setColor(prevTint or Tint.WHITE)
-	love.graphics.setLineWidth(1)
 	love.graphics.pop()
 end
 

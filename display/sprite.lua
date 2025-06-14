@@ -23,7 +23,6 @@ function Sprite:init(x, y, texture)
 end
 
 function Sprite:draw()
-	local prevTint = { love.graphics.getColor() }
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position.get()) -- Positioning
@@ -31,10 +30,9 @@ function Sprite:draw()
 	love.graphics.scale(self.scale.get()) -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
-	love.graphics.setColor(self.tint or prevTint) -- Colouring
+	love.graphics.setColor(self.tint) -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
-	--love.graphics.setColor(prevTint or Tint.WHITE)
 	love.graphics.pop()
 end
 
@@ -71,14 +69,30 @@ function Sprite:getHeight() return self.texture and self.texture:getHeight() or 
 --- @param x number		How much to offset the X position when centering.
 --- @param y number		How much to offset the Y position when centering.
 function Sprite:centerPosition(x, y)
-	x, y = x or 0, y or 0
-	local slx, sly = self.scale.get() -- X, Y
-	local szx, szy = self:getDimensions() -- Width, Height
-	local wx, wy = love.window.getMode() -- Same as szx and szy
-	self.position.set(
-		(wx - (szx * slx)) * 0.5 + x,
-		(wy - (szy * sly)) * 0.5 + y
-	)
+	self:centerX(x)
+	self:centerY(y)
+	return self
+end
+
+--- Positions the Sprite at the center of the screen on the X axis
+--- @param x number		How much to offset the X position when centering.
+function Sprite:centerX(x)
+	x = x or 0
+	local slx = self.scale.x
+	local szx = self:getWidth()
+	local wx = love.window.getMode().width
+	self.position.x = (wx - (szx * slx)) * 0.5 + x
+	return self
+end
+
+--- Positions the Sprite at the center of the screen on the Y axis
+--- @param y number		How much to offset the Y position when centering.
+function Sprite:centerY(y)
+	y = y or 0
+	local sly = self.scale.y
+	local szy = self:getHeight()
+	local wy = love.window.getMode().height
+	self.position.y = (wy - (szy * slx)) * 0.5 + y
 	return self
 end
 
