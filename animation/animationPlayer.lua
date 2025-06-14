@@ -1,5 +1,6 @@
 local Timeline = require("dovey.animation.timeline")
 local AnimationPlayer = Proto:extend({
+	_name = "AnimationPlayer",
 	currentAnimation = nil,
 	animations = {},
 })

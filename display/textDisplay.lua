@@ -1,8 +1,9 @@
-TextAlignment = Enum("LEFT", "CENTER", "RIGHT") --"FILL")
+TextAlignment = Enum("TextAlignment", "LEFT", "CENTER", "RIGHT") --"FILL")
 
 -- half of this is taken from Sprite.lua
 
 local TextDisplay = Proto:extend({
+	_name = "TextDisplay",
 	text = nil, --- Text displayed on-screen when visible.
 	tint = { 1,1,1,1 }, --- Colour of the TextDisplay when rendering.
 	scale = Vec2(1, 1), --- Display Size of the Texture.
@@ -11,7 +12,7 @@ local TextDisplay = Proto:extend({
 	shear = Vec2(0, 0), --- Skew/Shear Factor.
 	angle = 0, --- Text Rotation Angle.
 	limit = 0, --- Limit (in screen pixels) before word wrapping starts.
-	--- Enum("NONE", "SIMPLE", "SMART")?
+	--- Enum("TextWrapMode", NONE", "SIMPLE", "SMART")?
 	wrapText = true, --- If word wrapping should happen when the text exceeds the limit.
 	alignment = TextAlignment.LEFT, --- Where should text align to (based on limit).
 	font = nil, --- Per instance font.

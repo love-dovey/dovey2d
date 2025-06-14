@@ -1,6 +1,7 @@
 --- A Data closure that represents a Rectangle, has position and size.
 local function Rect2(x, y, w, h)
 	local self = { x = x or 0, y = y or 0, w = w or 0, h = h or 0, }
+	self._name = "Rect2"
 	function self.position() return self.x, self.y end
 	function self.size() return self.w, self.h end
 	function self.area() return self.w * self.h end

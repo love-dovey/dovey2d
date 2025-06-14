@@ -1,9 +1,9 @@
 --- A Data closure that represents a Point/Vector, has 2D Coordinates (X, Y)
 local function Vec2(x, y)
 	local self = { x = x or 0, y = y or 0 }
+	self._name = "Vec2"
 	function self.set(x, y)
-		self.x = x
-		self.y = y
+		self.x, self.y = x, y
 		return self
 	end
 	function self.zero()

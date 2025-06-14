@@ -1,5 +1,6 @@
-RectangleRenderMode = Enum("FILL", "LINE") -- this is just for type safety actually.
+RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE") -- this is just for type safety actually.
 local TintRectangle = Proto:extend({
+	_name = "TintRectangle",
 	position = Vec2(0, 0),
 	scale = Vec2(1, 1),
 	size = Vec2(50, 50),
@@ -17,7 +18,7 @@ local TintRectangle = Proto:extend({
 --- @param sx number	Initial X size
 --- @param sy number	Initial Y size
 function TintRectangle:init(x, y, tint, sx, sy)
-	self.position = Vec2(x or self.position.x, y or self.position.y)
+	self.position.set(x or self.position.x, y or self.position.y)
 	if tint then
 		self.tint = tint or { Tint.fromRGB(tint[1], tint[2], tint[3], tint[4] or 255) }
 	end
@@ -28,7 +29,6 @@ end
 
 function TintRectangle:draw()
 	love.graphics.push("all")
-
 	love.graphics.translate(self.position.get()) -- Positioning
 	love.graphics.rotate(self.angle) -- Rotation
 	love.graphics.scale(self.scale.get()) -- Scale

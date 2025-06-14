@@ -21,6 +21,7 @@ local function toBytes(r, g, b, a)
 end
 
 return {
+	_name = "Tint",
 	WHITE = love.math.colorFromBytes(255, 255, 255, 255),
 	BLACK = love.math.colorFromBytes(0, 0, 0, 255),
 	--- Converts a colour table to numbers.

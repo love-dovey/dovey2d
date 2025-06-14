@@ -1,4 +1,5 @@
 local Input = {
+	_name = "Input",
 	actions = {
 		["ui_down"] = { "down" },
 		["ui_left"] = { "left" },

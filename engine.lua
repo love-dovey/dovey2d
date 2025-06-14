@@ -1,28 +1,6 @@
 --Overriding defaults--
-function table.copy(tbl)
-	local copy = {}
-	for k, v in ipairs(tbl) do
-		copy[k] = v
-	end
-	return copy
-end
-function string.tablestring(tbl)
-	local str = "\n"
-	local function continuestr(k, v)
-		return str.."	"..tostring(k).."="..tostring(v)..",\n"
-	end
-	for k,v in pairs(tbl or {}) do
-		if v == nil then return end
-		str = continuestr(k,v)
-	end
-	return tostring(tbl).." {"..str.."}\n"
-end
-function string.starts(x, beginning)
-	return string.sub(x, 1, #beginning) == beginning
-end
-function string.endswith(x, ending)
-	return string.sub(x, -#ending) == ending
-end
+require("dovey.util.tabletools")
+require("dovey.util.stringtools")
 --These must be imported first--
 Enum = require("dovey.util.enum")
 Tint = require("dovey.util.tint")
@@ -30,16 +8,15 @@ Log = require("dovey.util.log")
 Rect2 = require("dovey.util.rect2")
 Vec2 = require("dovey.util.vec2")
 Proto = require("dovey.proto")
+Timer = require("dovey.util.timer")
+Signal = require("dovey.util.signal")
 -- Objects --
 Input = require("dovey.input")
 Canvas = require("dovey.canvas")
-Signal = require("dovey.util.signal")
 AnimationPlayer = require("dovey.animation.animationPlayer")
 TintRectangle = require("dovey.display.tintRectangle")
 Sprite = require("dovey.display.sprite")
 TextDisplay = require("dovey.display.textDisplay")
-
-local VSyncMode = Enum("Disable", "Enable", "Adaptive")
 
 local Engine = {
 	activeCanvas = nil,
@@ -122,6 +99,7 @@ function Engine.begin(startingCanvas)
 				else v.update(delta) end
 			end
 		end
+		Timer.updateAll(delta)
 		Input.update(delta)
 	end
 	love.draw = function()

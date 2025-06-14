@@ -10,6 +10,11 @@ local Canvas = Proto:extend({
 	end,
 })
 
+function Canvas:init()
+	self.objects = {}
+	return self
+end
+
 function Canvas:update(delta)
 	self:forEach(function(o)
 		if o.update then

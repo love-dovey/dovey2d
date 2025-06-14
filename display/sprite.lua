@@ -1,4 +1,5 @@
 local Sprite = Proto:extend({
+	_name = "Sprite",
 	tint = { 1,1,1,1 }, --- Colour of the Sprite when rendering.
 	texture = nil, --- Texture to render the Sprite with.
 	scale = Vec2(1, 1), --- Display Size of the Texture.
@@ -17,7 +18,7 @@ end
 --- @param y number		(Initial) Y Coordinates to Display the Sprite at.
 --- @param texture love.graphics.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
-	self.position = Vec2(x or self.position.x, y or self.position.y)
+	self.position.set(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
 	return self
 end

@@ -1,12 +1,13 @@
 ProgressStyling = {
-Direction = Enum("LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
-	Shape = Enum("RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
+Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
+	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
 }
 local _defaultTint = {
 	{ 0, 0.5, 0, 1 }, -- Dark Green
 	{ 0, 1.0, 0, 1 }, -- Green
 }
 local ProgressShape = Proto:extend({
+	_name = "ProgressShape",
 	position = Vec2(0, 0), --- Position to render the ProgressShape at.
 	scale = Vec2(1, 1), --- How much to stretch the ProgressShape to.
 	size = Vec2(350, 25), -- Width and Height of the shape.
@@ -34,7 +35,7 @@ local border = { --- Handles the border behind the main colours.
 --- @param y number
 --- @param dir string|number 		Options: "LeftRight"|1, "RightLeft"|2, "TopBottom"|3, "BottomTop"|4
 function ProgressShape:init(x, y, dir)
-	self.position = Vec2(x or self.position.x, y or self.position.y)
+	self.position.set(x or self.position.x, y or self.position.y)
 	self.direction = ProgressStyling.Direction.resolve(dir or self.direction)
 	return self
 end

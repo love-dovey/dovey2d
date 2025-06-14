@@ -1,6 +1,6 @@
 local DEFAULT_FRAMERATE = 30
 local Timeline = Proto:extend({
-	name = "Timeline",
+	_name = "Timeline",
 	tracks = {}, --- Tracks for modifying values (e.g. Position, Angle, Scale, Tint, etc.).
 	frameRate = DEFAULT_FRAMERATE, --- Update frequency.
 	finished = false, --- Animation is done.

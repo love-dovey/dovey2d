@@ -38,7 +38,7 @@ end
 --- ```
 function Proto.extend(from, defaults)
 	local outputClass = defaults or {}
-	outputClass.super = from
+	outputClass.super = from or {}
 	outputClass.exists = true
 	for key, value in pairs(from) do
 		if outputClass[key] == nil then
@@ -46,19 +46,25 @@ function Proto.extend(from, defaults)
 		end
 	end
 	setmetatable(outputClass, {
-		__tostring = function() return ("[Proto %s]"):format(outputClass._name or "Unknown (Custom)") end,
+		__tostring = function() return ("[Proto %s]"):format(outputClass._name or "Unknown(Custom)") end,
 	})
 	function outputClass:new(...)
-		setmetatable(self, outputClass)
-		if self.init then self:init(...) end
-		return self
+		local current = {}
+		setmetatable(current, outputClass)
+		for k, v in pairs(outputClass) do
+			if k ~= "__index" and k ~= "__newindex" and k ~= "super" and k ~= "exists" then
+				-- prevent shared table states.
+				current[k] = table.copy(v, true)
+			end
+		end
+		if current.init then current:init(...) end
+		return current
 	end
 	outputClass.__index = outputClass
-	return outputClass, outputClass.super or {}
+	return outputClass, outputClass.super
 end
 
 -- https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/classic.lua#L44
--- TODO: this kinda doesn't work you know??????
 --- Checks if an Object is of the same type as another object.
 function Proto:is(cls)
 	local mt = getmetatable(self)

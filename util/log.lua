@@ -1,4 +1,4 @@
-LogLevel = Enum("INFO", "WARN", "ERROR")
+LogLevel = Enum("LogLevel", "INFO", "WARN", "ERROR")
 local asciiCodes = {
 	white = "\27[0m",
 	red = "\27[31m",
@@ -25,6 +25,7 @@ local function printRich(msg, level)
 		" (at: "..line..")\n")
 end
 return {
+	_name = "Log",
 	info = function(msg)
 		return printRich(msg, LogLevel.INFO)
 	end,
