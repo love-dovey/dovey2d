@@ -17,6 +17,12 @@ function string.tablestring(tbl)
 	end
 	return tostring(tbl).." {"..str.."}\n"
 end
+function string.starts(x, beginning)
+	return string.sub(x, 1, #beginning) == beginning
+end
+function string.endswith(x, ending)
+	return string.sub(x, -#ending) == ending
+end
 --These must be imported first--
 Enum = require("dovey.util.enum")
 Tint = require("dovey.util.tint")
@@ -40,6 +46,7 @@ local Engine = {
 	clearTint = {0.1, 0.1, 0.1, 1},
 	enginName = "dövey",
 	version = "1.0.0",
+	loveVer = "12.0",
 	maxFPS = 60,
 }
 
@@ -105,6 +112,7 @@ end
 function love.run() return limitedRun() end
 
 function Engine.begin(startingCanvas)
+	Engine.loveVer = tostring(love.getVersion())
 	love.update = function(delta)
 		if Engine.activeCanvas then Engine.activeCanvas:update(delta) end
 		for _, v in pairs(Engine.layeredObjects) do
@@ -180,9 +188,23 @@ function Engine.removeLayered(object)
 	end
 end
 
+local function traceback(msg) -- I was having issues with LÖVE12 and debug.traceback so this will have to work.
+	msg = tostring(msg or "")
+	local level = 2
+	local tb = msg
+	while true do
+		local info = debug.getinfo(level, "S1")
+		if not info then break end
+		tb = tb.."\n"..string.format("%s:%d", info.short_src, info.currentline)
+		level = level + 1
+	end
+	if not tb or #tb == 0 then return "(stack trace unavailable)" end
+	return tb
+end
+
 function Engine.errorhandler(msg)
 	msg = tostring(msg) -- make sure its a string
-	print(debug.traceback("Error: "..msg.."\n"):gsub("\n[^\n]+$", ""))
+	print(traceback("Error: "..msg.."\n"))
 	if not love.window or not love.graphics or not love.event then
 		return
 	end
@@ -209,7 +231,7 @@ function Engine.errorhandler(msg)
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.origin()
 
-	local stack = debug.traceback()
+	local stack = traceback()
 	local width, height = love.graphics.getDimensions()
 
 	return function()

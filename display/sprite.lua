@@ -41,9 +41,14 @@ end
 --- Loads a Texture to The Sprite in order to render it.
 ---
 --- Caching the texture beforehand is recommended if you're not doing it frequently.
---- @param tex love.graphics.Texture
+--- @param tex String
 function Sprite:loadTexture(tex)
-	self.texture = type(tex) == "string" and love.graphics.newTexture(tex) or tex
+	assert(tostring(tex), "Sprite:loadTexture must receive a string as the argument.")
+	if Engine.loveVer:starts("11") == true then -- love11
+		self.texture = love.graphics.newImage(tex)
+	else -- later versions
+		self.texture = love.graphics.newTexture(tex)
+	end
 	return self
 end
 
