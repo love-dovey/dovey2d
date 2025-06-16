@@ -250,6 +250,20 @@ function TextDisplay:setStrokeSize(size)
 	return self
 end
 
+--- Changes the offset of the Drop Shadow stroke.
+--- @param ox number
+--- @param oy number
+function TextDisplay:setStrokeOffset(ox, oy)
+	ox, oy = ox or 0, oy or 0
+	if type(self.stroke) ~= "table" then
+		-- in case you cleared it for some reason
+		self.stroke = getDefaultStroke()
+	end
+	self.stroke.offset.x = ox
+	self.stroke.offset.y = oy
+	return self
+end
+
 --- Changes the render colour of the outline behind the rendered text.
 --- @param r number		How much Red (range is: 0-255)
 --- @param g number		How much Green (range is: 0-255)

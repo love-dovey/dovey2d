@@ -57,3 +57,13 @@ function string.split(x, delimiter)
 	end
 	return out
 end
+
+--- Similar to string.split, but splits the entire string for only words.
+--- @param x string
+function string.splitwords(x)
+	local words = {}
+	for word in x:gmatch("%S+%s*") do
+		table.insert(words, word)
+	end
+	return words
+end
