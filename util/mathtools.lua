@@ -1,0 +1,18 @@
+function math.round(x)
+	-- WHYYY ISN'T THIS A THING?
+	return math.floor(x + 0.5)
+end
+
+function math.lerp(a, b, weight)
+	-- stolen from Multi Theft Auto
+	return a + (b - a) * math.max(0, math.min(1, weight))
+	-- i think.
+end
+
+function math.inverselerp(a, b, weight)
+	return b + (a - b) * math.max(0, math.min(1, weight))
+end
+
+function math.isnan(n)
+	return n ~= n
+end

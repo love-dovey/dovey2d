@@ -1,6 +1,6 @@
 ProgressStyling = {
-Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
-	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
+	Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
+	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"),                       --- Render Shapes.
 }
 local _defaultTint = {
 	{ 0, 0.5, 0, 1 }, -- Dark Green
@@ -8,22 +8,22 @@ local _defaultTint = {
 }
 local ProgressShape = Proto:extend({
 	_name = "ProgressShape",
-	position = Vec2(0, 0), --- Position to render the ProgressShape at.
-	scale = Vec2(1, 1), --- How much to stretch the ProgressShape to.
-	size = Vec2(350, 25), -- Width and Height of the shape.
-	angle = 0, --- Rotation Angle
+	position = Vec2(0, 0),                        --- Position to render the ProgressShape at.
+	scale = Vec2(1, 1),                           --- How much to stretch the ProgressShape to.
+	size = Vec2(350, 25),                         -- Width and Height of the shape.
+	angle = 0,                                    --- Rotation Angle
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?
-	smooth = false, --- Smoothly transitions between colour 1 and 2 when rendering.
-	current =   0, --- Current value.
-	maximum = 100, --- Maximum value that can be to reach.
-	minimum =   0, --- Minimum value that can be to reach.
-	rounded = true, --- Maintains the value in a linear range (always round numbers, never decimals).
+	smooth = false,                               --- Smoothly transitions between colour 1 and 2 when rendering.
+	current = 0,                                  --- Current value.
+	maximum = 100,                                --- Maximum value that can be to reach.
+	minimum = 0,                                  --- Minimum value that can be to reach.
+	rounded = true,                               --- Maintains the value in a linear range (always round numbers, never decimals).
 })
-local tints = { --- Contains the colours to render the background and progress.
-	{ 0, 0.5, 0, 1 }, -- Dark Green
-	{ 0, 1.0, 0, 1 }, -- Green
+local tints = {                                   --- Contains the colours to render the background and progress.
+	{ 0, 0.5, 0, 1 },                             -- Dark Green
+	{ 0, 1.0, 0, 1 },                             -- Green
 }
-local border = { --- Handles the border behind the main colours.
+local border = {                                  --- Handles the border behind the main colours.
 	tint = { 1, 1, 1, 1 },
 	thickness = 3,
 }
@@ -47,8 +47,10 @@ function ProgressShape:setProgress(value)
 	if self.rounded then self.current = math.floor(self.current + 0.5) end
 	return self
 end
+
 --- Checks if we've reached the end of the progress meter.
 function ProgressShape:isFull() return self.current >= self.maximum end
+
 --- Checks if we are at the start of the progress meter.
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
@@ -58,8 +60,8 @@ function ProgressShape:draw()
 	-- reminder that Vec2:get() returns X and Y.
 
 	love.graphics.translate(self.position:get()) -- Positioning
-	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale:get()) -- Scale
+	love.graphics.rotate(self.angle)          -- Rotation
+	love.graphics.scale(self.scale:get())     -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)
@@ -67,10 +69,10 @@ function ProgressShape:draw()
 		love.graphics.rectangle("line", 0, 0, self.size.x, self.size.y)
 	end
 
-	love.graphics.setColor(tints[1] or _defaultTint[1]) -- Draw Background
+	love.graphics.setColor(tints[1] or _defaultTint[1])                         -- Draw Background
 	love.graphics.rectangle("fill", 0, 0, self.size.x, self.size.y)
 	local sizeProg = (self.current - self.minimum) / (self.maximum - self.minimum) -- I think, i hope.
-	love.graphics.setColor(tints[2] or _defaultTint[2]) -- Draw Progress
+	love.graphics.setColor(tints[2] or _defaultTint[2])                         -- Draw Progress
 	if self.direction == ProgressStyling.Direction.RightLeft then
 		sizeProg = 1 - sizeProg
 	end
@@ -90,8 +92,10 @@ end
 
 --- Returns the dimensions (width and height) of the ProgressShape.
 function ProgressShape:getDimensions() return self.size.x or 1, self.size.y or 1 end
+
 --- Returns the width of the ProgressShape.
 function ProgressShape:getWidth() return self.size.x or 1 end
+
 --- Returns the height of the ProgressShape.
 function ProgressShape:getHeight() return self.size.y or 1 end
 
@@ -100,7 +104,7 @@ function ProgressShape:getHeight() return self.size.y or 1 end
 --- @param y number		How much to offset the Y position when centering.
 function ProgressShape:centerPosition(x, y)
 	x, y = x or 0, y or 0
-	local slx, sly = self.scale:get() -- X, Y
+	local slx, sly = self.scale:get()  -- X, Y
 	local szx, szy = self:getDimensions() -- Width, Height
 	local wx, wy = love.window.getMode() -- Same as szx and szy
 	self.position:set(

@@ -3,7 +3,7 @@ local function clamp01(x)
 end
 -- I have to put it outside, ehh...
 local function fromBytes(r, g, b, a)
-	a =  a or 255
+	a = a or 255
 	return
 		clamp01(math.floor(r + 0.5) / 255),
 		clamp01(math.floor(g + 0.5) / 255),
@@ -12,7 +12,7 @@ local function fromBytes(r, g, b, a)
 end
 -- this one I don't but just for consistency.
 local function toBytes(r, g, b, a)
-	a =  a or 1
+	a = a or 1
 	return
 		clamp01(r * 255 + 0.5),
 		clamp01(g * 255 + 0.5),
@@ -26,7 +26,7 @@ return {
 	BLACK = love.math.colorFromBytes(0, 0, 0, 255),
 	--- Converts a colour table to numbers.
 	toNumbers = function(rgba)
-		rgba = rgba or {1, 1, 1, 1}
+		rgba = rgba or { 1, 1, 1, 1 }
 		return rgba[1], rgba[2], rgba[3], rgba[4] or 1
 	end,
 	--- Converts RGB (0-255) to (0-1) range.
@@ -48,18 +48,18 @@ return {
 	--- Converts a hex value to a colour value (0-1).
 	--- @see https://love2d.org/wiki/love.math.colorFromBytes
 	fromHex = function(rgba)
-		rgba = rgba:gsub("#", "") -- make sure there's no "#"
+		rgba = rgba:gsub("#", "")  -- make sure there's no "#"
 		local rb, gb, bb, ab = 0, 0, 0, 255
 		if #rgba == 3 or #rgba == 4 then -- #RGBA
-			rb = (tonumber(rgba:sub(1,1), 16) * 17) or 0
-			gb = (tonumber(rgba:sub(2,2), 16) * 17) or 0
-			bb = (tonumber(rgba:sub(3,3), 16) * 17) or 0
-			ab = #rgba == 4 and ((tonumber(rgba:sub(4,4), 16) * 17) or 255) or 255
+			rb = (tonumber(rgba:sub(1, 1), 16) * 17) or 0
+			gb = (tonumber(rgba:sub(2, 2), 16) * 17) or 0
+			bb = (tonumber(rgba:sub(3, 3), 16) * 17) or 0
+			ab = #rgba == 4 and ((tonumber(rgba:sub(4, 4), 16) * 17) or 255) or 255
 		elseif #rgba == 6 or #rgba == 8 then -- #RRGGBBAA - Standard Hex Format (as far as i know.)
-			rb = tonumber(rgba:sub(1,2), 16) or 0
-			gb = tonumber(rgba:sub(3,4), 16) or 0
-			bb = tonumber(rgba:sub(5,6), 16) or 0
-			ab = #rgba == 8 and (tonumber(rgba:sub(4,4), 16) or 255) or 255
+			rb = tonumber(rgba:sub(1, 2), 16) or 0
+			gb = tonumber(rgba:sub(3, 4), 16) or 0
+			bb = tonumber(rgba:sub(5, 6), 16) or 0
+			ab = #rgba == 8 and (tonumber(rgba:sub(4, 4), 16) or 255) or 255
 		end
 		return fromBytes(rb, gb, bb, ab)
 	end,
@@ -69,7 +69,7 @@ return {
 			math.max(0, value[1] - amount), -- Red
 			math.max(0, value[2] - amount), -- Green
 			math.max(0, value[3] - amount), -- Blue
-			value[4] or 1 -- Alpha
+			value[4] or 1          -- Alpha
 		}
 	end,
 	--- Lightens a colour by a percentage (0-1)
@@ -78,15 +78,15 @@ return {
 			math.min(1, value[1] + amount), -- Red
 			math.min(1, value[2] + amount), -- Green
 			math.min(1, value[3] + amount), -- Blue
-			value[4] or 1 -- Alpha
+			value[4] or 1          -- Alpha
 		}
 	end,
 	--- Multiplies colours A and B.
 	multiply = function(a, b)
 		return {
-			a[1] * b[1], -- Red
-			a[2] * b[2], -- Green
-			a[3] * b[3], -- Blue
+			a[1] * b[1],     -- Red
+			a[2] * b[2],     -- Green
+			a[3] * b[3],     -- Blue
 			(a[4] or 1) * (b[4] or 1) -- Alpha
 		}
 	end,

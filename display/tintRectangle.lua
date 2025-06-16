@@ -5,7 +5,7 @@ local TintRectangle = Proto:extend({
 	scale = Vec2(1, 1),
 	size = Vec2(50, 50),
 	shear = Vec2(0, 0),
-	tint = {1, 1, 1, 1},
+	tint = { 1, 1, 1, 1 },
 	thickness = 0,
 	mode = nil,
 	angle = 0,
@@ -30,10 +30,10 @@ end
 function TintRectangle:draw()
 	love.graphics.push("all")
 	love.graphics.translate(self.position:get()) -- Positioning
-	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale:get()) -- Scale
+	love.graphics.rotate(self.angle)             -- Rotation
+	love.graphics.scale(self.scale:get())        -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
-	love.graphics.setColor(self.tint) -- Colouring
+	love.graphics.setColor(self.tint)            -- Colouring
 	love.graphics.setLineWidth(self.thickness or 1) -- Line Thickness
 	local mode = RectangleRenderMode.str(self.mode):lower()
 	love.graphics.rectangle(mode, 0, 0, self.size.x, self.size.y)
@@ -51,9 +51,9 @@ end
 --- @param y number		How much to offset the Y position when centering.
 function TintRectangle:centerPosition(x, y)
 	x, y = x or 0, y or 0
-	local slx, sly = self.scale:get() -- X, Y
+	local slx, sly = self.scale:get()      -- X, Y
 	local szx, szy = self.size.x, self.size.y -- Width, Height
-	local wx, wy = love.window.getMode() -- Same as szx and szy
+	local wx, wy = love.window.getMode()   -- Same as szx and szy
 	self.position:set(
 		(wx - (szx * slx)) * 0.5 + x,
 		(wy - (szy * sly)) * 0.5 + y

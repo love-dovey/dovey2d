@@ -1,12 +1,12 @@
 local Sprite = Proto:extend({
 	_name = "Sprite",
-	tint = { 1,1,1,1 }, --- Colour of the Sprite when rendering.
-	texture = nil, --- Texture to render the Sprite with.
+	tint = { 1, 1, 1, 1 }, --- Colour of the Sprite when rendering.
+	texture = nil,      --- Texture to render the Sprite with.
 	scale = Vec2(1, 1), --- Display Size of the Texture.
 	position = Vec2(0, 0), --- Screen coordinates where the Texture renders.
 	origin = Vec2(0, 0), --- Texture Pivot Offset.
 	shear = Vec2(0, 0), --- Skew/Shear Factor.
-	angle = 0, --- Texture Rotation Angle.
+	angle = 0,          --- Texture Rotation Angle.
 })
 
 local function resetTransform(self)
@@ -26,12 +26,12 @@ end
 function Sprite:draw()
 	love.graphics.push("all")
 
-	love.graphics.translate(self.position:get()) -- Positioning
-	love.graphics.rotate(self.angle) -- Rotation
-	love.graphics.scale(self.scale:get()) -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y) -- Skewing
+	love.graphics.translate(self.position:get())         -- Positioning
+	love.graphics.rotate(self.angle)                     -- Rotation
+	love.graphics.scale(self.scale:get())                -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
-	love.graphics.setColor(self.tint) -- Colouring
+	love.graphics.setColor(self.tint)                    -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
 	love.graphics.pop()
@@ -63,6 +63,7 @@ end
 
 --- Returns the width of the Sprite's texture.
 function Sprite:getWidth() return self.texture and self.texture:getWidth() or 1 end
+
 --- Returns the height of the Sprite's texture.
 function Sprite:getHeight() return self.texture and self.texture:getHeight() or 1 end
 

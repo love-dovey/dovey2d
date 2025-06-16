@@ -9,6 +9,7 @@ if love.graphics then
 	function love.graphics.origin()
 		love.graphics.reset()
 	end
+
 	function love.graphics.newTexture(texture)
 		return love.graphics.newImage(texture)
 	end

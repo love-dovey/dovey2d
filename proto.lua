@@ -6,14 +6,17 @@ function Proto:init(...)
 	Log.error("Method `init` must be implemented by a subclass.", 2)
 	return self
 end
+
 --- Happens every frame.
 function Proto:update(delta)
 	--Log.warn("Method `update` must be implemented by a subclass.", true)
 end
+
 --- Used to draw the object to the screen.
 function Proto:draw()
 	--Log.warn("Method `draw` must be implemented by a subclass.", true)
 end
+
 --- Used to get rid of the object and release it from memory.
 function Proto:dispose()
 	--Log.warn("Method `dispose` must be implemented by a subclass.", true)
@@ -60,6 +63,7 @@ function Proto.extend(from, defaults)
 		if current.init then current:init(...) end
 		return current
 	end
+
 	outputClass.__index = outputClass
 	return outputClass, outputClass.super
 end
@@ -73,6 +77,21 @@ function Proto:is(cls)
 		mt = getmetatable(mt)
 	end
 	return false
+end
+
+function Proto:implement(feature)
+	feature = feature or {}
+	for k, v in pairs(feature) do
+		if not self[k] or self[k] ~= v then
+			self[k] = v
+		end
+	end
+	return self
+end
+
+--- Returns the raw name of the object.
+function Proto:type()
+	return self._name or "Unknown(" .. self.super._name or "" .. ")"
 end
 
 setmetatable(Proto, {

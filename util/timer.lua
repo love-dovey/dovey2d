@@ -1,6 +1,6 @@
 --- Simple Timer class, counts from a specific duration to 0 and finishes
 --- @class Timer
-local Timer = Proto:extend({_name = "Timer"})
+local Timer = Proto:extend({ _name = "Timer" })
 local _running = {}
 
 function Timer:init()

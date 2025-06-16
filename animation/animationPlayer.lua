@@ -27,7 +27,7 @@ end
 function AnimationPlayer:play(name, speed, force)
 	local anim = self:findAnimation(name)
 	if not anim then
-		Log.warn("Animation \""..tostring(name).."\" doesn't exist!")
+		Log.warn("Animation \"" .. tostring(name) .. "\" doesn't exist!")
 		return
 	end
 	anim.speed = speed or anim.speed

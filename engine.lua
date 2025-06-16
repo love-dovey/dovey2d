@@ -1,6 +1,7 @@
 --Overriding defaults--
 require("dovey.util.tabletools")
 require("dovey.util.stringtools")
+require("dovey.util.mathtools")
 --These must be imported first--
 Enum = require("dovey.util.enum")
 Tint = require("dovey.util.tint")
@@ -21,19 +22,19 @@ TextDisplay = require("dovey.display.textDisplay")
 local Engine = {
 	activeCanvas = nil,
 	layeredObjects = {},
-	clearTint = {0.1, 0.1, 0.1, 1},
+	clearTint = { 0.1, 0.1, 0.1, 1 },
 	enginName = "dövey",
 	version = "1.0.0",
 	maxFPS = 60,
 }
 
 function Engine.setClearTint(tint)
-	Engine.clearTint = tint or {0.1, 0.1, 0.1, 1}
+	Engine.clearTint = tint or { 0.1, 0.1, 0.1, 1 }
 end
 
 function Engine.getVersion()
 	local i = Engine.info()
-	return i.engineName.." "..i.verName.." (on LÖVE "..i.loveVer..")"
+	return i.engineName .. " " .. i.verName .. " (on LÖVE " .. i.loveVer .. ")"
 end
 
 function Engine.info()
@@ -48,7 +49,7 @@ local function limitedRun()
 	-- yeah, yeah we're doing this.
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 	if love.timer then love.timer.step() end
-	local minDelta = 1/Engine.maxFPS
+	local minDelta = 1 / Engine.maxFPS
 	local nextTime = love.timer.getTime()
 	local curDelta = 0
 	while true do
@@ -68,7 +69,7 @@ local function limitedRun()
 					return a or 0
 				end
 				local handler = love.handlers[e]
-				if handler then handler(e,a,b,c,d) end
+				if handler then handler(e, a, b, c, d) end
 			end
 		end
 		if love.timer then curDelta = love.timer.step() end
@@ -95,8 +96,11 @@ function Engine.begin(startingCanvas)
 		for _, v in pairs(Engine.layeredObjects) do
 			if v and v.update then
 				-- Closures (or just normal tables) can also update.
-				if getmetatable(v) then v:update(delta)
-				else v.update(delta) end
+				if getmetatable(v) then
+					v:update(delta)
+				else
+					v.update(delta)
+				end
 			end
 		end
 		Timer.updateAll(delta)
@@ -108,8 +112,11 @@ function Engine.begin(startingCanvas)
 		for _, v in pairs(Engine.layeredObjects) do
 			if v and v.draw then
 				-- Closures (or just normal tables) can also draw.
-				if getmetatable(v) then v:draw()
-				else v.draw() end
+				if getmetatable(v) then
+					v:draw()
+				else
+					v.draw()
+				end
 			end
 		end
 	end
@@ -126,7 +133,7 @@ local function _makeCanvas(input)
 	if type(input) == "string" then ___ = require(input) end
 	--elseif Canvas:is(next) then ___ = next end
 	if type(___) ~= "table" then
-		error("Unable to switch to Canvas "..tostring(input)..", make sure it's a table.")
+		error("Unable to switch to Canvas " .. tostring(input) .. ", make sure it's a table.")
 		return
 	end
 	if ___ and ___.new then
@@ -159,7 +166,7 @@ function Engine.addLayered(object)
 end
 
 function Engine.removeLayered(object)
-	for k,v in pairs(_layerIndexes) do
+	for k, v in pairs(_layerIndexes) do
 		if _layerIndexes[i] > -1 then
 			table.remove(Engine.layeredObjects, i)
 		end
@@ -176,7 +183,7 @@ local function traceback(msg) -- I was having issues with LÖVE12 and debug.trac
 	while true do
 		local info = debug.getinfo(level, "S1")
 		if not info then break end
-		tb = tb.."\n"..string.format("%s:%d", info.short_src, info.currentline)
+		tb = tb .. "\n" .. string.format("%s:%d", info.short_src, info.currentline)
 		level = level + 1
 	end
 	if not tb or #tb == 0 then return "(stack trace unavailable)" end
@@ -185,7 +192,7 @@ end
 
 function Engine.errorhandler(msg)
 	msg = tostring(msg) -- make sure its a string
-	print(traceback("Error: "..msg.."\n"))
+	print(traceback("Error: " .. msg .. "\n"))
 	if not love.window or not love.graphics or not love.event then
 		return
 	end
@@ -203,13 +210,13 @@ function Engine.errorhandler(msg)
 		end
 	end
 	if love.joystick then
-		for i,v in ipairs(love.joystick.getJoysticks()) do
+		for i, v in ipairs(love.joystick.getJoysticks()) do
 			v:setVibration()
 		end
 	end
 	if love.audio then love.audio.stop() end
 	love.graphics.reset()
-	love.graphics.setColor(1,1,1,1)
+	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.origin()
 
 	local stack = traceback()
@@ -229,26 +236,26 @@ function Engine.errorhandler(msg)
 		love.graphics.push("all")
 
 		-- draw error screen --
-			love.graphics.setColor(0.1, 0.1, 0.5, 0.8)
-			love.graphics.rectangle("fill", 0, 0, width, height)
+		love.graphics.setColor(0.1, 0.1, 0.5, 0.8)
+		love.graphics.rectangle("fill", 0, 0, width, height)
 
-			-- fancy line around screen
-			love.graphics.setLineWidth(3)
-			love.graphics.setColor(1, 1, 1, 0.5)
-			love.graphics.rectangle("line", 5, 5, width - 10, height - 10)
+		-- fancy line around screen
+		love.graphics.setLineWidth(3)
+		love.graphics.setColor(1, 1, 1, 0.5)
+		love.graphics.rectangle("line", 5, 5, width - 10, height - 10)
 
-			-- header
-			love.graphics.setColor(1,1,1,1)
-			love.graphics.setFont(love.graphics.newFont(24))
-			love.graphics.printf("[ Crash Report ]", 0, 5, width - 10, "center")
-			-- error
-			love.graphics.setFont(love.graphics.newFont(16))
-			love.graphics.printf(msg, 50, 15 + 24, width - 10, "left")
-			-- stack
-			love.graphics.printf(tostring(stack), 50, height / 8, width - 10, "left")
+		-- header
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.setFont(love.graphics.newFont(24))
+		love.graphics.printf("[ Crash Report ]", 0, 5, width - 10, "center")
+		-- error
+		love.graphics.setFont(love.graphics.newFont(16))
+		love.graphics.printf(msg, 50, 15 + 24, width - 10, "left")
+		-- stack
+		love.graphics.printf(tostring(stack), 50, height / 8, width - 10, "left")
 
-			-- instructions
-			love.graphics.printf("\n\nPress ESCAPE to close", 0, height - 80, width - 10, "center")
+		-- instructions
+		love.graphics.printf("\n\nPress ESCAPE to close", 0, height - 80, width - 10, "center")
 
 		love.graphics.present()
 		love.graphics.pop()

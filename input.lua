@@ -1,10 +1,10 @@
 local Input = {
 	_name = "Input",
 	actions = {
-		["ui_down"] = { "down" },
-		["ui_left"] = { "left" },
-		["ui_right"] = { "right" },
-		["ui_up"] = { "up" },
+		["ui_down"]   = { "down" },
+		["ui_left"]   = { "left" },
+		["ui_right"]  = { "right" },
+		["ui_up"]     = { "up" },
 		["ui_accept"] = { "return" },
 		["ui_cancel"] = { "backspace" },
 		["ui_pause"]  = { "pause" },

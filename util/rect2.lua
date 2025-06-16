@@ -1,4 +1,4 @@
-local Rect2 = Proto:extend{
+local Rect2 = Proto:extend {
 	_name = "Rect2",
 	x = x or 0,
 	y = y or 0,
@@ -35,10 +35,13 @@ function Rect2:one()
 end
 
 function Rect2:get() return self.x, self.y, self.w, self.h end
+
 function Rect2:center() return (self.x + self.w * 0.5), (self.y + self.h * 0.5) end
+
 function Rect2:area() return self.w * self.h end
 
 function Rect2:position() return self.x, self.y end
+
 function Rect2:size() return self.w, self.h end
 
 function Rect2:add(x, y, w, h)
@@ -64,10 +67,11 @@ function Rect2:round()
 	self.h = math.floor(self.h + 0.5)
 	return self
 end
+
 function Rect2:overlaps(r)
 	return self.x < r.x + r.w and
 		self.x + self.w > r.x and
-		self.y < r.y + r.h    and
+		self.y < r.y + r.h and
 		self.y + self.h > r.y
 end
 

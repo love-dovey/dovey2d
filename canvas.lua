@@ -44,7 +44,7 @@ function Canvas:add(o, exclude)
 		return nil
 	end
 	table.insert(tbl, o)
-	--if o.enterCanvas then o:enterCanvas() end
+	if o.enterCanvas then o:enterCanvas() end
 	return o
 end
 
@@ -86,7 +86,7 @@ end
 --- @param fun 			Function to run on the objects looped.
 function Canvas:forEach(fun)
 	if fun then
-		for _, o in ipairs(self.objects) do fun(o) end
+		for idx, o in ipairs(self.objects) do fun(o, idx) end
 	end
 end
 
