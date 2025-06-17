@@ -19,12 +19,12 @@ function Sprite:init(x, y, texture)
 end
 
 function Sprite:draw()
-	if not self.visible then return end
+	if self.visible == false then return end
 	love.graphics.push("all")
 
-	love.graphics.translate(self.position:get())         -- Positioning
+	love.graphics.translate(self.position.x, self.position.y)         -- Positioning
 	love.graphics.rotate(self.rotation)                  -- Rotation
-	love.graphics.scale(self.scale:get())                -- Scale
+	love.graphics.scale(self.scale.x, self.scale.y)                -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
 	love.graphics.setColor(self.tint)                    -- Colouring
@@ -84,7 +84,7 @@ function Sprite:centerY(y)
 	local sly = self.scale.y
 	local szy = self:getHeight()
 	local _, wy = love.window.getMode()
-	self.position.y = (wy - (szy * slx)) * 0.5 + y
+	self.position.y = (wy - (szy * sly)) * 0.5 + y
 	return self
 end
 

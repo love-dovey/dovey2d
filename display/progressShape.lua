@@ -20,11 +20,11 @@ local ProgressShape = Proto:extend({
 	rounded = true,                               --- Maintains the value in a linear range (always round numbers, never decimals).
 }):implement(Caps2D)
 
-local tints = {                                   --- Contains the colours to render the background and progress.
-	{ 0, 0.5, 0, 1 },                             -- Dark Green
-	{ 0, 1.0, 0, 1 },                             -- Green
+local tints = {    --- Contains the colours to render the background and progress.
+	{ 0, 0.5, 0, 1 }, -- Dark Green
+	{ 0, 1.0, 0, 1 }, -- Green
 }
-local border = {                                  --- Handles the border behind the main colours.
+local border = {   --- Handles the border behind the main colours.
 	tint = { 1, 1, 1, 1 },
 	thickness = 3,
 }
@@ -56,12 +56,12 @@ function ProgressShape:isFull() return self.current >= self.maximum end
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
 function ProgressShape:draw()
-	if not self.visible then return end
+	if self.visible == false then return end
 	love.graphics.push("all")
 	-- rlly basic rendering should do it for now.
-	love.graphics.translate(self.position:get()) -- Positioning
-	love.graphics.rotate(self.rotation)       -- Rotation
-	love.graphics.scale(self.scale:get())     -- Scale
+	love.graphics.translate(self.position.x, self.position.y) -- Positioning
+	love.graphics.rotate(self.rotation)                    -- Rotation
+	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)
@@ -116,7 +116,7 @@ function ProgressShape:centerY(y)
 	local sly = self.scale.y
 	local szy = self:getHeight()
 	local _, wy = love.window.getMode()
-	self.position.y = (wy - (szy * slx)) * 0.5 + y
+	self.position.y = (wy - (szy * sly)) * 0.5 + y
 	return self
 end
 

@@ -54,13 +54,13 @@ function TextDisplay:drawText(text, x, y)
 end
 
 function TextDisplay:draw()
-	if not self.visible then return end
+	if self.visible == false then return end
 	love.graphics.push("all")
 
-	love.graphics.translate(self.position:get())         -- Positioning
-	love.graphics.rotate(self.rotation)                     -- Rotation
-	love.graphics.scale(self.scale:get())                -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
+	love.graphics.translate(self.position.x, self.position.y) -- Positioning
+	love.graphics.rotate(self.rotation)                    -- Rotation
+	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Origin
 	love.graphics.setFont(self.font)
 	self:drawCurrentText(self.text, self.tint, self.stroke.tint)
@@ -123,6 +123,7 @@ function TextDisplay:setText(text)
 	self.text = text or ""
 	return self
 end
+
 --- Returns the dimensions (width and height) that are being rendered on the TextDisplay.
 function TextDisplay:getDimensions()
 	local w, h = 1, 1
@@ -137,6 +138,7 @@ function TextDisplay:getDimensions()
 	end
 	return w, h
 end
+
 --- Returns the dimensions (width and height) of the TextDisplay's font.
 function TextDisplay:getFontDimensions()
 	local w, h = 1, 1
@@ -145,8 +147,10 @@ function TextDisplay:getFontDimensions()
 	end
 	return w, h
 end
+
 --- Returns the width of the TextDisplay's font.
 function TextDisplay:getWidth() return self.font and self.font:getWidth(self.text) or 1 end
+
 --- Returns the height of the TextDisplay's font.
 function TextDisplay:getHeight() return self.font and self.font:getLineHeight() or 1 end
 
