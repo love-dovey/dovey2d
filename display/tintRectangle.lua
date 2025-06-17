@@ -1,15 +1,11 @@
 RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE") -- this is just for type safety actually.
+local Caps2D = require("dovey.caps.caps2d")
 local TintRectangle = Proto:extend({
 	_name = "TintRectangle",
-	position = Vec2(0, 0),
-	scale = Vec2(1, 1),
 	size = Vec2(50, 50),
-	shear = Vec2(0, 0),
-	tint = { 1, 1, 1, 1 },
 	thickness = 0,
 	mode = nil,
-	angle = 0,
-})
+}):implement(Caps2D)
 
 --- Creates a Tinted Rectangle.
 --- @param x number		Initial X position
@@ -28,6 +24,7 @@ function TintRectangle:init(x, y, tint, sx, sy)
 end
 
 function TintRectangle:draw()
+	if not self.visible then return end
 	love.graphics.push("all")
 	love.graphics.translate(self.position:get()) -- Positioning
 	love.graphics.rotate(self.angle)             -- Rotation
@@ -40,24 +37,34 @@ function TintRectangle:draw()
 	love.graphics.pop()
 end
 
---- Repositions the TintRectangle elsewhere.
-function TintRectangle:setPosition(x, y)
-	self.position:set(x or 0, y or 0)
-	return self
-end
-
 --- Positions the TintRectangle at the center of the screen
 --- @param x number		How much to offset the X position when centering.
 --- @param y number		How much to offset the Y position when centering.
 function TintRectangle:centerPosition(x, y)
-	x, y = x or 0, y or 0
-	local slx, sly = self.scale:get()      -- X, Y
-	local szx, szy = self.size.x, self.size.y -- Width, Height
-	local wx, wy = love.window.getMode()   -- Same as szx and szy
-	self.position:set(
-		(wx - (szx * slx)) * 0.5 + x,
-		(wy - (szy * sly)) * 0.5 + y
-	)
+	self:centerX(x)
+	self:centerY(y)
+	return self
+end
+
+--- Positions the TintRectangle at the center of the screen on the X axis
+--- @param x number		How much to offset the X position when centering.
+function TintRectangle:centerX(x)
+	x = x or 0
+	local slx = self.scale.x
+	local szx = self.size.x
+	local wx = love.window.getMode().width
+	self.position.x = (wx - (szx * slx)) * 0.5 + x
+	return self
+end
+
+--- Positions the TintRectangle at the center of the screen on the Y axis
+--- @param y number		How much to offset the Y position when centering.
+function TintRectangle:centerY(y)
+	y = y or 0
+	local sly = self.scale.y
+	local szy = self.size.y
+	local wy = love.window.getMode().height
+	self.position.y = (wy - (szy * slx)) * 0.5 + y
 	return self
 end
 
@@ -72,43 +79,11 @@ function TintRectangle:setMode(mode, lineThickness)
 	return self
 end
 
---- Scales the TintRectangle.
---- @param x number		How much to scale the TintRectangle on the X axis.
---- @param y number		How much to scale the TintRectangle on the Y axis.
-function TintRectangle:setScale(x, y)
-	self.scale:set(x or 1, y or 1)
-	return self
-end
-
 --- Changes the overall size of the TintRectangle.
 --- @param x number		How much to scale the TintRectangle on the X axis.
 --- @param y number		How much to scale the TintRectangle on the Y axis.
 function TintRectangle:setSize(x, y)
 	self.size:set(x or 1, y or 1)
-	return self
-end
-
---- Applies a shear factor (skew) to the TintRectangle.
---- @param x number		How much to shear the TintRectangle on the X axis.
---- @param y number		How much to shear the TintRectangle on the Y axis.
-function TintRectangle:setShear(x, y)
-	self.shear:set(x or 0, y or 0)
-	return self
-end
-
---- Applies a new rotation angle to the TintRectangle.
-function TintRectangle:setAngle(angle)
-	self.angle = angle or 0
-	return self
-end
-
---- Changes the render colour of the TintRectangle.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function TintRectangle:setTint(r, g, b, a)
-	self.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
 	return self
 end
 

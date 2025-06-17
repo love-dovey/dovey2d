@@ -80,9 +80,8 @@ function Proto:is(cls)
 end
 
 function Proto:implement(feature)
-	feature = feature or {}
-	for k, v in pairs(feature) do
-		if not self[k] or self[k] ~= v then
+	for k, v in pairs(feature or {}) do
+		if self[k] == nil or self[k] ~= v then
 			self[k] = v
 		end
 	end
@@ -91,7 +90,7 @@ end
 
 --- Returns the raw name of the object.
 function Proto:type()
-	return self._name or "Unknown(" .. self.super._name or "" .. ")"
+	return self._name or ("Unknown(" .. self.super._name or "" .. ")")
 end
 
 setmetatable(Proto, {

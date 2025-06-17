@@ -1,24 +1,25 @@
 ProgressStyling = {
 	Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
-	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"),                       --- Render Shapes.
+	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"),                        --- Render Shapes.
 }
+
 local _defaultTint = {
 	{ 0, 0.5, 0, 1 }, -- Dark Green
 	{ 0, 1.0, 0, 1 }, -- Green
 }
+
+local Caps2D = require("dovey.caps.caps2d")
 local ProgressShape = Proto:extend({
 	_name = "ProgressShape",
-	position = Vec2(0, 0),                        --- Position to render the ProgressShape at.
-	scale = Vec2(1, 1),                           --- How much to stretch the ProgressShape to.
 	size = Vec2(350, 25),                         -- Width and Height of the shape.
-	angle = 0,                                    --- Rotation Angle
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?
 	smooth = false,                               --- Smoothly transitions between colour 1 and 2 when rendering.
 	current = 0,                                  --- Current value.
 	maximum = 100,                                --- Maximum value that can be to reach.
 	minimum = 0,                                  --- Minimum value that can be to reach.
 	rounded = true,                               --- Maintains the value in a linear range (always round numbers, never decimals).
-})
+}):implement(Caps2D)
+
 local tints = {                                   --- Contains the colours to render the background and progress.
 	{ 0, 0.5, 0, 1 },                             -- Dark Green
 	{ 0, 1.0, 0, 1 },                             -- Green
@@ -55,12 +56,11 @@ function ProgressShape:isFull() return self.current >= self.maximum end
 function ProgressShape:isEmpty() return self.current <= self.minimum end
 
 function ProgressShape:draw()
+	if not self.visible then return end
 	love.graphics.push("all")
 	-- rlly basic rendering should do it for now.
-	-- reminder that Vec2:get() returns X and Y.
-
 	love.graphics.translate(self.position:get()) -- Positioning
-	love.graphics.rotate(self.angle)          -- Rotation
+	love.graphics.rotate(self.rotation)       -- Rotation
 	love.graphics.scale(self.scale:get())     -- Scale
 
 	if border.thickness > 0 and border.tint[4] > 0 then
@@ -80,16 +80,6 @@ function ProgressShape:draw()
 	love.graphics.pop()
 end
 
--- just copied from sprite.lua lol
-
---- Repositions the ProgressBar elsewhere.
---- @param x number
---- @param y number
-function ProgressShape:setPosition(x, y)
-	self.position:set(x or 0, y or 0)
-	return self
-end
-
 --- Returns the dimensions (width and height) of the ProgressShape.
 function ProgressShape:getDimensions() return self.size.x or 1, self.size.y or 1 end
 
@@ -103,29 +93,30 @@ function ProgressShape:getHeight() return self.size.y or 1 end
 --- @param x number		How much to offset the X position when centering.
 --- @param y number		How much to offset the Y position when centering.
 function ProgressShape:centerPosition(x, y)
-	x, y = x or 0, y or 0
-	local slx, sly = self.scale:get()  -- X, Y
-	local szx, szy = self:getDimensions() -- Width, Height
-	local wx, wy = love.window.getMode() -- Same as szx and szy
-	self.position:set(
-		(wx - (szx * slx)) * 0.5 + x,
-		(wy - (szy * sly)) * 0.5 + y
-	)
+	self:centerX(x)
+	self:centerY(y)
 	return self
 end
 
---- Scales the Sprite's texture.
---- @param x number		How much to scale the Sprite on the X axis.
---- @param y number		How much to scale the Sprite on the Y axis.
-function ProgressShape:setScale(x, y)
-	self.scale:set(x or 1, y or 1)
+--- Positions the ProgressShape at the center of the screen on the X axis
+--- @param x number		How much to offset the X position when centering.
+function ProgressShape:centerX(x)
+	x = x or 0
+	local slx = self.scale.x
+	local szx = self:getWidth()
+	local wx = love.window.getMode().width
+	self.position.x = (wx - (szx * slx)) * 0.5 + x
 	return self
 end
 
---- Applies a new rotation angle to the Sprite.
---- @param angle number
-function ProgressShape:setAngle(angle)
-	self.angle = angle or 0
+--- Positions the ProgressShape at the center of the screen on the Y axis
+--- @param y number		How much to offset the Y position when centering.
+function ProgressShape:centerY(y)
+	y = y or 0
+	local sly = self.scale.y
+	local szy = self:getHeight()
+	local wy = love.window.getMode().height
+	self.position.y = (wy - (szy * slx)) * 0.5 + y
 	return self
 end
 

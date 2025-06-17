@@ -6,22 +6,18 @@ local DEFAULT_OUTLINE_SIZE = 1.25
 
 -- half of this is taken from Sprite.lua
 
+local Caps2D = require("dovey.caps.caps2d")
+
 local TextDisplay = Proto:extend({
 	_name = "TextDisplay",
 	text = nil,                  --- Text displayed on-screen when visible.
-	tint = { 1, 1, 1, 1 },       --- Colour of the TextDisplay when rendering.
-	scale = Vec2(1, 1),          --- Display Size of the Texture.
-	position = Vec2(0, 0),       --- Screen coordinates where the Texture renders.
-	origin = Vec2(0, 0),         --- Pivot Offset.
-	shear = Vec2(0, 0),          --- Skew/Shear Factor.
-	angle = 0,                   --- Text Rotation Angle.
 	limit = 0,                   --- Limit (in screen pixels) before word wrapping starts.
 	--- Enum("TextWrapMode", NONE", "SIMPLE", "SMART")?
 	wrapText = true,             --- If word wrapping should happen when the text exceeds the limit.
 	alignment = TextAlignment.LEFT, --- Where should text align to (based on limit).
 	stroke = nil,                --- Shadow/Outline behind text. @type table
 	font = nil,                  --- Per instance font. @type love.Font
-})
+}):implement(Caps2D)
 
 local function getDefaultStroke()
 	return {
@@ -33,7 +29,7 @@ local function getDefaultStroke()
 end
 
 --local function resetTransform(self)
---	return self.position:get(), self.angle, self.scale:get(), self.origin:get(), self.shear:get()
+--	return self.position:get(), self.rotation, self.scale:get(), self.origin:get(), self.shear:get()
 --end
 
 function TextDisplay:init(x, y, text, limit)
@@ -58,10 +54,11 @@ function TextDisplay:drawText(text, x, y)
 end
 
 function TextDisplay:draw()
+	if not self.visible then return end
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position:get())         -- Positioning
-	love.graphics.rotate(self.angle)                     -- Rotation
+	love.graphics.rotate(self.rotation)                     -- Rotation
 	love.graphics.scale(self.scale:get())                -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Origin
@@ -126,13 +123,6 @@ function TextDisplay:setText(text)
 	self.text = text or ""
 	return self
 end
-
---- Repositions the TextDisplay elsewhere.
-function TextDisplay:setPosition(x, y)
-	self.position:set(x or 0, y or 0)
-	return self
-end
-
 --- Returns the dimensions (width and height) that are being rendered on the TextDisplay.
 function TextDisplay:getDimensions()
 	local w, h = 1, 1
@@ -147,7 +137,6 @@ function TextDisplay:getDimensions()
 	end
 	return w, h
 end
-
 --- Returns the dimensions (width and height) of the TextDisplay's font.
 function TextDisplay:getFontDimensions()
 	local w, h = 1, 1
@@ -156,10 +145,8 @@ function TextDisplay:getFontDimensions()
 	end
 	return w, h
 end
-
 --- Returns the width of the TextDisplay's font.
 function TextDisplay:getWidth() return self.font and self.font:getWidth(self.text) or 1 end
-
 --- Returns the height of the TextDisplay's font.
 function TextDisplay:getHeight() return self.font and self.font:getLineHeight() or 1 end
 
@@ -191,39 +178,6 @@ function TextDisplay:centerY(y)
 	local wy = love.window.getMode()
 	local _, szy = self:getDimensions()
 	self.position.y = (wy - (szy * sly)) * 0.5 + y
-	return self
-end
-
---- Scales the TextDisplay's font.
---- @param x number		How much to scale the TextDisplay on the X axis.
---- @param y number		How much to scale the TextDisplay on the Y axis.
-function TextDisplay:setScale(x, y)
-	self.scale:set(x or 1, y or 1)
-	return self
-end
-
---- Applies a shear factor (skew) to the TextDisplay.
---- @param x number		How much to shear the TextDisplay on the X axis.
---- @param y number		How much to shear the TextDisplay on the Y axis.
-function TextDisplay:setShear(x, y)
-	self.shear:set(x or 0, y or 0)
-	return self
-end
-
---- Applies a new rotation angle to the TextDisplay.
---- @param angle number
-function TextDisplay:setAngle(angle)
-	self.angle = angle or 0
-	return self
-end
-
---- Changes the render colour of the TextDisplay.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function TextDisplay:setTint(r, g, b, a)
-	self.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
 	return self
 end
 

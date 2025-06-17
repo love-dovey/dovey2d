@@ -1,22 +1,17 @@
+local Caps2D = require("dovey.caps.caps2d")
 local Sprite = Proto:extend({
 	_name = "Sprite",
-	tint = { 1, 1, 1, 1 }, --- Colour of the Sprite when rendering.
-	texture = nil,      --- Texture to render the Sprite with.
-	scale = Vec2(1, 1), --- Display Size of the Texture.
-	position = Vec2(0, 0), --- Screen coordinates where the Texture renders.
-	origin = Vec2(0, 0), --- Texture Pivot Offset.
-	shear = Vec2(0, 0), --- Skew/Shear Factor.
-	angle = 0,          --- Texture Rotation Angle.
-})
+	texture = nil, --- Texture to render the Sprite with.
+}):implement(Caps2D)
 
 local function resetTransform(self)
-	return self.position:get(), self.angle, self.scale:get(), self.origin:get(), self.shear:get()
+	return self.position:get(), self.rotation, self.scale:get(), self.origin:get(), self.shear:get()
 end
 
 --- Creates a Sprite (must be added to a Canvas to be displayed).
 --- @param x number		(Initial) X Coordinates to Display the Sprite at.
 --- @param y number		(Initial) Y Coordinates to Display the Sprite at.
---- @param texture love.graphics.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
+--- @param texture love.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
 	self.position:set(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
@@ -24,10 +19,11 @@ function Sprite:init(x, y, texture)
 end
 
 function Sprite:draw()
+	if not self.visible then return end
 	love.graphics.push("all")
 
 	love.graphics.translate(self.position:get())         -- Positioning
-	love.graphics.rotate(self.angle)                     -- Rotation
+	love.graphics.rotate(self.rotation)                  -- Rotation
 	love.graphics.scale(self.scale:get())                -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
@@ -43,12 +39,6 @@ end
 --- @param tex String|love.graphics.Image
 function Sprite:loadTexture(tex)
 	self.texture = love.graphics.newTexture(tex)
-	return self
-end
-
---- Repositions the Sprite elsewhere.
-function Sprite:setPosition(x, y)
-	self.position:set(x or 0, y or 0)
 	return self
 end
 
@@ -95,39 +85,6 @@ function Sprite:centerY(y)
 	local szy = self:getHeight()
 	local wy = love.window.getMode().height
 	self.position.y = (wy - (szy * slx)) * 0.5 + y
-	return self
-end
-
---- Scales the Sprite's texture.
---- @param x number		How much to scale the Sprite on the X axis.
---- @param y number		How much to scale the Sprite on the Y axis.
-function Sprite:setScale(x, y)
-	self.scale:set(x or 1, y or 1)
-	return self
-end
-
---- Applies a shear factor (skew) to the Sprite.
---- @param x number		How much to shear the Sprite on the X axis.
---- @param y number		How much to shear the Sprite on the Y axis.
-function Sprite:setShear(x, y)
-	self.shear:set(x or 0, y or 0)
-	return self
-end
-
---- Applies a new rotation angle to the Sprite.
---- @param angle number
-function Sprite:setAngle(angle)
-	self.angle = angle or 0
-	return self
-end
-
---- Changes the render colour of the Sprite.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function Sprite:setTint(r, g, b, a)
-	self.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
 	return self
 end
 
