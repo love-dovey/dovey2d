@@ -83,7 +83,6 @@ function Proto:implement(feature)
 	for k, v in pairs(feature or {}) do
 		if self[k] == nil or self[k] ~= v then
 			self[k] = v
-			print("implemented "..k.." to "..self:type().. " with default value "..tostring(v))
 		end
 	end
 	return self

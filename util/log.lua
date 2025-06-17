@@ -29,23 +29,30 @@ local function printRich(msg, level)
 		asciiCodes.white .. msg ..
 		" (at: " .. line .. ")\n")
 end
-return {
-	_name = "Log",
-	info = function(msg)
-		return printRich(msg, LogLevel.INFO)
-	end,
-	warn = function(msg, once)
-		if once then
-			if _warned[msg] == true then return end
-			_warned[msg] = true
-		end
-		return printRich(msg, LogLevel.WARN)
-	end,
-	error = function(msg, errLevel, once)
-		if once then
-			if _warned[msg] == true then return end
-			_warned[msg] = true
-		end
-		return printRich(msg, LogLevel.ERROR, errLevel)
-	end,
-}
+
+local Log = { _name = "Log" }
+
+function Log.info(msg)
+	return printRich(msg, LogLevel.INFO)
+end
+
+function Log.warn(msg, once)
+	if once then
+		if _warned[msg] == true then return end
+		_warned[msg] = true
+	end
+	return printRich(msg, LogLevel.WARN)
+end
+
+function Log.error(msg, errLevel, once)
+	if once then
+		if _warned[msg] == true then return end
+		_warned[msg] = true
+	end
+	return printRich(msg, LogLevel.ERROR, errLevel)
+end
+
+luaPrint = print
+print = Log.info
+
+return Log
