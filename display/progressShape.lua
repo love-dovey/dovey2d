@@ -104,7 +104,7 @@ function ProgressShape:centerX(x)
 	x = x or 0
 	local slx = self.scale.x
 	local szx = self:getWidth()
-	local wx = love.window.getMode().width
+	local wx = love.window.getMode()
 	self.position.x = (wx - (szx * slx)) * 0.5 + x
 	return self
 end
@@ -115,7 +115,7 @@ function ProgressShape:centerY(y)
 	y = y or 0
 	local sly = self.scale.y
 	local szy = self:getHeight()
-	local wy = love.window.getMode().height
+	local _, wy = love.window.getMode()
 	self.position.y = (wy - (szy * slx)) * 0.5 + y
 	return self
 end
