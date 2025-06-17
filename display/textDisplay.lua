@@ -63,32 +63,33 @@ function TextDisplay:draw()
 	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Origin
 	love.graphics.setFont(self.font)
-	self:drawCurrentText(self.text, self.tint, self.stroke.tint)
+
+	self:drawCurrentText(self.text, self.tint, self.stroke)
 	love.graphics.pop()
 end
 
 -- override this if needed
-function TextDisplay:drawCurrentText()
-	if self.stroke and self.stroke.type ~= TextStroke.NONE and self.stroke.size > 0 then
-		love.graphics.setColor(self.stroke.tint)
+function TextDisplay:drawCurrentText(text, tint, stroke)
+	if stroke and stroke.type ~= TextStroke.NONE and stroke.size > 0 then
+		love.graphics.setColor(stroke.tint)
 		if self.stroke.type == TextStroke.OUTLINE then
 			-- i hate this already, i should use a shader, but it looks ugly.
 			local off = -self.stroke.size
 			--- @diagnostic disable-next-line: unused-local -- you're gonna shut up.
 			for _ = 1, MAX_OUTLINE_ITERATIONS do
-				self:drawText(self.text, 0, off)
-				self:drawText(self.text, off, 0)
-				self:drawText(self.text, -off, off)
-				self:drawText(self.text, off, -off)
+				self:drawText(text, 0, off)
+				self:drawText(text, off, 0)
+				self:drawText(text, -off, off)
+				self:drawText(text, off, -off)
 				off = -off
 			end
 		else -- Shadow
-			local off = self.stroke.offset or { x = 1, y = 1 }
-			self:drawText(self.text, off.x, off.y)
+			local off = stroke.offset or { x = 1, y = 1 }
+			self:drawText(text, off.x, off.y)
 		end
 	end
-	love.graphics.setColor(self.tint) -- Colouring
-	self:drawText(self.text)
+	love.graphics.setColor(tint) -- Colouring
+	self:drawText(text)
 	return self
 end
 
