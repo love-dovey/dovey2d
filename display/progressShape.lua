@@ -58,10 +58,12 @@ function ProgressShape:isEmpty() return self.current <= self.minimum end
 function ProgressShape:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
-	-- rlly basic rendering should do it for now.
+
 	love.graphics.translate(self.position.x, self.position.y) -- Positioning
 	love.graphics.rotate(self.rotation)                    -- Rotation
 	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
+	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
 
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)
@@ -73,10 +75,12 @@ function ProgressShape:draw()
 	love.graphics.rectangle("fill", 0, 0, self.size.x, self.size.y)
 	local sizeProg = (self.current - self.minimum) / (self.maximum - self.minimum) -- I think, i hope.
 	love.graphics.setColor(tints[2] or _defaultTint[2])                         -- Draw Progress
+	local nx = 0
 	if self.direction == ProgressStyling.Direction.RightLeft then
 		sizeProg = 1 - sizeProg
+		nx = self.size.x * sizeProg
 	end
-	love.graphics.rectangle("fill", 0, 0, self.size.x * sizeProg, self.size.y)
+	love.graphics.rectangle("fill", nx, 0, self.size.x * sizeProg, self.size.y)
 	love.graphics.pop()
 end
 
@@ -120,43 +124,56 @@ function ProgressShape:centerY(y)
 	return self
 end
 
+local function normaliseTint(value)
+	if type(value) == "string" then
+		return { Tint.fromHex(value) }
+	elseif type(value) == "table" then
+		if value[1] > 1 or value[2] > 1 or value[3] > 1 then
+			return { Tint.fromBytes(table.unpack(value)) }
+		end
+		return value
+	end
+	return { 1, 1, 1, 1 }
+end
+
 --- Changes the render colour for the background.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function ProgressShape:setBackgroundTint(r, g, b, a)
-	tints[1] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
+---
+--- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
+function ProgressShape:setBackgroundTint(...)
+	local t = { ... }
+	if #t == 1 then t = ... end
+	tints[1] = normaliseTint(t)
 	return self
 end
 
 --- Changes the render colour for the foreground/progress.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function ProgressShape:setProgressTint(r, g, b, a)
-	tints[2] = { Tint.fromRGB(r or 0, g or 100, b or 0, a or 255) }
+---
+--- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
+function ProgressShape:setProgressTint(...)
+	local t = { ... }
+	if #t == 1 then t = ... end
+	tints[2] = normaliseTint(t)
 	return self
 end
 
 --- Sets the border's tint and thickness at the same time.
---- @param tint table[3|4]		Table with 3 or 4 values { r, g, b, a }
 --- @param thickness number 	Thickness of the border, a low value is recommended.
---- @see https://love2d.org/wiki/love.math.colorFromBytes to use RGB(0-255).
-function ProgressShape:setBorder(tint, thickness)
-	border.tint = tint or { 1, 1, 1, 1 }
+--- @param ... any				This value is converted to a color.
+function ProgressShape:setBorder(thickness, ...)
+	local t = { ... }
+	if #t == 1 then t = ... end
+	border.tint = normaliseTint(t)
 	border.thickness = thickness or 0
 	return self
 end
 
 --- Changes the render colour for the border.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function ProgressShape:setBorderTint(r, g, b, a)
-	border.tint = { Tint.fromRGB(r or 0, g or 0, b or 0, a or 255) }
+---
+--- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
+function ProgressShape:setBorderTint(...)
+	local t = { ... }
+	if #t == 1 then t = ... end
+	border.tint = normaliseTint(t)
 	return self
 end
 

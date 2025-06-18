@@ -1,5 +1,11 @@
 --- @author swordcube
 
+-- Backwards compatibility
+table.pack = table.pack or function(...)
+	return { n = select("#", ...), ... }
+end
+table.unpack = table.unpack or unpack
+
 function table.find(tbl, val)
 	for i, v in ipairs(tbl) do
 		if v == val then return i end

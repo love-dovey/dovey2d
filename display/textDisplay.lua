@@ -223,17 +223,29 @@ function TextDisplay:setStrokeOffset(ox, oy)
 	return self
 end
 
+local function normaliseTint(value)
+	if type(value) == "string" then
+		return { Tint.fromHex(value) }
+	elseif type(value) == "table" then
+		if value[1] > 1 or value[2] > 1 or value[3] > 1 then
+			return { Tint.fromBytes(table.unpack(value)) }
+		end
+		return value
+	end
+	return { 1, 1, 1, 1 }
+end
+
 --- Changes the render colour of the outline behind the rendered text.
---- @param r number		How much Red (range is: 0-255)
---- @param g number		How much Green (range is: 0-255)
---- @param b number		How much Blue (range is: 0-255)
---- @param a number		How much Alpha (range is: 0-255)
-function TextDisplay:setStrokeTint(r, g, b, a)
+---
+--- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
+function TextDisplay:setStrokeTint(...)
 	if type(self.stroke) ~= "table" then
 		-- in case you cleared it for some reason
 		self.stroke = getDefaultStroke()
 	end
-	self.stroke.tint = { Tint.fromRGB(r or 255, g or 255, b or 255, a or 255) }
+	local t = {...}
+	if #t == 1 then t = ... end
+	self.stroke.tint = normaliseTint(t)
 	return self
 end
 

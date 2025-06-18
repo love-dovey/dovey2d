@@ -26,7 +26,7 @@ local Caps2D = {
 
 local function normaliseTint(value)
 	if type(value) == "string" then
-		return Tint.fromHex(value)
+		return { Tint.fromHex(value) }
 	elseif type(value) == "table" then
 		if value[1] > 1 or value[2] > 1 or value[3] > 1 then
 			return { Tint.fromBytes(table.unpack(value)) }
@@ -55,9 +55,13 @@ function Caps2D:setScale(x, y)
 end
 
 --- Sets the tint to something else
+---
+--- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
 --- @param value table|string
-function Caps2D:setTint(value)
-	self.tint = normaliseTint(value)
+function Caps2D:setTint(...)
+	local t = {...}
+	if #t == 1 then t = ... end
+	self.tint = normaliseTint(t)
 	return self
 end
 

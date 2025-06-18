@@ -53,7 +53,7 @@ function Tint.fromHex(rgba)
 		rb = (tonumber(rgba:sub(1, 1), 16) * 17) or 0
 		gb = (tonumber(rgba:sub(2, 2), 16) * 17) or 0
 		bb = (tonumber(rgba:sub(3, 3), 16) * 17) or 0
-		ab = #rgba == 4 and ((tonumber(rgba:sub(4, 4), 16) * 17) or 255) or 255
+		ab = #rgba == 8 and (tonumber(rgba:sub(7, 8), 16) or 255) or 255
 	elseif #rgba == 6 or #rgba == 8 then -- #RRGGBBAA - Standard Hex Format (as far as i know.)
 		rb = tonumber(rgba:sub(1, 2), 16) or 0
 		gb = tonumber(rgba:sub(3, 4), 16) or 0
