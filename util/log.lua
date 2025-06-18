@@ -7,7 +7,8 @@ local asciiCodes = {
 }
 local _warned = {}
 local function printRich(msg, level)
-	msg = tostring(msg)
+	local isTbl = type(msg) == "table"
+	msg = isTbl and string.table(msg) or tostring(msg)
 	level = LogLevel.resolve(level)
 	local info = debug.getinfo(2, "Sl")
 	local line = info.short_src .. ":" .. info.currentline

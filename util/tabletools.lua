@@ -1,5 +1,12 @@
 --- @author swordcube
 
+function table.find(tbl, val)
+	for i, v in ipairs(tbl) do
+		if v == val then return i end
+	end
+	return 0
+end
+
 ---
 --- Makes a copy of a table.
 ---
