@@ -16,6 +16,7 @@ Input = require("dovey.input")
 Canvas = require("dovey.canvas")
 AnimationPlayer = require("dovey.animation.animationPlayer")
 TintRectangle = require("dovey.display.tintRectangle")
+ProgressShape = require("dovey.display.progressShape")
 Sprite = require("dovey.display.sprite")
 TextDisplay = require("dovey.display.textDisplay")
 
@@ -23,7 +24,7 @@ local Engine = {
 	activeCanvas = nil,
 	layeredObjects = {},
 	clearTint = { 0.1, 0.1, 0.1, 1 },
-	enginName = "dövey",
+	engineName = "dövey",
 	version = "1.0.0",
 	maxFPS = 60,
 }
