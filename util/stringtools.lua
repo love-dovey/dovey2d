@@ -62,22 +62,15 @@ end
 ---		3 = "banana",
 ---	}
 --- ```
-function string.split(x, delimiter, trimSpaces)
+function string.split(x, delimiter, trimSpaces, seen)
 	if #x == 0 then return {} end
 	if trimSpaces == nil then trimSpaces = false end
-	local out = {}
-	if delimiter == "" then
-		-- insert every element.
-		for i = 1, #x do
-			local character = string.sub(x, i, i)
-			out[i] = trimSpaces and string.trim(x)
-		end
-	else
-		-- insert only elements after the delimiter.
-		for character in string.gmatch((x .. delimiter), "(.-)" .. delimiter) do
-			table.insert(out, trimSpaces and string.trim(character) or character)
-		end
+	local function gsplit(s)
+		if trimSpaces then s = s:match("^%s*(.-)%s*$") end
+		table.insert(out, s)
 	end
+	out = seen or {}
+	x = string.gsub(x, (delimiter and delimiter ~= "") and "([^" .. delimiter .. "]+)" or ".", gsplit)
 	return out
 end
 
