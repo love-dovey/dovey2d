@@ -1,8 +1,8 @@
 local Caps2D = require("dovey.caps.caps2d")
-local Sprite = Object:extend({
+local Sprite = Object:extend {
 	_name = "Sprite",
 	texture = nil, --- Texture to render the Sprite with.
-}):implement(Caps2D)
+}:implement(Caps2D)
 
 local function resetTransform(self)
 	return self.position:get(), self.rotation, self.scale:get(), self.origin:get(), self.shear:get()
@@ -22,12 +22,12 @@ function Sprite:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
 
-	love.graphics.translate(self.position.x, self.position.y)         -- Positioning
-	love.graphics.rotate(self.rotation)                  -- Rotation
-	love.graphics.scale(self.scale.x, self.scale.y)                -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y)      -- Skewing
+	love.graphics.translate(self.position.x, self.position.y) -- Positioning
+	love.graphics.rotate(self.rotation)                    -- Rotation
+	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
 	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
-	love.graphics.setColor(self.tint)                    -- Colouring
+	love.graphics.setColor(self.tint)                      -- Colouring
 
 	if self.texture then love.graphics.draw(self.texture) end
 	love.graphics.pop()

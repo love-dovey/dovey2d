@@ -1,5 +1,5 @@
 local DEFAULT_FRAMERATE = 30
-local Timeline = Object:extend({
+local Timeline = Object:extend {
 	_name = "Timeline",
 	tracks = {},                --- Tracks for modifying values (e.g. Position, Angle, Scale, Tint, etc.).
 	frameRate = DEFAULT_FRAMERATE, --- Update frequency.
@@ -8,7 +8,7 @@ local Timeline = Object:extend({
 	time = 0.0,                 --- Self-explanatory, yeah?
 	speed = 1.0,                --- How fast/slow the animation plays.
 	length = 0,                 --- Duration in seconds.
-})
+}
 function Timeline:__tostring()
 	return ("Timeline(Animation: %s, FPS: %i)"):format(self.name, tostring(self.frameRate))
 end

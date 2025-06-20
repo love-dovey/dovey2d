@@ -9,7 +9,7 @@ local _defaultTint = {
 }
 
 local Caps2D = require("dovey.caps.caps2d")
-local ProgressShape = Object:extend({
+local ProgressShape = Object:extend {
 	_name = "ProgressShape",
 	size = Vec2(350, 25),                         -- Width and Height of the shape.
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?
@@ -18,7 +18,7 @@ local ProgressShape = Object:extend({
 	maximum = 100,                                --- Maximum value that can be to reach.
 	minimum = 0,                                  --- Minimum value that can be to reach.
 	rounded = true,                               --- Maintains the value in a linear range (always round numbers, never decimals).
-}):implement(Caps2D)
+}:implement(Caps2D)
 
 local tints = {    --- Contains the colours to render the background and progress.
 	{ 0, 0.5, 0, 1 }, -- Dark Green

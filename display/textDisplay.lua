@@ -4,7 +4,7 @@ TextStroke = Enum("TextStroke", "NONE", "OUTLINE", "SHADOW")
 local DEFAULT_OUTLINE_SIZE = 1.25
 local Caps2D = require("dovey.caps.caps2d")
 
-local TextDisplay = Object:extend({
+local TextDisplay = Object:extend {
 	_name = "TextDisplay",
 	text = nil,                  --- Text displayed on-screen when visible.
 	limit = 0,                   --- Limit (in screen pixels) before word wrapping starts.
@@ -13,7 +13,7 @@ local TextDisplay = Object:extend({
 	alignment = TextAlignment.LEFT, --- Where should text align to (based on limit).
 	stroke = nil,                --- Shadow/Outline behind text. @type table
 	font = nil,                  --- Per instance font. @type love.Font
-}):implement(Caps2D)
+}:implement(Caps2D)
 
 local function getDefaultStroke()
 	return {

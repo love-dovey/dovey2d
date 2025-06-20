@@ -42,43 +42,11 @@ end
 --	}
 --end
 
---- Used to extend Object A for Object B
---- Example:
----
---- ```lua
---- local MyObject = Object:extend({
----		-- public properties
----		publicStr = "Example",
---- 	publicNum = 0,
----	})
---- -- private property.
---- local _priv = { "Elem1", "Elem2" }
----
---- -- get/set
----
---- function MyObject:pget_publicNum()
----		local n = self.publicNum
----		-- never less than 0, never greater than 100, never a decimal (always rounded)
----		return math.min(math.max(math.floor(n + 0.5), 0), 100)
----	end
----
---- function MyObject:pset_publicNum(n)
----		if type(n) ~= "table" then
----			-- push warning if needed.
----			Log.warn("Cannot set publicNum property to a value that isn't a number.")
----			return self
----		end
----		self.publicNum = n
----		-- returning here is optional.
----		return self.publicNum
---- end
---- return MyObject
---- ```
---- @return metatable, metatable|table
-function Object.extend(from, defaults)
+local function extend(from, defaults)
 	local derivation = defaults or {}
 	local super = from or {}
 	derivation.implement = implement
+	derivation.extend = extend
 
 	--local function getProperty(tbl, k)
 	--	-- check all tables, highest access level to lowest.
@@ -100,7 +68,7 @@ function Object.extend(from, defaults)
 			--end
 			local getter = rawget(self, "pget_" .. key)
 			if type(getter) == "function" then
-				print('found getter at '..key)
+				print('found getter at ' .. key)
 				return getter()
 			else
 				local value = rawget(self, key)
@@ -149,6 +117,41 @@ function Object.extend(from, defaults)
 
 	return derivation, super
 end
+
+--- Used to extend Object A for Object B
+--- Example:
+---
+--- ```lua
+--- local MyObject = Object:extend({
+---		-- public properties
+---		publicStr = "Example",
+--- 	publicNum = 0,
+---	})
+--- -- private property.
+--- local _priv = { "Elem1", "Elem2" }
+---
+--- -- get/set
+---
+--- function MyObject:pget_publicNum()
+---		local n = self.publicNum
+---		-- never less than 0, never greater than 100, never a decimal (always rounded)
+---		return math.min(math.max(math.floor(n + 0.5), 0), 100)
+---	end
+---
+--- function MyObject:pset_publicNum(n)
+---		if type(n) ~= "table" then
+---			-- push warning if needed.
+---			Log.warn("Cannot set publicNum property to a value that isn't a number.")
+---			return self
+---		end
+---		self.publicNum = n
+---		-- returning here is optional.
+---		return self.publicNum
+--- end
+--- return MyObject
+--- ```
+--- @return metatable, metatable|table
+Object.extend = extend
 
 -- https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/classic.lua#L44
 --- Checks if an Object is of the same type as another object.

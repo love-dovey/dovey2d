@@ -1,9 +1,9 @@
 local Timeline = require("dovey.animation.timeline")
-local AnimationPlayer = Object:extend({
+local AnimationPlayer = Object:extend {
 	_name = "AnimationPlayer",
 	currentAnimation = nil,
 	animations = {},
-})
+}
 local _latestAnimation = nil
 
 function AnimationPlayer:init()

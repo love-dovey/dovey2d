@@ -1,5 +1,5 @@
 --- Canvas for easily rendering objects to the screen.
-local Canvas = Object:extend({
+local Canvas = Object:extend {
 	--- Canvas Name.
 	_name = "Canvas",
 	--- Contains the objects that render to the screen.
@@ -8,7 +8,7 @@ local Canvas = Object:extend({
 	length = function()
 		return #self.objects
 	end,
-})
+}
 
 function Canvas:init()
 	self.objects = {}
@@ -18,8 +18,11 @@ end
 function Canvas:update(delta)
 	self:forEach(function(o)
 		if o.update then
-			if getmetatable(o) then o:update(delta)
-			else o.update(delta) end
+			if getmetatable(o) then
+				o:update(delta)
+			else
+				o.update(delta)
+			end
 		end
 	end)
 end
@@ -27,8 +30,11 @@ end
 function Canvas:draw()
 	self:forEach(function(o)
 		if o.draw and o.exists then
-			if getmetatable(o) then o:draw()
-			else o.draw() end
+			if getmetatable(o) then
+				o:draw()
+			else
+				o.draw()
+			end
 		end
 	end)
 end
@@ -40,7 +46,8 @@ end
 function Canvas:add(o, exclude)
 	local tbl = (not exclude and self.objects or self.exclusions)
 	if not o then
-		error("Tried to add Object("..tostring(o)..") to Canvas("..tostring(self._name or "CustomCanvas")..") at index "..#tbl+1)
+		error("Tried to add Object(" ..
+		tostring(o) .. ") to Canvas(" .. tostring(self._name or "CustomCanvas") .. ") at index " .. #tbl + 1)
 		return nil
 	end
 	table.insert(tbl, o)
@@ -55,9 +62,9 @@ function Canvas:remove(o)
 	local function getRid(tbl)
 		for i = #tbl, 1, -1 do
 			if tbl[i] == o then
-			    tbl[i] = tbl[#tbl]
-			    tbl[#tbl] = nil
-			    return true
+				tbl[i] = tbl[#tbl]
+				tbl[#tbl] = nil
+				return true
 			end
 		end
 		return false
@@ -75,10 +82,10 @@ end
 
 --- Checks if an object is present inside the Canvas (excluded or not).
 function Canvas:has(o)
-    for _, v in ipairs(self.objects) do
-    	if v == o then return true end
-    end
-    return false
+	for _, v in ipairs(self.objects) do
+		if v == o then return true end
+	end
+	return false
 end
 
 --- Loops through every item in the Canvas.

@@ -1,11 +1,11 @@
 RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE") -- this is just for type safety actually.
 local Caps2D = require("dovey.caps.caps2d")
-local TintRectangle = Object:extend({
+local TintRectangle = Object:extend {
 	_name = "TintRectangle",
 	size = Vec2(50, 50),
 	thickness = 0,
 	mode = nil,
-}):implement(Caps2D)
+}:implement(Caps2D)
 
 --- Creates a Tinted Rectangle.
 --- @param x number		Initial X position
@@ -27,7 +27,7 @@ function TintRectangle:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
 	love.graphics.translate(self.position.x, self.position.y) -- Positioning
-	love.graphics.rotate(self.rotation)                       -- Rotation
+	love.graphics.rotate(self.rotation)                    -- Rotation
 	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
 	love.graphics.setColor(self.tint)                      -- Colouring

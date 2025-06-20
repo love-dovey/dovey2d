@@ -1,14 +1,14 @@
-local Signal = Object:extend({
+local Signal = Object:extend {
 	_name = "Signal",
 	timesEmitted = 0,
 	funcs = {},
-})
+}
 
 function Signal:connect(func)
 	if type(func) ~= "function" then
 		error("Attempt to assign a value(" ..
-		tostring(func) .. ") of Type " ..
-		type(func) .. " to a Signal when a Function was expected to be passed as a value.")
+			tostring(func) .. ") of Type " ..
+			type(func) .. " to a Signal when a Function was expected to be passed as a value.")
 		return self
 	end
 	table.insert(self.funcs, func)
@@ -18,8 +18,8 @@ end
 function Signal:disconnect(func)
 	if type(func) ~= "function" then
 		error("Attempt to assign a value(" ..
-		tostring(func) .. ") of Type " ..
-		type(func) .. " to a Signal when a Function was expected to be passed as a value.")
+			tostring(func) .. ") of Type " ..
+			type(func) .. " to a Signal when a Function was expected to be passed as a value.")
 		return self
 	end
 	for _, ifunc in pairs(self.funcs) do
@@ -33,8 +33,8 @@ end
 function Signal:hasConnection(func)
 	if type(func) ~= "function" then
 		error("Attempt to assign a value(" ..
-		tostring(func) .. ") of Type " ..
-		type(func) .. " to a Signal when a Function was expected to be passed as a value.")
+			tostring(func) .. ") of Type " ..
+			type(func) .. " to a Signal when a Function was expected to be passed as a value.")
 		return self
 	end
 	local result = false
