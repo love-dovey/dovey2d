@@ -9,7 +9,7 @@ local _defaultTint = {
 }
 
 local Caps2D = require("dovey.caps.caps2d")
-local ProgressShape = Proto:extend({
+local ProgressShape = Object:extend({
 	_name = "ProgressShape",
 	size = Vec2(350, 25),                         -- Width and Height of the shape.
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?

@@ -4,7 +4,7 @@ TextStroke = Enum("TextStroke", "NONE", "OUTLINE", "SHADOW")
 local DEFAULT_OUTLINE_SIZE = 1.25
 local Caps2D = require("dovey.caps.caps2d")
 
-local TextDisplay = Proto:extend({
+local TextDisplay = Object:extend({
 	_name = "TextDisplay",
 	text = nil,                  --- Text displayed on-screen when visible.
 	limit = 0,                   --- Limit (in screen pixels) before word wrapping starts.
@@ -104,6 +104,7 @@ end
 --- @param font string|love.graphics.Font
 --- @param size? number Font size (optional) in case you're passing a string
 --- @param upFilter? string(linear, nearest)
+--- @param lowerFilter? string(linear, nearest)
 function TextDisplay:setFont(font, size, upFilter, lowerFilter)
 	if type(font) == "string" then
 		upFilter = upFilter or "linear"

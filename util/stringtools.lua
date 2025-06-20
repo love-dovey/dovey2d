@@ -1,13 +1,18 @@
-function string.table(tbl, indent)
+function string.table(tbl, indent, been)
 	if type(tbl) ~= "table" then return tostring(tbl) end
+	been = been or {}
+	if been[tbl] then return "{ recursive table }" end
+	been[tbl] = true
 	indent = indent or 0
+
 	local _str = "{\n"
 	local pad = string.rep("  ", indent + 1)
+
 	for k, v in pairs(tbl) do
 		local key = tostring(k)
 		local value = tostring(v)
 		if type(v) == "table" then
-			value = string.table(v, indent + 1)
+			value = string.table(v, indent + 1, been)
 		end
 		if type(v) == "string" then value = "\"" .. tostring(v) .. "\"" end
 		_str = _str .. pad .. key .. " = " .. value .. ",\n"

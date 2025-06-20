@@ -1,5 +1,5 @@
 --- Canvas for easily rendering objects to the screen.
-local Canvas = Proto:extend({
+local Canvas = Object:extend({
 	--- Canvas Name.
 	_name = "Canvas",
 	--- Contains the objects that render to the screen.

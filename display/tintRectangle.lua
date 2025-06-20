@@ -1,6 +1,6 @@
 RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE") -- this is just for type safety actually.
 local Caps2D = require("dovey.caps.caps2d")
-local TintRectangle = Proto:extend({
+local TintRectangle = Object:extend({
 	_name = "TintRectangle",
 	size = Vec2(50, 50),
 	thickness = 0,

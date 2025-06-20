@@ -1,4 +1,4 @@
-local Vec2 = Proto:extend {
+local Vec2 = Object:extend {
 	_name = "Vec2",
 	x = x or 0,
 	y = y or 0,

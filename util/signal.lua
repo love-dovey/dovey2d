@@ -1,4 +1,4 @@
-local Signal = Proto:extend({
+local Signal = Object:extend({
 	_name = "Signal",
 	timesEmitted = 0,
 	funcs = {},

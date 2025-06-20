@@ -30,7 +30,7 @@ function table.copy(tbl, deep, been)
 	been[tbl] = copied
 	for k, v in pairs(tbl) do
 		if type(v) == "table" then
-			copied[k] = deep and table.copy(v, true, seen) or v
+			copied[k] = deep and table.copy(v, deep, been) or v
 		else
 			copied[k] = v
 		end

@@ -1,5 +1,5 @@
 local Caps2D = require("dovey.caps.caps2d")
-local Sprite = Proto:extend({
+local Sprite = Object:extend({
 	_name = "Sprite",
 	texture = nil, --- Texture to render the Sprite with.
 }):implement(Caps2D)

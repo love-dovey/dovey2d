@@ -1,4 +1,4 @@
-local Rect2 = Proto:extend {
+local Rect2 = Object:extend {
 	_name = "Rect2",
 	x = x or 0,
 	y = y or 0,
