@@ -3,6 +3,10 @@ dövey2d (all lowercase) is a very tiny extension for LÖVE2D that makes it slig
 
 I made this for my own personal projects.
 
+### external libraries used
+
+- [rxi/json.lua](https://github.com/rxi/json.lua)
+
 ### recommended usage
 just create a submodule for the engine in your LÖVE2D project with the following commands
 ```sh

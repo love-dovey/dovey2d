@@ -57,7 +57,7 @@ end
 --- Sets the tint to something else
 ---
 --- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
---- @param value table|string
+--- @param ... table|string
 function Caps2D:setTint(...)
 	local t = {...}
 	if #t == 1 then t = ... end

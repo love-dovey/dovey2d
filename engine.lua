@@ -21,29 +21,64 @@ Sprite = require("dovey.display.sprite")
 TextDisplay = require("dovey.display.textDisplay")
 
 local Engine = {
+	_NAME = "dövey",
+	_VERSION = "1.0.0",
+	_DESCRIPTION = "Small extension for LÖVE2D",
+	_URL = "https://github.com/pisayesiwsi/dovey2d",
+	_LICENSE = [[
+		Copyright 2025 pisayesiwsi
+
+		Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+		The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+		THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	]],
 	activeCanvas = nil,
 	layeredObjects = {},
 	clearTint = { 0.1, 0.1, 0.1, 1 },
-	engineName = "dövey",
-	version = "1.0.0",
 	maxFPS = 60,
+	mainWindow = {
+		x = 0, y = 0,
+		width = 0, height = 0,
+		flags = {},
+		getPosition = function()
+			return Engine.mainWindow.x, Engine.mainWindow.y
+		end,
+		setPosition = function(x, y)
+			x, y = x or 0, y or 0
+			Engine.mainWindow.x = x
+			Engine.mainWindow.y = y
+		end,
+		getSize = function()
+			return Engine.mainWindow.width, Engine.mainWindow.height
+		end,
+		setSize = function(w, h)
+			Engine.mainWindow.width = w or 1
+			Engine.mainWindow.height = h or 1
+		end,
+		setFlags = function(f)
+			Engine.mainWindow.flags = f or {}
+		end,
+		reset = function()
+			local w, h, f = love.window.getMode()
+			Engine.mainWindow.setSize(w, h)
+			Engine.mainWindow.setFlags(f)
+			Engine.mainWindow.setPosition(love.window.getPosition())
+		end
+	},
 }
+
+function love.resize(w, h)
+	Engine.mainWindow.reset()
+end
 
 function Engine.setClearTint(tint)
 	Engine.clearTint = tint or { 0.1, 0.1, 0.1, 1 }
 end
 
 function Engine.getVersion()
-	local i = Engine.info()
-	return i.engineName .. " " .. i.verName .. " (on LÖVE " .. i.loveVer .. ")"
-end
-
-function Engine.info()
-	return {
-		engineName = Engine.engineName or "dövey",
-		verName = tostring(Engine.version),
-		loveVer = love.getVersion(),
-	}
+	return Engine._NAME .. " " .. Engine._VERSION .. " (on LÖVE " .. love.getVersion() .. ")"
 end
 
 local function limitedRun()
@@ -91,6 +126,8 @@ end
 function love.run() return limitedRun() end
 
 function Engine.begin(startingCanvas)
+	Engine.mainWindow.reset()
+
 	Engine.loveVer = tostring(love.getVersion())
 	love.update = function(delta)
 		if Engine.activeCanvas then Engine.activeCanvas:update(delta) end

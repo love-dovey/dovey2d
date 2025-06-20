@@ -172,7 +172,7 @@ end
 function TextDisplay:centerX(x)
 	x = x or 0
 	local slx = self.scale.x
-	local wx, _, _ = love.window.getMode()
+	local wx = Engine.mainWindow.width
 	local szx, _ = self:getDimensions()
 	self.position.x = (wx - (szx * slx)) * 0.5 + x
 	return self
@@ -183,7 +183,7 @@ end
 function TextDisplay:centerY(y)
 	y = y or 0
 	local sly = self.scale.y
-	local wy, _, _ = love.window.getMode()
+	local wy = Engine.mainWindow.height
 	local _, szy = self:getDimensions()
 	self.position.y = (wy - (szy * sly)) * 0.5 + y
 	return self

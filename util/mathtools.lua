@@ -139,8 +139,8 @@ end
 --- @param tx number 	X position of Area B
 --- @param y number 	Y position of Area A
 --- @param ty number 	Y position of Area B
---- @param w number 	Width of Area A
---- @param tw number 	Width of Area B
+--- @param w? number 	Width of Area A
+--- @param tw? number 	Width of Area B
 --- @param h number 	Height of Area A
 --- @param th number 	Height of Area B
 --- @return boolean
