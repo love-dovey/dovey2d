@@ -2,7 +2,10 @@ local function makeEnum(name, ...)
 	local newEnum = { ... }
 	newEnum._name = "Enum(" .. tostring(name or "Nameless") .. ")"
 	-- Reverse mappings are stored both for number AND for string.
-	for k, v in pairs(newEnum) do newEnum[v] = k end
+	for k, v in pairs(newEnum) do
+		if type(k) == "string" then k = string.lower(k) end
+		newEnum[v] = k
+	end
 	newEnum.str = function(t)
 		for k, v in pairs(newEnum) do
 			if v == t then return k end

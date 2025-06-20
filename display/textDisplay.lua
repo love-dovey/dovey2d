@@ -1,11 +1,7 @@
 TextAlignment = Enum("TextAlignment", "LEFT", "CENTER", "RIGHT") --"FILL")
 TextStroke = Enum("TextStroke", "NONE", "OUTLINE", "SHADOW")
 
-local MAX_OUTLINE_ITERATIONS = 8
 local DEFAULT_OUTLINE_SIZE = 1.25
-
--- half of this is taken from Sprite.lua
-
 local Caps2D = require("dovey.caps.caps2d")
 
 local TextDisplay = Proto:extend({
@@ -68,27 +64,29 @@ function TextDisplay:draw()
 	love.graphics.pop()
 end
 
+function TextDisplay:drawStroke(text, stroke)
+	if not stroke or stroke.type == TextStroke.NONE or stroke.size <= 0 then return end
+	love.graphics.setColor(stroke.tint)
+	if stroke.type == TextStroke.OUTLINE then
+		local sz = self.stroke.size
+		local offs = {
+			{ -sz, 0 }, { sz, 0 }, { 0, -sz }, { 0, sz },
+			{ -sz, -sz }, { -sz, sz }, { sz, -sz }, { sz, sz },
+		}
+		for _, offset in ipairs(offs) do
+			self:drawText(text, offset[1], offset[2])
+		end
+	else -- Shadow
+		local off = stroke.offset or { x = 1, y = 1 }
+		self:drawText(text, off.x, off.y)
+	end
+	return self
+end
+
 -- override this if needed
 function TextDisplay:drawCurrentText(text, tint, stroke)
-	if stroke and stroke.type ~= TextStroke.NONE and stroke.size > 0 then
-		love.graphics.setColor(stroke.tint)
-		if self.stroke.type == TextStroke.OUTLINE then
-			-- i hate this already, i should use a shader, but it looks ugly.
-			local off = -self.stroke.size
-			--- @diagnostic disable-next-line: unused-local -- you're gonna shut up.
-			for _ = 1, MAX_OUTLINE_ITERATIONS do
-				self:drawText(text, 0, off)
-				self:drawText(text, off, 0)
-				self:drawText(text, -off, off)
-				self:drawText(text, off, -off)
-				off = -off
-			end
-		else -- Shadow
-			local off = stroke.offset or { x = 1, y = 1 }
-			self:drawText(text, off.x, off.y)
-		end
-	end
-	love.graphics.setColor(tint) -- Colouring
+	self:drawStroke(text, stroke)
+	love.graphics.setColor(tint)
 	self:drawText(text)
 	return self
 end
@@ -104,11 +102,15 @@ end
 
 --- Changes the font to a new one.
 --- @param font string|love.graphics.Font
---- @param size Font size (optional) in case you're passing a string
-function TextDisplay:setFont(font, size)
+--- @param size? number Font size (optional) in case you're passing a string
+--- @param upFilter? string(linear, nearest)
+function TextDisplay:setFont(font, size, upFilter, lowerFilter)
 	if type(font) == "string" then
+		upFilter = upFilter or "linear"
+		lowerFilter = lowerFilter or "linear"
 		assert(tonumber(size), "[TextDisplay:setFont]: size must be a number!")
 		self.font = love.graphics.newFont(font, size)
+		self.font:setFilter(upFilter, lowerFilter)
 	else
 		if not font then
 			Log.error("Could not load font(" .. tostring(font) .. "), please pass (love.graphics.)Font to this function!")
@@ -121,13 +123,13 @@ end
 --- Changes what is displayed for something else (falls back if not possible).
 --- @param text string
 function TextDisplay:setText(text)
-	self.text = text or ""
+	self.text = text or "null (did you provide any?)"
 	return self
 end
 
 --- Returns the dimensions (width and height) that are being rendered on the TextDisplay.
 function TextDisplay:getDimensions()
-	local w, h = 1, 1
+	local w, h = 0, 0
 	if self.font then
 		if self.wrapText and self.limit > 0 then
 			w = self.limit
@@ -142,7 +144,7 @@ end
 
 --- Returns the dimensions (width and height) of the TextDisplay's font.
 function TextDisplay:getFontDimensions()
-	local w, h = 1, 1
+	local w, h = 0, 0
 	if self.font then
 		w, h = self.font:getWidth(self.text), self.font:getLineHeight()
 	end
@@ -169,7 +171,7 @@ end
 function TextDisplay:centerX(x)
 	x = x or 0
 	local slx = self.scale.x
-	local wx = love.window.getMode()
+	local wx, _, _ = love.window.getMode()
 	local szx, _ = self:getDimensions()
 	self.position.x = (wx - (szx * slx)) * 0.5 + x
 	return self
@@ -180,7 +182,7 @@ end
 function TextDisplay:centerY(y)
 	y = y or 0
 	local sly = self.scale.y
-	local wy = love.window.getMode()
+	local wy, _, _ = love.window.getMode()
 	local _, szy = self:getDimensions()
 	self.position.y = (wy - (szy * sly)) * 0.5 + y
 	return self
@@ -243,7 +245,7 @@ function TextDisplay:setStrokeTint(...)
 		-- in case you cleared it for some reason
 		self.stroke = getDefaultStroke()
 	end
-	local t = {...}
+	local t = { ... }
 	if #t == 1 then t = ... end
 	self.stroke.tint = normaliseTint(t)
 	return self

@@ -27,34 +27,72 @@ end
 ---
 --- ```lua
 --- local MyObject = Proto:extend({
----		-- public variables
----		myDefaultVariable1 = 0,
----		myDefaultVariable2 = "Example",
+---		-- public properties
+---		publicStr = "Example",
+---		publicNum = 0,
 ---	})
---- -- private variables
---- local myPrivateVariable1 = { "Elem1", "Elem2" }
---- function MyObject:setPrivateVariable1(tbl)
----		myPrivateVariable1 = tbl or {} --- failsafe to empty table.
----		return self --- allow chaining, i.e: MyObject:new():setPrivateVariable({ "Elem1" })
+--- -- private property
+--- local _priv = { "Elem1", "Elem2" }
+---
+--- -- get/set
+---
+--- function MyObject:pget_publicNum()
+---		local n = self.publicNum
+---		-- never less than 0, never greater than 100, never a decimal (always rounded)
+---		return math.min(math.max(math.floor(n + 0.5), 0), 100)
+---	end
+---
+--- function MyObject:pset_publicNum(n)
+---		if type(n) ~= "table" then
+---			-- push warning if needed.
+---			Log.warn("Cannot set publicNum property to a value that isn't a number.")
+---			return self
+---		end
+---		self.publicNum = n
+---		-- returning here is optional.
+---		return self.publicNum
 --- end
 --- return MyObject
 --- ```
 function Proto.extend(from, defaults)
-	local outputClass = defaults or {}
-	outputClass.super = from or {}
-	outputClass.exists = true
-	for key, value in pairs(from) do
-		if outputClass[key] == nil then
-			outputClass[key] = value
-		end
-	end
-	setmetatable(outputClass, {
-		__tostring = function() return ("[Proto %s]"):format(outputClass._name or "Unknown(Custom)") end,
-	})
-	function outputClass:new(...)
+	local derivation = defaults or {}
+	local devmt = {
+		__index = function(self, key)
+			if string.starts(key, "pget_") then
+				local getter = rawget(self, key)
+				if type(getter) == "function" then return getter() end
+			end
+			local value = rawget(self, key)
+			if value ~= nil then return value end
+			local upclass = getmetatable(self).__upclass
+			while upclass do
+				local val = rawget(upclass, key)
+				if val ~= nil then return val end
+				upclass = getmetatable(upclass) -- recursion
+			end
+			return nil
+		end,
+		__newindex = function(self, key, value)
+			if string.starts(key, "pset_") then
+				local setter = rawget(self, key)
+				if type(setter) == "function" then
+					return setter(value)
+				end
+			end
+			rawset(self, key, value)
+		end,
+	}
+	setmetatable(derivation, from or {})
+	derivation.exists = true
+
+	function derivation:new(...)
 		local current = {}
-		setmetatable(current, outputClass)
-		for k, v in pairs(outputClass) do
+		setmetatable(current, {
+			__index = devmt.__index,
+			__newindex = devmt.__newindex,
+			__upclass = derivation, -- tried without it and it didn't work.
+		})
+		for k, v in pairs(derivation) do
 			if k ~= "__index" and k ~= "__newindex" and k ~= "super" and k ~= "exists" then
 				-- prevent shared table states.
 				current[k] = table.copy(v, true)
@@ -63,9 +101,7 @@ function Proto.extend(from, defaults)
 		if current.init then current:init(...) end
 		return current
 	end
-
-	outputClass.__index = outputClass
-	return outputClass, outputClass.super
+	return derivation, from or {}
 end
 
 -- https://github.com/rxi/classic/blob/e5610756c98ac2f8facd7ab90c94e1a097ecd2c6/classic.lua#L44
@@ -90,11 +126,11 @@ end
 
 --- Returns the raw name of the object.
 function Proto:type()
-	return self._name or ("Unknown(" .. self.super._name or "" .. ")")
+	return self._name or (getmetatable(self) and getmetatable(self)._name) or "Unknown"
 end
 
 setmetatable(Proto, {
-	__tostring = function() return ("[Proto %s]"):format(to._name or "Proto") end,
+	__tostring = function(self) return ("[Proto %s]"):format(self._name or "Proto") end,
 })
 Proto.__index = Proto
 
