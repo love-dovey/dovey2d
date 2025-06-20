@@ -34,12 +34,32 @@ local function tovalue(x)
 			table.insert(t, tovalue(valueString))
 		end
 		return t
+	elseif x == nil then
+		return "nil"
 	end
 	return x
 end
 
+local function isComment(x)
+	return first(x, "#") or first(x, "//") or first(x, ";")
+end
+
+local function stripInlineComment(x)
+	x = x or ""
+	local comment = false
+	local cstart = x:find("//") or x:find("#") or x:find(";")
+	if cstart then
+		comment = trim(x:sub(cstart + 2))
+		x = x:sub(1, cstart - 1)
+	end
+	if comment then
+		return comment
+	end
+	return nil
+end
+
 local doveyconf = {
-	_NAME = "...",
+	_NAME = "döveyconf.lua",
 	_DESCRIPTION = "A parser for INI/CFG/TOML-styled files.",
 	_URL = "https://github.com/pisayesiwsi/dovey2d", -- maybe i should put this on its own repo some day.
 	_VERSION = "1.0.0",
@@ -76,12 +96,11 @@ function doveyconf.parse(content)
 	while i <= #contable do
 		local line = contable[i]
 		local trimmed = trim(line)
-		local isComment = first(trimmed, "#")
 
 		if trimmed == "" then
 			-- Skip empty lines
-		elseif isComment then
-			file.comments = file.comments or {}
+		elseif isComment(trimmed) then
+			if not file.comments then file.comments = {} end
 			local comment = trimmed:sub(2):gsub(NO_QUOTE_PATTERN, "")
 			table.insert(file.comments, trim(comment))
 		elseif trimmed:match("^%[.-%]$") then
@@ -99,6 +118,21 @@ function doveyconf.parse(content)
 			local keyv = split(trimmed, "=")
 			local k = trim(keyv[1])
 			local v = trim(keyv[2] or "")
+			local inlinecomment = stripInlineComment(keyv[2] or "")
+			if inlinecomment ~= nil then
+				if not file.comments then file.comments = {} end
+				table.insert(file.comments, stripInlineComment(keyv[2] or ""))
+			end
+			-- trim away comments.
+			v = v:match("([^#;]+)") or v
+			v = trim(v:gsub("//.*", ""))
+			-- throw errors
+			if k == "" or #keyv == 1 then
+				error(string.format("[line %d] Syntax error: empty key in line '%s'", i, trimmed))
+			end
+			if v == "" and trimmed:find("=") then
+				error(string.format("[line %d] Syntax error: missing value for key '%s'", i, k))
+			end
 			local target = file
 			if category ~= "" then
 				local cats = split(category, ".")
@@ -111,24 +145,50 @@ function doveyconf.parse(content)
 				-- Handle multiline string values ([[...]])
 				local buffer = ""
 				i = i + 1
-				while i <= #contable and trim(contable[i]) ~= "]]" do
+				local start = i
+				local closed = false
+				while i <= #contable do
 					local trimmedcon = trim(contable[i])
+					if trimmedcon == "]]" then
+						closed = true
+						break
+					end
+					if trimmedcon == k or trimmedcon:find("=") then
+						error(string.format(
+							"[line %d]: Syntax error: unterminated multiline string starting at line %d (report from line %d)",
+							start - 1, start, i))
+						break
+					end
 					buffer = buffer .. trimmedcon
 					if i < #trimmedcon - 2 then buffer = buffer .. ";" end
 					i = i + 1
 				end
+				if not closed then
+					error(string.format("[line %d]: Syntax error: unterminated multiline string starting at line %d",
+						start - 1, start))
+				end
 				target[k] = doveyconf.multilineToTable(trim(buffer))
-			elseif v == "[" then
+			elseif v == "[[" then
 				-- Handle multiline array values ([...])
 				local buffer = {}
 				i = i + 1
-				while i <= #contable and trim(contable[i]) ~= "]" do
+				local start = i
+				local closed = false
+				while i <= #contable do
+					if trim(contable[i]) == "]" then
+						closed = true
+						break
+					end
 					local row = {}
 					for value in contable[i]:gmatch("[^,]+") do
 						table.insert(row, tovalue(value))
 					end
 					table.insert(buffer, row)
 					i = i + 1
+				end
+				if not closed then
+					error(string.format("[line %d]: Syntax error: unterminated multiline array starting at line %d",
+						start - 1, start))
 				end
 				target[k] = buffer
 			else
