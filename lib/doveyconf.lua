@@ -141,15 +141,15 @@ function doveyconf.parse(content)
 				end
 			end
 
-			if v == "[[" then
-				-- Handle multiline string values ([[...]])
+			if v == "'''" then
+				-- Handle multiline string values ('''...''')
 				local buffer = ""
 				i = i + 1
 				local start = i
 				local closed = false
 				while i <= #contable do
 					local trimmedcon = trim(contable[i])
-					if trimmedcon == "]]" then
+					if trimmedcon == "'''" then
 						closed = true
 						break
 					end
@@ -168,7 +168,7 @@ function doveyconf.parse(content)
 						start - 1, start))
 				end
 				target[k] = doveyconf.multilineToTable(trim(buffer))
-			elseif v == "[[" then
+			elseif v == "[" then
 				-- Handle multiline array values ([...])
 				local buffer = {}
 				i = i + 1
