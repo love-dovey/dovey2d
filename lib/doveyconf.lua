@@ -78,8 +78,8 @@ function doveyconf.multilineToTable(content)
 	local result = {}
 	for line in string.gmatch(content, "[^\r\n]+") do
 		local row = {}
-		for char in string.gmatch(line, ".") do table.insert(row, tonumber(char)) end
-		for _, num in ipairs(row) do table.insert(result, num) end
+		for char in string.gmatch(line, ".") do table.insert(row, tovalue(char)) end
+		for _, x in pairs(row) do table.insert(result, x) end
 	end
 	return result
 end
@@ -143,7 +143,7 @@ function doveyconf.parse(content)
 
 			if v == "'''" then
 				-- Handle multiline string values ('''...''')
-				local buffer = ""
+				local buffer = {}
 				i = i + 1
 				local start = i
 				local closed = false
@@ -159,15 +159,14 @@ function doveyconf.parse(content)
 							start - 1, start, i))
 						break
 					end
-					buffer = buffer .. trimmedcon
-					if i < #trimmedcon - 2 then buffer = buffer .. ";" end
+					table.insert(buffer, tovalue(trimmedcon))
 					i = i + 1
 				end
 				if not closed then
 					error(string.format("[line %d]: Syntax error: unterminated multiline string starting at line %d",
 						start - 1, start))
 				end
-				target[k] = doveyconf.multilineToTable(trim(buffer))
+				target[k] = buffer
 			elseif v == "[" then
 				-- Handle multiline array values ([...])
 				local buffer = {}
