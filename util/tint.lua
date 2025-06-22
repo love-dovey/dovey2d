@@ -1,3 +1,5 @@
+--- Utility with functions to resolve methods for colouring.
+--- @type table
 local Tint = {
 	_name       = "Tint",
 	TRANSPARENT = { 0, 0, 0, 0 },

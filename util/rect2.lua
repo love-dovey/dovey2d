@@ -1,10 +1,9 @@
+--- A 2D bounding-box, contains X and Y coordinates, and also width and height.s
 --- @class Rect2
 local Rect2 = Object:extend {
 	_name = "Rect2",
-	x = x or 0,
-	y = y or 0,
-	w = w or 0,
-	h = h or 0
+	x = 0, y = 0,
+	w = 0, h = 0
 }
 
 function Rect2:__tostring() -- does this even work outside metatables

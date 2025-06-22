@@ -1,4 +1,5 @@
---- Basic Object used as a basis for Object-oriented operations.
+--- Base for every other class in the Engine.
+--- @class Object
 local Object = {}
 
 --- Initializes an empty object.

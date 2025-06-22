@@ -1,5 +1,11 @@
-RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE") -- this is just for type safety actually.
+-- this is just for type safety actually.
+
+--- Defines How a TintRectangle fills itself
+--- @enum RectangleRenderMode
+RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE")
 local Caps2D = require("dovey.caps.caps2d")
+
+--- @class TintRectangle
 local TintRectangle = Object:extend {
 	_name = "TintRectangle",
 	size = Vec2(50, 50),

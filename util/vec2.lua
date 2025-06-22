@@ -1,7 +1,8 @@
+--- Utility containing X and Y coordinates.
+--- @class Vec2
 local Vec2 = Object:extend {
 	_name = "Vec2",
-	x = x or 0,
-	y = y or 0,
+	x = 0, y = 0,
 }
 
 function Vec2:__tostring() -- does this even work outside metatables

@@ -20,6 +20,8 @@ ProgressShape = require("dovey.display.progressShape")
 Sprite = require("dovey.display.sprite")
 TextDisplay = require("dovey.display.textDisplay")
 
+--- Global table that instantiates the entire of dövey's backend.
+--- @type table
 local Engine = {
 	_NAME = "dövey",
 	_VERSION = "1.0.0",

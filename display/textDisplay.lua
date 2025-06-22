@@ -1,9 +1,14 @@
+--- Where text aligns to
+--- @enum TextAlignment
 TextAlignment = Enum("TextAlignment", "LEFT", "CENTER", "RIGHT") --"FILL")
+--- What the text stroke/background/border draws as.
+--- @enum TextStroke
 TextStroke = Enum("TextStroke", "NONE", "OUTLINE", "SHADOW")
 
 local DEFAULT_OUTLINE_SIZE = 1.25
 local Caps2D = require("dovey.caps.caps2d")
 
+--- @class TextDisplay
 local TextDisplay = Object:extend {
 	_name = "TextDisplay",
 	text = nil,                  --- Text displayed on-screen when visible.
@@ -64,8 +69,12 @@ function TextDisplay:draw()
 	love.graphics.pop()
 end
 
-function TextDisplay:drawStroke(text, stroke)
+function TextDisplay:drawStroke(text, stroke, defaultAlpha)
 	if not stroke or stroke.type == TextStroke.NONE or stroke.size <= 0 then return end
+	local nextAlpha = defaultAlpha or stroke.tint[4] or 1
+	if stroke.tint[4] ~= nextAlpha then
+		stroke.tint[4] = nextAlpha
+	end
 	love.graphics.setColor(stroke.tint)
 	if stroke.type == TextStroke.OUTLINE then
 		local sz = self.stroke.size
@@ -85,7 +94,7 @@ end
 
 -- override this if needed
 function TextDisplay:drawCurrentText(text, tint, stroke)
-	self:drawStroke(text, stroke)
+	self:drawStroke(text, stroke, tint[4])
 	love.graphics.setColor(tint)
 	self:drawText(text)
 	return self
@@ -101,17 +110,18 @@ end
 -- TODO: find a way to make a TextDisplay:setFontSize() function that can properly keep the font family.
 
 --- Changes the font to a new one.
---- @param font string|love.graphics.Font
+--- @param font string|love.Font
 --- @param size? number Font size (optional) in case you're passing a string
 --- @param upFilter? string(linear, nearest)
 --- @param lowerFilter? string(linear, nearest)
 function TextDisplay:setFont(font, size, upFilter, lowerFilter)
 	if type(font) == "string" then
+		assert(tonumber(size), "[TextDisplay:setFont]: size must be a number!")
 		upFilter = upFilter or "linear"
 		lowerFilter = lowerFilter or "linear"
-		assert(tonumber(size), "[TextDisplay:setFont]: size must be a number!")
-		self.font = love.graphics.newFont(font, size)
-		self.font:setFilter(upFilter, lowerFilter)
+		local daFont = love.graphics.newFont(font, size)
+		daFont:setFilter(upFilter, lowerFilter)
+		self.font = daFont
 	else
 		if not font then
 			Log.error("Could not load font(" .. tostring(font) .. "), please pass (love.graphics.)Font to this function!")

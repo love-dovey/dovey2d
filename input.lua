@@ -1,3 +1,5 @@
+--- Utility for handling inputs.
+--- @type table
 local Input = {
 	_name = "Input",
 	actions = {

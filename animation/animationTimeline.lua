@@ -1,6 +1,11 @@
+--- Default Animation Framerate.
+--- @type number
 local DEFAULT_FRAMERATE = 30
-local Timeline = Object:extend {
-	_name = "Timeline",
+
+--- Holds data to animate anything.
+--- @class AnimationTimeline
+local AnimationTimeline = Object:extend {
+	_name = "AnimationTimeline",
 	tracks = {},                --- Tracks for modifying values (e.g. Position, Angle, Scale, Tint, etc.).
 	frameRate = DEFAULT_FRAMERATE, --- Update frequency.
 	finished = false,           --- Animation is done.
@@ -9,11 +14,11 @@ local Timeline = Object:extend {
 	speed = 1.0,                --- How fast/slow the animation plays.
 	length = 0,                 --- Duration in seconds.
 }
-function Timeline:__tostring()
-	return ("Timeline(Animation: %s, FPS: %i)"):format(self.name, tostring(self.frameRate))
+function AnimationTimeline:__tostring()
+	return ("AnimationTimeline(Animation: %s, FPS: %i)"):format(self.name, tostring(self.frameRate))
 end
 
-function Timeline:init(name, tracks, frameRate, length)
+function AnimationTimeline:init(name, tracks, frameRate, length)
 	self.name = name
 	self.tracks = tracks or {}
 	self.frameRate = frameRate or DEFAULT_FRAMERATE
@@ -21,7 +26,7 @@ function Timeline:init(name, tracks, frameRate, length)
 	return self
 end
 
-function Timeline:update(delta)
+function AnimationTimeline:update(delta)
 	if self.paused or self.finished then return end
 	if not self.tracks then return end
 	self.time = math.min(self.time + delta * (self.speed or 1.0), self.length)
@@ -55,4 +60,4 @@ function Timeline:update(delta)
 	end
 end
 
-return Timeline
+return AnimationTimeline

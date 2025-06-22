@@ -1,5 +1,11 @@
+--- Table of Enums for ProgressShape styiling.
+--- @type table
 ProgressStyling = {
+	--- Direction of the ProgressShape fill.
+	--- @enum ProgressStylingDirection
 	Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
+	--- Shape of the ProgressShape.
+	--- @enum ProgressStylingShape
 	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"),                        --- Render Shapes.
 }
 
@@ -9,6 +15,9 @@ local _defaultTint = {
 }
 
 local Caps2D = require("dovey.caps.caps2d")
+
+--- A horizontal, vertical, or even radial visual representation of a percentage.
+--- @class ProgressShape
 local ProgressShape = Object:extend {
 	_name = "ProgressShape",
 	size = Vec2(350, 25),                         -- Width and Height of the shape.

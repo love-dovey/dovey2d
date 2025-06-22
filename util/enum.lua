@@ -1,4 +1,17 @@
+--- Makes an enum (fancy table with some helper methods)
+--- ```lua
+--- local Values = Enum("Values", "VALUE1", "VALUE2")
+--- -- you can use a number to access
+--- print(Values.resolve(1)) -- "VALUE1"
+--- -- or a string
+--- print(Values.resolve("VALUE2")) -- "VALUE2"
+--- -- inexistent values fall back to the first
+--- print(Values.resolve(5)) -- "VALUE1"
+--- -- there's also a function to stringify values.
+--- print(Value.str(1)) -- "VALUE1"
+--- ```
 local function makeEnum(name, ...)
+	--- @class Enum
 	local newEnum = { ... }
 	newEnum._name = "Enum(" .. tostring(name or "Nameless") .. ")"
 	-- Reverse mappings are stored both for number AND for string.
@@ -11,7 +24,6 @@ local function makeEnum(name, ...)
 			if v == t then return k end
 		end
 	end
-	-- FAANCY motherfucker
 	newEnum.resolve = function(input)
 		if type(input) == "number" then
 			return math.round(input)

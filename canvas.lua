@@ -1,13 +1,14 @@
---- Canvas for easily rendering objects to the screen.
+--- A neat little object that is used as an entry-point for any game.
+---
+--- This is used as a standalone way of rendering multiple objects to the screen.
+--- @class Canvas
 local Canvas = Object:extend {
 	--- Canvas Name.
+	--- @type string
 	_name = "Canvas",
 	--- Contains the objects that render to the screen.
+	--- @type table
 	objects = {},
-	--- Returns the maximum amount of objects in the Canvas.
-	length = function()
-		return #self.objects
-	end,
 }
 
 function Canvas:init()
@@ -70,6 +71,12 @@ function Canvas:remove(o)
 		return false
 	end
 	return getRid(self.objects)
+end
+
+--- Returns the maximum amount of objects in the Canvas.
+--- @return number
+function Canvas:length()
+	return #self.objects
 end
 
 --- Clears the Canvas objects entirely.

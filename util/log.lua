@@ -31,6 +31,8 @@ local function printRich(msg, level)
 		" (at: " .. line .. ")\n")
 end
 
+--- Class for logging messages to standard output.
+--- @type table
 local Log = { _name = "Log" }
 
 function Log.info(msg)
