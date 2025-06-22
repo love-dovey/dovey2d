@@ -1,3 +1,4 @@
+--- @class Rect2
 local Rect2 = Object:extend {
 	_name = "Rect2",
 	x = x or 0,
@@ -68,11 +69,12 @@ function Rect2:round()
 	return self
 end
 
-function Rect2:overlaps(r)
-	return self.x < r.x + r.w and
-		self.x + self.w > r.x and
-		self.y < r.y + r.h and
-		self.y + self.h > r.y
+--- Checks if a Rect2 overlaps another.
+--- @param other Rect2
+function Rect2:overlaps(other)
+	local ax, ay, aw, ah = self.x, self.y, self.w, self.h
+	local bx, by, bw, bh = other.x, other.y, other.w, other.h
+    return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
 end
 
 return function(x, y, w, h)

@@ -135,15 +135,15 @@ function math.area(x, y)
 end
 
 --- Returns true if two areas overlap.
---- @param x number 	X position of Area A
---- @param tx number 	X position of Area B
---- @param y number 	Y position of Area A
---- @param ty number 	Y position of Area B
---- @param w? number 	Width of Area A
---- @param tw? number 	Width of Area B
---- @param h number 	Height of Area A
---- @param th number 	Height of Area B
+--- @param ax number 	X position of Area A
+--- @param bx number 	X position of Area B
+--- @param ay number 	Y position of Area A
+--- @param by number 	Y position of Area B
+--- @param aw number 	Width of Area A
+--- @param bw number 	Width of Area B
+--- @param ah number 	Height of Area A
+--- @param bh number 	Height of Area B
 --- @return boolean
-function math.overlaps(x, tx, y, ty, w, tw, h, th)
-	return x < tx + tw and x + w > tx and y < ty + th and y + h > ty
+function math.overlaps(ax, ay, aw, ah, bx, by, bw, bh)
+    return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
 end

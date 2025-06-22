@@ -11,12 +11,12 @@ I made this for my own personal projects.
 just create a submodule for the engine in your LÖVE2D project with the following commands
 ```sh
 git submodule init
-git submodule add https://github.com/pisayesiwsi/dovey2d.git dovey
+git submodule add https://github.com/love-dovey/dovey2d.git dovey
 ```
 though if you prefer using SSH verification, change the link in the last command to `git@github.com:pisayesiwsi/dovey2d.git`
 
 if these instructions aren't enough, here's an example game you could use as a reference point
 
-**[dovey-template](https://github.com/pisayesiwsi/dovey-template)**
+**[dovey-template](https://github.com/love-dovey/dovey-template)**
 
 ---

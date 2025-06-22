@@ -24,7 +24,7 @@ local Engine = {
 	_NAME = "dövey",
 	_VERSION = "1.0.0",
 	_DESCRIPTION = "Small extension for LÖVE2D",
-	_URL = "https://github.com/pisayesiwsi/dovey2d",
+	_URL = "https://github.com/love-dovey/dovey2d",
 	_LICENSE = [[
 		Copyright 2025 pisayesiwsi
 

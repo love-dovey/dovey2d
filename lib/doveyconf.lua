@@ -61,7 +61,7 @@ end
 local doveyconf = {
 	_NAME = "döveyconf.lua",
 	_DESCRIPTION = "A parser for INI/CFG/TOML-styled files.",
-	_URL = "https://github.com/pisayesiwsi/dovey2d", -- maybe i should put this on its own repo some day.
+	_URL = "https://github.com/love-dovey/dovey2d", -- maybe i should put this on its own repo some day.
 	_VERSION = "1.0.0",
 	_LICENSE = [[
 		Copyright 2025 pisayesiwsi

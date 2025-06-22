@@ -7,10 +7,10 @@ end
 table.unpack = table.unpack or unpack
 
 function table.find(tbl, val)
-	for i, v in ipairs(tbl) do
+	for i, v in pairs(tbl) do
 		if v == val then return i end
 	end
-	return 0
+	return nil
 end
 
 ---

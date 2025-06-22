@@ -4,7 +4,7 @@ function AsepriteSheetFormat.newSheet()
 	return {
 		frames = {},
 		meta = {
-			app = "https://github.com/pisayesiwsi/dovey2d",
+			app = "https://github.com/love-dovey/dovey2d",
 			version = tostring(Engine.version),
 			image = "",
 			size = { w = 1, h = 1 },
