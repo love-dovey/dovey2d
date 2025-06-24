@@ -40,6 +40,34 @@ function Canvas:draw()
 	end)
 end
 
+--- Gets rid of anything in the Canvas.
+function Canvas:dispose()
+	local count = 1
+	for k, v in pairs(self.objects) do
+		if v and type(v) == "table" then
+			if type(v.dispose) == "function" then
+				if getmetatable(v) then
+					v:dispose()
+				else
+					v.dispose()
+				end
+				count = count + 1
+			else
+				for i = 1, #v do
+					if v.release then v:release() end
+					if v ~= nil then v[i] = nil end
+					count = count + 1
+				end
+			end
+		end
+		local nv = self.objects[k]
+		if self.objects[k].release then self.objects[k]:release() end
+		self.objects[k] = nil
+		count = count + 1
+	end
+	print(string.format("Canvas(%s) disposed %i objects cleared", self._name, count))
+end
+
 --- Adds an object to the Canvas.
 ---
 --- @param o 			Object to add.

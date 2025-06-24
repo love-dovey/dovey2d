@@ -173,8 +173,8 @@ local function _makeCanvas(input)
 	local ___ = input
 	if type(input) == "string" then ___ = require(input) end
 	--elseif Canvas:is(next) then ___ = next end
-	if type(___) ~= "table" then
-		error("Unable to switch to Canvas " .. tostring(input) .. ", make sure it's a table.")
+	if type(___) ~= "table" or not getmetatable(___) then
+		error("Unable to switch to Canvas " .. tostring(input) .. ", make sure it's a Metatable/Canvas object.")
 		return
 	end
 	if ___ and ___.new then
@@ -185,6 +185,9 @@ end
 
 function Engine.changeCanvas(next)
 	-- emit a signal before the previous canvas gets deleted and after we switch to a new one.
+	if Engine.activeCanvas and Engine.activeCanvas.dispose then
+		Engine.activeCanvas:dispose()
+	end
 	Engine.activeCanvas = _makeCanvas(next)
 end
 

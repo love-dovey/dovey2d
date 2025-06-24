@@ -31,6 +31,7 @@ end
 --- Much like `Sprite`, but contains frames to play animations instead.
 --- @class AnimatedSprite
 local AnimatedSprite = Sprite:extend {
+	_name = "AnimatedSprite",
 	frame = 1,
 	animations = {},
 	texture = nil
