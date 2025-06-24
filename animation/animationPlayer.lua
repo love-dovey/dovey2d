@@ -1,4 +1,4 @@
-local AnimationTimeline = require("dovey.animation.animationTimeline")
+local Animation = require("dovey.animation.animation")
 
 --- Object used for Animation playback.
 --- @class AnimationPlayer
@@ -20,7 +20,7 @@ function AnimationPlayer:update(delta)
 end
 
 function AnimationPlayer:addAnimation(name, tracks, frameRate, length)
-	self.animations[name] = AnimationTimeline:new(name, tracks, frameRate, length)
+	self.animations[name] = Animation:new(name, tracks, frameRate, length)
 end
 
 function AnimationPlayer:findAnimation(name)

@@ -18,6 +18,7 @@ AnimationPlayer = require("dovey.animation.animationPlayer")
 TintRectangle = require("dovey.display.tintRectangle")
 ProgressShape = require("dovey.display.progressShape")
 Sprite = require("dovey.display.sprite")
+AnimatedSprite = require("dovey.display.animatedSprite")
 TextDisplay = require("dovey.display.textDisplay")
 
 --- Global table that instantiates the entire of dövey's backend.

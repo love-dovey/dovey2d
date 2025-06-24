@@ -1,5 +1,4 @@
 --- Importer/Exporter for Aseprite Spritesheets.
---- @class AsepriteSheetFormat
 local AsepriteSheetFormat = {}
 
 function AsepriteSheetFormat.newSheet()

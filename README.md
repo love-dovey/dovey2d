@@ -6,6 +6,7 @@ I made this for my own personal projects.
 ### external libraries used
 
 - [rxi/json.lua](https://github.com/rxi/json.lua)
+- [jonathanpoelen/lua-xmlparser](https://github.com/jonathanpoelen/lua-xmlparser)
 
 ### recommended usage
 just create a submodule for the engine in your LÖVE2D project with the following commands

@@ -40,7 +40,7 @@ function TextDisplay:init(x, y, text, limit)
 	self.text = text or self.text
 	self.limit = limit or self.limit
 	if self.limit <= 0 then
-		self.limit = love.graphics.getWidth()
+		self.limit = Engine.mainWindow.width
 	end
 	return self
 end
@@ -49,7 +49,7 @@ end
 --- @param y? number
 function TextDisplay:drawText(text, x, y)
 	x, y = x or 0, y or 0
-	local l = self.wrapText and self.limit or 0
+	local l = self.wrapText and self.limit or Engine.mainWindow.width
 	local align = TextAlignment.str(self.alignment):lower()
 	love.graphics.printf(tostring(text), x, y, l, align)
 end

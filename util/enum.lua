@@ -14,25 +14,37 @@ local function makeEnum(name, ...)
 	--- @class Enum
 	local newEnum = { ... }
 	newEnum._name = "Enum(" .. tostring(name or "Nameless") .. ")"
-	-- Reverse mappings are stored both for number AND for string.
-	for k, v in pairs(newEnum) do
-		if type(k) == "string" then k = string.lower(k) end
-		newEnum[v] = k
-	end
-	newEnum.str = function(t)
+	local function reverseMappingCheck()
+		-- Reverse mappings are stored both for number AND for string.
 		for k, v in pairs(newEnum) do
-			if v == t then return k end
+			if type(k) == "string" then k = string.lower(k) end
+			newEnum[v] = k
 		end
 	end
-	newEnum.resolve = function(input)
+	local function resolve(input)
 		if type(input) == "number" then
-			return math.round(input)
+			return math.floor(input + 0.5)
 		elseif type(input) == "string" then
 			input = input:lower():gsub("%s+", "")
 			return newEnum[input:upper()] or newEnum[newEnum[1]]
 		end
 		return newEnum[newEnum[1]]
 	end
+	newEnum.str = function(t)
+		for k, v in pairs(newEnum) do
+			if v == t and type(k) == "string" then
+				return k:upper()
+			end
+		end
+		return tostring(t)
+	end
+	newEnum.resolve = resolve
+	newEnum.mapAlias = function(original, alias)
+		newEnum[alias] = resolve(original)
+		reverseMappingCheck()
+		return newEnum -- chaining
+	end
+	reverseMappingCheck()
 	return newEnum
 end
 
