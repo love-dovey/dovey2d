@@ -36,7 +36,7 @@ local AnimatedSprite, super = Sprite:extend {
 	frame = 1,
 	animations = {},
 	texture = nil
-}
+}:implement(Caps2D)
 
 local _latestAnimation = ""
 
