@@ -29,25 +29,12 @@ function table.copy(tbl, deep, been)
 	local copied = {}
 	been[tbl] = copied
 	for k, v in pairs(tbl) do
-		if type(v) == "table" then
-			copied[k] = deep and table.copy(v, deep, been) or v
-		else
-			copied[k] = v
-		end
+		local key = deep and table.copy(k, deep, been) or k
+		local val = deep and table.copy(v, deep, been) or v
+		copied[key] = val
 	end
 	local mt = getmetatable(tbl)
 	if mt then setmetatable(copied, mt) end
-	return copied
-end
-
-local function deepCopy(data)
-	if type(data) ~= "table" or getmetatable(data) then
-		return data
-	end
-	local copied = {}
-	for k, v in pairs(data) do
-		copied[k] = deepCopy(v)
-	end
 	return copied
 end
 

@@ -1,4 +1,4 @@
-LogLevel = Enum("LogLevel", "INFO", "WARN", "ERROR")
+local LogLevel = Enum("LogLevel", "INFO", "WARN", "ERROR")
 local asciiCodes = {
 	white = "\27[0m",
 	red = "\27[31m",
@@ -6,6 +6,7 @@ local asciiCodes = {
 	blue = "\27[34m",
 }
 local _warned = {}
+local _errored = {}
 local function printRich(msg, level)
 	local isTbl = type(msg) == "table"
 	msg = isTbl and string.table(msg) or tostring(msg)
@@ -47,12 +48,12 @@ function Log.warn(msg, once)
 	return printRich(msg, LogLevel.WARN)
 end
 
-function Log.error(msg, errLevel, once)
+function Log.error(msg, once)
 	if once then
-		if _warned[msg] == true then return end
-		_warned[msg] = true
+		if _errored[msg] == true then return end
+		_errored[msg] = true
 	end
-	return printRich(msg, LogLevel.ERROR, errLevel)
+	return printRich(msg, LogLevel.ERROR)
 end
 
 luaPrint = print

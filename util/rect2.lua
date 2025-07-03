@@ -16,6 +16,10 @@ function Rect2:init(x, y, w, h)
 	return self
 end
 
+function Rect2:clone()
+	return Rect2:new(self.x, self.y, self.w, self.h)
+end
+
 function Rect2:set(x, y, w, h)
 	self.x, self.y = x, y
 	self.w, self.h = w, h
@@ -73,9 +77,7 @@ end
 function Rect2:overlaps(other)
 	local ax, ay, aw, ah = self.x, self.y, self.w, self.h
 	local bx, by, bw, bh = other.x, other.y, other.w, other.h
-    return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
+	return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
 end
 
-return function(x, y, w, h)
-	return Rect2:new(x, y, w, h)
-end
+return function(x, y, w, h) return Rect2:new(x, y, w, h) end

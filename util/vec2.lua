@@ -2,16 +2,19 @@
 --- @class Vec2
 local Vec2 = Object:extend {
 	_name = "Vec2",
-	x = 0, y = 0,
-}
+	x = x or 0, y = y or 0 }
 
 function Vec2:__tostring() -- does this even work outside metatables
 	return ("Vec2(%f, %f)"):format(self.x, self.y)
 end
 
 function Vec2:init(x, y)
-	self.x, self.y = x or self.x, y or self.y
+	self.x, self.y = x or 0, y or 0
 	return self
+end
+
+function Vec2:clone()
+	return Vec2:new(self.x, self.y)
 end
 
 function Vec2:set(x, y)
@@ -51,6 +54,4 @@ function Vec2:round()
 	return self
 end
 
-return function(x, y)
-	return Vec2:new(x, y)
-end
+return function(x, y) return Vec2:new(x, y) end

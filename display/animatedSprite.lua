@@ -24,13 +24,14 @@ local function makeAnimation(name, texture, frameRate, length)
 		time = 0.0,                           --- Self-explanatory, yeah?
 		speed = 1.0,                          --- How fast/slow the animation plays.
 		quads = {},                           --- Animation quad info (render frames),
-		offset = DEFAULT_FRAME_OFFSET,        --- Frame offset (important for some formats).
+		frameOffset = DEFAULT_FRAME_OFFSET,   --- Frame offset (important for some formats).
+		offset = { x = 0, y = 0 },            --- Position Offset.
 	}
 end
 
 --- Much like `Sprite`, but contains frames to play animations instead.
 --- @class AnimatedSprite
-local AnimatedSprite = Sprite:extend {
+local AnimatedSprite, super = Sprite:extend {
 	_name = "AnimatedSprite",
 	frame = 1,
 	animations = {},
@@ -41,6 +42,7 @@ local _latestAnimation = ""
 
 function AnimatedSprite:init(x, y, texture)
 	self.position = Vec2(x or self.position.x, y or self.position.y)
+	if texture then self:loadTexture(texture) end
 	return self
 end
 
@@ -57,13 +59,17 @@ function AnimatedSprite:update(delta)
 	end
 end
 
+local function applyDirectionalOffset(off, scal, flip)
+	return off * ((scal >= 0) and 1 or -1) * (flip and -1 or 1)
+end
+
 function AnimatedSprite:draw()
 	love.graphics.push("all")
 
 	local quad = nil
-	local curAnim = self.currentAnimation
 	local tex = self.texture
-	local offx, offy = 0, 0
+	local curAnim = self.currentAnimation
+	local framex, framey = 0, 0
 	local scalx, scaly = 1, 1
 	local rot = 0
 
@@ -74,25 +80,28 @@ function AnimatedSprite:draw()
 				tex = curAnim.quads[self.frame].texture
 			end
 			quad = frame.quad
-			local frameOffset = frame.offset or DEFAULT_FRAME_OFFSET
-			offx, offy = -frameOffset.x, -frameOffset.y
+
+			local frameOffset = frame.frameOffset or DEFAULT_FRAME_OFFSET
 			if frame.scale then
 				scalx, scaly = frame.scale.x, frame.scale.y
 			end
+			framex = applyDirectionalOffset(frameOffset.x or 0, self.scale.x, scalx < 0)
+			framey = applyDirectionalOffset(frameOffset.y or 0, self.scale.y, scaly < 0)
 			rot = frameOffset.r or 0
 		end
 	end
 
-	love.graphics.translate(self.position.x, self.position.y)    -- Positioning
-	love.graphics.rotate(self.rotation + rot)                    -- Rotation
-	love.graphics.shear(self.shear.x, self.shear.y)              -- Skewing
-	love.graphics.scale(self.scale.x * scalx, self.scale.y * scaly) -- Scale
-	love.graphics.translate(-self.origin.x, -self.origin.y)      -- Pivot Offset
-	love.graphics.setColor(self.tint)                            -- Colouring
+	local offx, offy = curAnim.offset.x or 0, curAnim.offset.y or 0
+	local px, py = self.position.x + offx, self.position.y + offy
+	love.graphics.translate(px, py)                                        -- Positioning
+	love.graphics.rotate(self.rotation + rot)                              -- Rotation
+	love.graphics.shear(self.shear.x, self.shear.y)                        -- Skewing
+	love.graphics.scale(self.scale.x * scalx, self.scale.y * scaly)        -- Scale
+	love.graphics.translate(-self.origin.x - framex, -self.origin.y - framey) -- Pivot + Frame Offset
+	love.graphics.setColor(self.tint)                                      -- Colouring
 
 	if tex then
 		if quad then
-			love.graphics.translate(offx, offy) -- Frame Offset
 			love.graphics.draw(tex, quad)
 		else
 			love.graphics.draw(tex)
@@ -102,8 +111,12 @@ function AnimatedSprite:draw()
 	love.graphics.pop()
 end
 
-function AnimatedSprite:addAnimation(name, quads, frameRate, texture, length)
-	local animation = makeAnimation(name, texture, frameRate, length)
+function AnimatedSprite:addAnimation(name, quads, frameRate, length)
+	local tex = self.texture
+	if quads.texture and quads.texture:type() == "Texture" then
+		tex = quads.texture
+	end
+	local animation = makeAnimation(name, tex, frameRate, length)
 	if type(quads) ~= "table" then
 		-- probably single frame.
 		animation.quads = { quads }
@@ -111,6 +124,15 @@ function AnimatedSprite:addAnimation(name, quads, frameRate, texture, length)
 		for i = 1, #quads do animation.quads[i] = quads[i] end
 	end
 	self.animations[name] = animation
+end
+
+function AnimatedSprite:setAnimationOffset(name, x, y)
+	if self.animations[name] then
+		self.animations[name].offset.x = x or self.animations[name].offset.x or 0
+		self.animations[name].offset.y = y or self.animations[name].offset.y or 0
+	else
+		Log.warn("Cannot add offset to Animation(" .. tostring(name) .. "), Animation does not exist.")
+	end
 end
 
 function AnimatedSprite:findAnimation(name)

@@ -8,6 +8,16 @@ function Object:init(...)
 	return self
 end
 
+--- Initializes the fields of the object.
+function Object:initFields(fields)
+	for k, v in pairs(fields) do
+		--if rawget(self, k) ~= nil then
+		--	Log.warn("Field '" .. k .. "' already exists in object: possible override.")
+		--end
+		self[k] = type(v) == "table" and table.copy(v, true) or v
+	end
+end
+
 --- Happens every frame.
 function Object:update(delta)
 	--Log.warn("Method `update` must be implemented by a subclass.", true)
@@ -25,12 +35,21 @@ end
 
 local function implement(self, feature)
 	for k, v in pairs(feature or {}) do
-		if self[k] == nil or self[k] ~= v then
-			self[k] = v
+		if self[k] == nil then
+			if type(v) == "table" then
+				if v.clone then
+					self[k] = getmetatable(v) and v:clone() or v.clone()
+				else
+					self[k] = table.copy(v, true)
+				end
+			else
+				self[k] = v
+			end
 		end
 	end
 	return self
 end
+
 
 --local function publicFunc(self, name, func) self._public[name] = func end
 --local function privateFunc(self, name, func) self._private[name] = func end
@@ -107,8 +126,7 @@ local function extend(from, defaults)
 			__upclass = derivation
 		})
 		for k, v in pairs(derivation) do
-			if k ~= "__index" and k ~= "__newindex" and k ~= "super" and k ~= "exists" then
-				-- prevent shared table states.
+			if k ~= "__index" and k ~= "__newindex" and k ~= "__upclass" and k ~= "super" then
 				current[k] = table.copy(v, true)
 			end
 		end

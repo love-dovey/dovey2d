@@ -65,45 +65,49 @@ function SparrowV2Format.getSubTexturesFromString(content)
 end
 
 function SparrowV2Format.attributesToQuadList(attributes, texture)
+	assert(texture, "Missing texture for SparrowV2 atlas")
 	local frames = {}
-	assert(texture,
-		"Attempt to build an SparrowAtlas Quad without a texture " ..
-		"did you forget to set a texture to an AnimatedSprite?")
-	local i = 1
-	for k, cfg in pairs(attributes) do
-		local trimmed = math.abs(cfg.frameX or 0) > 0
-		local rotated = cfg.rotated == "true" or false
-		local flipX = cfg.flipX == "true" or false
-		local flipY = cfg.flipY == "true" or false
-		local frame = {
-			source = { x = tonumber(cfg.x) or 0, y = tonumber(cfg.y) or 0, w = tonumber(cfg.width) or 1, h = tonumber(cfg.height) or 1 },
-			offset = { x = tonumber(cfg.frameX) or 0, y = tonumber(cfg.frameY) or 0, w = tonumber(cfg.frameWidth) or 1, h = tonumber(cfg.frameHeight) or 1, r = 0 },
-			scale = { x = flipX and -1 or 1, y = flipY and -1 or 1 },
-		}
-		local size = trimmed and frame.offset or frame.source
-		if rotated then frame.offset.r = math.rad(-90) end
 
-		local targetWidth = size.w
-		local targetHeight = size.h
+	for _, cfg in pairs(attributes) do
+		local rotated = cfg.rotated == "true"
+		local flipX = cfg.flipX == "true"
+		local flipY = cfg.flipY == "true"
+
+		local frameX = tonumber(cfg.frameX) or 0
+		local frameY = tonumber(cfg.frameY) or 0
+		local frameW = tonumber(cfg.frameWidth) or 1
+		local frameH = tonumber(cfg.frameHeight) or 1
+
+		local srcX = tonumber(cfg.x) or 0
+		local srcY = tonumber(cfg.y) or 0
+		local srcW = tonumber(cfg.width) or 1
+		local srcH = tonumber(cfg.height) or 1
+
+		local offsetX, offsetY = frameX, frameY
+
 		if rotated then
-			if not trimmed then
-				targetWidth = size.h
-				targetHeight = size.w
-			end
-			frame.offset.x = frame.offset.x + (targetWidth - frame.source.w) / 2
-			frame.offset.y = frame.offset.y + (targetHeight - frame.source.h) / 2
+			offsetX, offsetY = frameY, -(frameX + srcW)
 		end
 
-		frames[#frames + 1] = {
-			quad = love.graphics.newQuad(
-				frame.source.x, frame.source.y,
-				frame.source.w, frame.source.h,
-				texture:getDimensions()),
-			size = { targetWidth, targetHeight },
-			offset = frame.offset,
-			scale = frame.scale,
+		local frame = {
+			source = { x = srcX, y = srcY, w = srcW, h = srcH },
+			offset = {
+				x = offsetX,
+				y = offsetY,
+				w = rotated and frameH or frameW,
+				h = rotated and frameW or frameH,
+				r = rotated and math.rad(-90) or 0
+			},
+			scale = { x = flipX and -1 or 1, y = flipY and -1 or 1 }
 		}
-		i = i + 1
+
+		table.insert(frames, {
+			quad = love.graphics.newQuad(srcX, srcY, srcW, srcH, texture:getDimensions()),
+			size = { x = rotated and frameH or frameW, y = rotated and frameW or frameH },
+			frameOffset = frame.offset,
+			scale = frame.scale,
+			texture = texture,
+		})
 	end
 	return frames
 end
