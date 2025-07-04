@@ -141,7 +141,7 @@ end
 --- Example:
 ---
 --- ```lua
---- local MyObject = Object:extend({
+--- local MyObject = dovey.Object:extend({
 ---		-- public properties
 ---		publicStr = "Example",
 --- 	publicNum = 0,

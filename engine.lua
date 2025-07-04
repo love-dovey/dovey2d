@@ -4,22 +4,30 @@ require("dovey.util.stringtools")
 require("dovey.util.mathtools")
 --These must be imported first--
 Enum = require("dovey.util.enum")
-Tint = require("dovey.util.tint")
 Log = require("dovey.util.log")
-Object = require("dovey.object")
-Rect2 = require("dovey.util.rect2")
-Vec2 = require("dovey.util.vec2")
-Timer = require("dovey.util.timer")
-Signal = require("dovey.util.signal")
+Tint = require("dovey.util.tint")
+
+dovey = {
+	animation = {},
+	display = {},
+	math = {},
+	util = {},
+}
+
+dovey.Object = require("dovey.object")
+dovey.math.Rect2 = require("dovey.math.rect2")
+dovey.math.Vec2 = require("dovey.math.vec2")
+dovey.util.Timer = require("dovey.util.timer")
+dovey.util.Signal = require("dovey.util.signal")
 -- Objects --
-Input = require("dovey.input")
-Canvas = require("dovey.canvas")
-AnimationPlayer = require("dovey.animation.animationPlayer")
-TintRectangle = require("dovey.display.tintRectangle")
-ProgressShape = require("dovey.display.progressShape")
-Sprite = require("dovey.display.sprite")
-AnimatedSprite = require("dovey.display.animatedSprite")
-TextDisplay = require("dovey.display.textDisplay")
+dovey.Input = require("dovey.input")
+dovey.Canvas = require("dovey.canvas")
+dovey.animation.AnimationPlayer = require("dovey.animation.animationPlayer")
+dovey.display.Sprite = require("dovey.display.sprite")
+dovey.display.TintRectangle = require("dovey.display.tintRectangle")
+dovey.display.ProgressShape = require("dovey.display.progressShape")
+dovey.display.AnimatedSprite = require("dovey.display.animatedSprite")
+dovey.display.TextDisplay = require("dovey.display.textDisplay")
 
 --- Global table that instantiates the entire of dövey's backend.
 --- @type table
@@ -42,8 +50,10 @@ local Engine = {
 	clearTint = { 0.1, 0.1, 0.1, 1 },
 	maxFPS = 60,
 	mainWindow = {
-		x = 0, y = 0,
-		width = 0, height = 0,
+		x = 0,
+		y = 0,
+		width = 0,
+		height = 0,
 		flags = {},
 		getPosition = function()
 			return Engine.mainWindow.x, Engine.mainWindow.y
@@ -144,8 +154,8 @@ function Engine.begin(startingCanvas)
 				end
 			end
 		end
-		Timer.updateAll(delta)
-		Input.update(delta)
+		dovey.util.Timer.updateAll(delta)
+		dovey.Input.update(delta)
 	end
 	love.draw = function()
 		love.graphics.clear(Engine.clearTint)

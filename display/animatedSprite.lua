@@ -31,7 +31,7 @@ end
 
 --- Much like `Sprite`, but contains frames to play animations instead.
 --- @class AnimatedSprite
-local AnimatedSprite, super = Sprite:extend {
+local AnimatedSprite, super = dovey.display.Sprite:extend {
 	_name = "AnimatedSprite",
 	frame = 1,
 	animations = {},
@@ -41,7 +41,7 @@ local AnimatedSprite, super = Sprite:extend {
 local _latestAnimation = ""
 
 function AnimatedSprite:init(x, y, texture)
-	self.position = Vec2(x or self.position.x, y or self.position.y)
+	self.position = dovey.math.Vec2(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
 	return self
 end

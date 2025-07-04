@@ -3,16 +3,16 @@
 local Caps2D = {
 	--- Position of the object.
 	--- @class Vec2(x, y)
-	position = Vec2(0, 0),
+	position = dovey.math.Vec2(0, 0),
 	--- Scale of the object.
 	--- @class Vec2(x, y)
-	scale = Vec2(1, 1),
+	scale = dovey.math.Vec2(1, 1),
 	--- Tranformation origin
 	--- @class Vec2(x, y)
-	origin = Vec2(0, 0),
+	origin = dovey.math.Vec2(0, 0),
 	--- Skew/Shear Factor.
 	--- @class Vec2(0, 0)
-	shear = Vec2(0, 0),
+	shear = dovey.math.Vec2(0, 0),
 	--- Tint/Colour of the object.
 	--- @type table {r, g, b, a}.
 	tint = { 1, 1, 1, 1 },
@@ -59,7 +59,7 @@ end
 --- Can be rgba values (with a being optional), a hex code such as #RRGGBB(AA) or #RGB(A)
 --- @param ... table|string
 function Caps2D:setTint(...)
-	local t = {...}
+	local t = { ... }
 	if #t == 1 then t = ... end
 	self.tint = normaliseTint(t)
 	return self

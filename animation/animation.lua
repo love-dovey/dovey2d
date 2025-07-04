@@ -4,7 +4,7 @@ local DEFAULT_FRAMERATE = 30
 
 --- Holds data to animate anything.
 --- @class Animation
-local Animation = Object:extend {
+local Animation = dovey.Object:extend {
 	_name = "Animation",
 	tracks = {},                --- Tracks for modifying values (e.g. Position, Angle, Scale, Tint, etc.).
 	frameRate = DEFAULT_FRAMERATE, --- Update frequency.

@@ -2,7 +2,7 @@
 ---
 --- This is used as a standalone way of rendering multiple objects to the screen.
 --- @class Canvas
-local Canvas = Object:extend {
+local Canvas = dovey.Object:extend {
 	--- Canvas Name.
 	--- @type string
 	_name = "Canvas",
@@ -70,13 +70,12 @@ end
 
 --- Adds an object to the Canvas.
 ---
---- @param o 			Object to add.
---- @param exclude		Toggles whether the object should be excluded from rendering.
-function Canvas:add(o, exclude)
-	local tbl = (not exclude and self.objects or self.exclusions)
+--- @param o table|metatable			Object to add.
+function Canvas:add(o)
+	local tbl = self.objects
 	if not o then
 		error("Tried to add Object(" ..
-		tostring(o) .. ") to Canvas(" .. tostring(self._name or "CustomCanvas") .. ") at index " .. #tbl + 1)
+			tostring(o) .. ") to Canvas(" .. tostring(self._name or "CustomCanvas") .. ") at index " .. #tbl + 1)
 		return nil
 	end
 	table.insert(tbl, o)
@@ -86,7 +85,7 @@ end
 
 --- Removes an object from the Canvas.
 ---
---- @param o 			Object to get rid of.
+--- @param o table|metatable			Object to get rid of.
 function Canvas:remove(o)
 	local function getRid(tbl)
 		for i = #tbl, 1, -1 do
@@ -125,7 +124,7 @@ end
 
 --- Loops through every item in the Canvas.
 ---
---- @param fun 			Function to run on the objects looped.
+--- @param fun function			Function to run on the objects looped.
 function Canvas:forEach(fun)
 	if fun then
 		for idx, o in ipairs(self.objects) do fun(o, idx) end

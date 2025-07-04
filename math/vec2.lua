@@ -1,6 +1,6 @@
 --- Utility containing X and Y coordinates.
 --- @class Vec2
-local Vec2 = Object:extend {
+local Vec2 = dovey.Object:extend {
 	_name = "Vec2",
 	x = x or 0, y = y or 0 }
 

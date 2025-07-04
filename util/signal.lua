@@ -1,6 +1,6 @@
 --- Utility to emit a signal to every attached function.
 --- @class Signal
-local Signal = Object:extend {
+local Signal = dovey.Object:extend {
 	_name = "Signal",
 	timesEmitted = 0,
 	funcs = {},

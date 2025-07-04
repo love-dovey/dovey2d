@@ -9,7 +9,7 @@ local DEFAULT_OUTLINE_SIZE = 1.25
 local Caps2D = require("dovey.caps.caps2d")
 
 --- @class TextDisplay
-local TextDisplay = Object:extend {
+local TextDisplay = dovey.Object:extend {
 	_name = "TextDisplay",
 	text = nil,                  --- Text displayed on-screen when visible.
 	limit = 0,                   --- Limit (in screen pixels) before word wrapping starts.

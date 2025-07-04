@@ -2,7 +2,7 @@ local Caps2D = require("dovey.caps.caps2d")
 
 --- Object that displays a Texture.
 --- @class Sprite
-local Sprite = Object:extend {
+local Sprite = dovey.Object:extend {
 	_name = "Sprite",
 	texture = nil, --- Texture to render the Sprite with.
 }:implement(Caps2D)

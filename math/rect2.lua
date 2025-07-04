@@ -1,6 +1,6 @@
 --- A 2D bounding-box, contains X and Y coordinates, and also width and height.s
 --- @class Rect2
-local Rect2 = Object:extend {
+local Rect2 = dovey.Object:extend {
 	_name = "Rect2",
 	x = 0, y = 0,
 	w = 0, h = 0

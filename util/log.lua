@@ -15,7 +15,7 @@ local function printRich(msg, level)
 	local line = info.short_src .. ":" .. info.currentline
 	if arg[#arg] == "-subl" then -- no colours in sublime text.
 		io.stderr:write("[" .. (Engine.engineName or "dövey") ..
-		":" .. LogLevel.str(level) .. "] " .. msg .. " (at: " .. line .. ")\n")
+			":" .. LogLevel.str(level) .. "] " .. msg .. " (at: " .. line .. ")\n")
 		return
 	end
 	local col = asciiCodes.white

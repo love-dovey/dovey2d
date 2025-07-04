@@ -6,9 +6,9 @@ RectangleRenderMode = Enum("RectangleRenderMode", "FILL", "LINE")
 local Caps2D = require("dovey.caps.caps2d")
 
 --- @class TintRectangle
-local TintRectangle = Object:extend {
+local TintRectangle = dovey.Object:extend {
 	_name = "TintRectangle",
-	size = Vec2(50, 50),
+	size = dovey.math.Vec2(50, 50),
 	thickness = 0,
 	mode = nil,
 }:implement(Caps2D)
@@ -25,7 +25,7 @@ function TintRectangle:init(x, y, tint, sx, sy)
 		self.tint = tint or { Tint.fromRGB(tint[1], tint[2], tint[3], tint[4] or 255) }
 	end
 	self.mode = RectangleRenderMode.resolve("FILL")
-	self.size = Vec2(sx or self.size.x, sy or self.size.y)
+	self.size = dovey.math.Vec2(sx or self.size.x, sy or self.size.y)
 	return self
 end
 

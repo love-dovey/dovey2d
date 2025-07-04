@@ -2,7 +2,7 @@ local Animation = require("dovey.animation.animation")
 
 --- Object used for Animation playback.
 --- @class AnimationPlayer
-local AnimationPlayer = Object:extend {
+local AnimationPlayer = dovey.Object:extend {
 	_name = "AnimationPlayer",
 	currentAnimation = nil,
 	animations = {},

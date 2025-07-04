@@ -6,7 +6,7 @@ ProgressStyling = {
 	Direction = Enum("ProgressStylingDirection", "LeftRight", "RightLeft", "TopBottom", "BottomTop"), --- Horizontal Directions.
 	--- Shape of the ProgressShape.
 	--- @enum ProgressStylingShape
-	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"),                        --- Render Shapes.
+	Shape = Enum("ProgressStylingShape", "RECTANGLE", "CIRCLE", "DIAMOND"), --- Render Shapes.
 }
 
 local _defaultTint = {
@@ -18,9 +18,9 @@ local Caps2D = require("dovey.caps.caps2d")
 
 --- A horizontal, vertical, or even radial visual representation of a percentage.
 --- @class ProgressShape
-local ProgressShape = Object:extend {
+local ProgressShape = dovey.Object:extend {
 	_name = "ProgressShape",
-	size = Vec2(350, 25),                         -- Width and Height of the shape.
+	size = dovey.math.Vec2(350, 25),              -- Width and Height of the shape.
 	direction = ProgressStyling.Direction.LeftRight, --- Where should Colour 1 and Colour 2 be rendered?
 	smooth = false,                               --- Smoothly transitions between colour 1 and 2 when rendering.
 	current = 0,                                  --- Current value.
