@@ -143,6 +143,9 @@ function Engine.begin(startingCanvas)
 
 	Engine.loveVer = tostring(love.getVersion())
 	love.update = function(delta)
+		dovey.Input.update(delta)
+		dovey.util.Timer.updateAll(delta)
+		--dovey.util.Tween.updateAll(delta)
 		if Engine.activeCanvas then Engine.activeCanvas:update(delta) end
 		for _, v in pairs(Engine.layeredObjects) do
 			if v and v.update then
@@ -154,8 +157,6 @@ function Engine.begin(startingCanvas)
 				end
 			end
 		end
-		dovey.util.Timer.updateAll(delta)
-		dovey.Input.update(delta)
 	end
 	love.draw = function()
 		love.graphics.clear(Engine.clearTint)
