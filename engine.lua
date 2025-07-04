@@ -7,6 +7,15 @@ Enum = require("dovey.util.enum")
 Log = require("dovey.util.log")
 Tint = require("dovey.util.tint")
 
+local function readonly(tbl)
+	return setmetatable({}, {
+		__index = tbl,
+		__newindex = function(_, k, _)
+			error(string.format("Attempt to modify a read-only table: %s", k), 2)
+		end
+	})
+end
+
 dovey = {
 	animation = {},
 	display = {},
@@ -28,6 +37,9 @@ dovey.display.TintRectangle = require("dovey.display.tintRectangle")
 dovey.display.ProgressShape = require("dovey.display.progressShape")
 dovey.display.AnimatedSprite = require("dovey.display.animatedSprite")
 dovey.display.TextDisplay = require("dovey.display.textDisplay")
+
+-- make it read-only to avoid issues with people overriding it by accident.
+dovey = readonly(dovey)
 
 --- Global table that instantiates the entire of dövey's backend.
 --- @type table
