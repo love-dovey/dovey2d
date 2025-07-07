@@ -6,6 +6,10 @@ local Signal = dovey.Object:extend {
 	funcs = {},
 }
 
+function Signal:init()
+	return self
+end
+
 function Signal:connect(func)
 	if type(func) ~= "function" then
 		error("Attempt to assign a value(" ..
@@ -24,9 +28,9 @@ function Signal:disconnect(func)
 			type(func) .. " to a Signal when a Function was expected to be passed as a value.")
 		return self
 	end
-	for _, ifunc in pairs(self.funcs) do
-		if func == ifunc then
-			table.remove(self.funcs, func)
+	for i, target in pairs(self.funcs) do
+		if func == target then
+			table.remove(self.funcs, i)
 			break
 		end
 	end
@@ -53,7 +57,11 @@ function Signal:emit(...)
 	self.timesEmitted = self.timesEmitted + 1
 	for _, func in pairs(self.funcs) do
 		-- easy !
-		func(...)
+		if func then
+			func(...)
+		else
+			table.remove(self.func, _)
+		end
 	end
 end
 

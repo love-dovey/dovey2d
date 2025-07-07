@@ -1,8 +1,11 @@
+local UNKNOWN_ACTION = "#unknown_action"
+
+local Signal = require("dovey.util.signal")
 --- Utility for handling inputs.
 --- @type table
 local Input = {
-	_name = "Input",
-	actions = {
+	_name     = "Input",
+	actions   = {
 		["ui_down"]   = { "down" },
 		["ui_left"]   = { "left" },
 		["ui_right"]  = { "right" },
@@ -10,14 +13,24 @@ local Input = {
 		["ui_accept"] = { "return" },
 		["ui_cancel"] = { "backspace" },
 		["ui_pause"]  = { "pause" },
-	}
+	},
+	onKeyDown = Signal:new(),
+	onKeyUp   = Signal:new(),
 }
 local pressed = {}
 local released = {}
 
-function Input.update(delta)
+function Input.update(_)
 	pressed = {}
 	released = {}
+end
+
+function Input.keyDown(_, scancode, _)
+	Input.onKeyDown:emit(true, scancode, Input.getActionFromKey(scancode))
+end
+
+function Input.keyUp(_, scancode, _)
+	Input.onKeyUp:emit(false, scancode, Input.getActionFromKey(scancode))
 end
 
 --- Checks if one of the action keys is being held down.
@@ -26,7 +39,7 @@ function Input.isDown(actionName)
 	if Input.hasAction(actionName) then
 		for _, key in ipairs(Input.actions[actionName]) do
 			if love.keyboard.isDown(key) then
-				pressed[actionName] = true
+				pressed[actionName] = { keyCode = key, action = actionName }
 				return true
 			end
 		end
@@ -40,7 +53,7 @@ function Input.wasDown(actionName)
 	if Input.hasAction(actionName) then
 		for _, key in ipairs(Input.actions[actionName]) do
 			if love.keyboard.isDown(key) and not pressed[actionName] then
-				pressed[actionName] = true
+				pressed[actionName] = { keyCode = key, action = actionName }
 				return true
 			end
 		end
@@ -54,7 +67,7 @@ function Input.wasUp(actionName)
 	if Input.hasAction(actionName) then
 		for _, key in ipairs(Input.actions[actionName]) do
 			if not love.keyboard.isDown(key) and not released[actionName] then
-				released[actionName] = true
+				released[actionName] = { keyCode = key, action = actionName }
 				return true
 			end
 		end
@@ -105,6 +118,15 @@ end
 --- @return boolean true/false depending on the result.
 function Input.hasAction(actionName)
 	return Input.actions[actionName] ~= nil
+end
+
+function Input.getActionFromKey(key)
+	for __, actions in pairs(Input.actions) do
+		if table.unpack(actions) == key then
+			return __
+		end
+	end
+	return UNKNOWN_ACTION
 end
 
 return Input

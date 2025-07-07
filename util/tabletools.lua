@@ -6,6 +6,15 @@ table.pack = table.pack or function(...)
 end
 table.unpack = table.unpack or unpack
 
+function table.freeze(tbl)
+	return setmetatable({}, {
+		__index = tbl,
+		__newindex = function(_, k, _)
+			error(string.format("Attempt to modify a read-only table: %s", k), 2)
+		end
+	})
+end
+
 function table.find(tbl, val)
 	for i, v in pairs(tbl) do
 		if v == val then return i end
