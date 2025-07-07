@@ -96,7 +96,7 @@ end
 --- @param key string|table 		A keycode string or table with keycodes.
 function Input.addAction(actionName, key)
 	if type(key) == "string" then
-		Input.actions[actionName] = { key }
+		table.insert(Input.actions[actionName], key)
 	elseif type(key) == "table" then
 		Input.actions[actionName] = key
 	else
@@ -122,8 +122,8 @@ end
 
 function Input.getActionFromKey(key)
 	for __, actions in pairs(Input.actions) do
-		if table.unpack(actions) == key then
-			return __
+		for i = 1, #actions do
+			if key == actions[i] then return __ end
 		end
 	end
 	return UNKNOWN_ACTION
