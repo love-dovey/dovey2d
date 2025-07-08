@@ -124,6 +124,7 @@ function AnimatedSprite:addAnimation(name, quads, frameRate, length)
 		for i = 1, #quads do animation.quads[i] = quads[i] end
 	end
 	self.animations[name] = animation
+	return self
 end
 
 function AnimatedSprite:setAnimationOffset(name, x, y)

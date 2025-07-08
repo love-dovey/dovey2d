@@ -52,12 +52,14 @@ local Engine = {
 	layeredObjects = {},
 	clearTint = { 0.1, 0.1, 0.1, 1 },
 	maxFPS = 60,
+	inactiveFPS = 15,
 	mainWindow = {
 		x = 0,
 		y = 0,
 		width = 0,
 		height = 0,
 		flags = {},
+		hasFocus = false,
 		getPosition = function()
 			return Engine.mainWindow.x, Engine.mainWindow.y
 		end,
@@ -85,7 +87,7 @@ local Engine = {
 	},
 }
 
-function love.resize(w, h)
+function love.resize(_, _)
 	Engine.mainWindow.reset()
 end
 
@@ -101,11 +103,17 @@ local function limitedRun()
 	-- yeah, yeah we're doing this.
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 	if love.timer then love.timer.step() end
-	local minDelta = 1 / Engine.maxFPS
+
+	local targetFPS = love.window.hasFocus() and Engine.maxFPS or Engine.inactiveFPS
 	local nextTime = love.timer.getTime()
+	local minDelta = 1 / targetFPS
 	local curDelta = 0
+
+	local _lastFocus = love.window.hasFocus()
+	Engine.mainWindow.hasFocus = _lastFocus
+
 	while true do
-		if love.timer and Engine.maxFPS > 0 then
+		if love.timer and targetFPS > 0 then
 			local curTime = love.timer.getTime()
 			if nextTime < curTime - minDelta then
 				nextTime = curTime
@@ -133,9 +141,21 @@ local function limitedRun()
 			love.graphics.present()
 		end
 		nextTime = nextTime + minDelta
-		if Engine.maxFPS <= 0 then
+		if targetFPS <= 0 then
 			love.timer.sleep(0.001)
 		end
+
+		if _lastFocus ~= love.window.hasFocus() then
+			_lastFocus = love.window.hasFocus()
+			Engine.mainWindow.hasFocus = _lastFocus
+			if Engine.activeCanvas then
+				if _lastFocus and Engine.activeCanvas.onFocus then Engine.activeCanvas:onFocus()
+				elseif _lastFocus and Engine.activeCanvas.onFocusLost then Engine.activeCanvas:onFocusLost() end
+			end
+		end
+
+		targetFPS = _lastFocus and Engine.maxFPS or Engine.inactiveFPS
+		if minDelta ~= (1 / targetFPS) then minDelta = 1 / targetFPS end
 	end
 end
 
@@ -145,6 +165,7 @@ function Engine.begin(startingCanvas)
 	Engine.mainWindow.reset()
 
 	Engine.loveVer = tostring(love.getVersion())
+
 	love.update = function(delta)
 		dovey.Input.update(delta)
 		dovey.util.Timer.updateAll(delta)
@@ -161,6 +182,7 @@ function Engine.begin(startingCanvas)
 			end
 		end
 	end
+
 	love.draw = function()
 		love.graphics.clear(Engine.clearTint)
 		if Engine.activeCanvas then Engine.activeCanvas:draw() end
@@ -175,6 +197,7 @@ function Engine.begin(startingCanvas)
 			end
 		end
 	end
+
 	love.keypressed = function(key, scancode, isrepeat)
 		dovey.Input.keyDown(key, scancode, isrepeat)
 	end
@@ -184,6 +207,7 @@ function Engine.begin(startingCanvas)
 	love.errorhandler = function(msg)
 		return Engine.errorhandler(msg)
 	end
+
 	if startingCanvas then
 		Engine.changeCanvas(startingCanvas)
 	end
