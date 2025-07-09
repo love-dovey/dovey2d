@@ -1,3 +1,5 @@
+local Caps2D = require("dovey.caps.caps2d")
+
 --- A neat little object that is used as an entry-point for any game.
 ---
 --- This is used as a standalone way of rendering multiple objects to the screen.
@@ -9,7 +11,7 @@ local Canvas = dovey.Object:extend {
 	--- Contains the objects that render to the screen.
 	--- @type table
 	objects = {},
-}
+}:implement(Caps2D)
 
 function Canvas:init()
 	self.objects = {}
@@ -29,6 +31,14 @@ function Canvas:update(delta)
 end
 
 function Canvas:draw()
+	love.graphics.push("all")
+	love.graphics.translate(self.position.x, self.position.y) -- Positioning
+	love.graphics.rotate(self.rotation)                    -- Rotation
+	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
+	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
+	love.graphics.setColor(self.tint)                      -- Colouring
+
 	self:forEach(function(o)
 		if o.draw and o.exists then
 			if getmetatable(o) then
@@ -38,6 +48,7 @@ function Canvas:draw()
 			end
 		end
 	end)
+	love.graphics.pop()
 end
 
 --- Gets rid of anything in the Canvas.
