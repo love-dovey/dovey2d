@@ -6,6 +6,24 @@ table.pack = table.pack or function(...)
 end
 table.unpack = table.unpack or unpack
 
+function table.push(tbl, value)
+	tbl[tbl + 1] = value
+	return tbl
+end
+
+function table.pushFront(tbl, value)
+	table.insert(tbl, 1, value)
+	return tbl
+end
+
+function table.pop(tbl)
+	return table.remove(tbl, tbl[#tbl])
+end
+
+function table.popFront(tbl)
+	return table.remove(tbl, 1)
+end
+
 function table.freeze(tbl)
 	return setmetatable({}, {
 		__index = tbl,

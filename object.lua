@@ -116,6 +116,7 @@ local function extend(from, defaults)
 		end,
 	}
 	setmetatable(derivation, super)
+	derivation.super = super
 	derivation.exists = true
 
 	function derivation:new(...)
