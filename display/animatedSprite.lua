@@ -1,5 +1,6 @@
 local AnimatedSprite = require("dovey.animation.animation")
 local Caps2D = require("dovey.caps.caps2d")
+local Signal = require("dovey.util.signal")
 
 --- Default Animation Framerate.
 --- @type number
@@ -26,6 +27,14 @@ local function makeAnimation(name, texture, frameRate, length)
 		quads = {},                           --- Animation quad info (render frames),
 		frameOffset = DEFAULT_FRAME_OFFSET,   --- Frame offset (important for some formats).
 		offset = { x = 0, y = 0 },            --- Position Offset.
+		getCurrentFrameDuration = function(self)
+			return 1 / self.frameRate
+		end,
+		animationLooped = Signal:new(),
+		animationFinished = Signal:new(),
+		looped = false,
+		loopPoint = 1,
+		frame = 1,
 	}
 end
 
@@ -33,12 +42,10 @@ end
 --- @class AnimatedSprite
 local AnimatedSprite, super = dovey.display.Sprite:extend {
 	_name = "AnimatedSprite",
-	frame = 1,
+	_latestAnimation = "",
 	animations = {},
-	texture = nil
+	texture = nil,
 }:implement(Caps2D)
-
-local _latestAnimation = ""
 
 function AnimatedSprite:init(x, y, texture)
 	self.position = dovey.math.Vec2(x or self.position.x, y or self.position.y)
@@ -48,14 +55,45 @@ end
 
 function AnimatedSprite:update(delta)
 	local anim = self.currentAnimation
-	if anim and not anim.paused and not anim.finished then
-		anim.time = math.min(anim.time + delta * (anim.speed or 1.0), anim.length)
-		if anim.time >= anim.length then
-			-- I need it to loop for now.
-			anim.time = 0.0
-			--anim.finished = true
+	if not anim or anim.paused or anim.finished then return end
+
+	anim.time = (anim.time or 0) + delta * (anim.speed or 1.0)
+
+	local frameDur = anim:getCurrentFrameDuration()
+	while anim.time > frameDur and not anim.finished do
+		anim.time = anim.time - frameDur
+
+		if anim.reversed then
+			if anim.looped and anim.frame == (anim.loopPoint or 1) then
+				anim.frame = #anim.quads
+				if anim.animationLooped then anim.animationLooped:emit(anim.name) end
+			else
+				anim.frame = anim.frame - 1
+			end
+		else
+			if anim.looped and anim.frame == #anim.quads then
+				anim.frame = anim.loopPoint or 1
+				if anim.animationLooped then anim.animationLooped:emit(anim.name) end
+			else
+				anim.frame = anim.frame + 1
+			end
 		end
-		self.frame = math.min(math.floor(anim.time * anim.frameRate + 0.5) + 1, #anim.quads)
+
+		if not anim.looped then
+			if anim.frame < 1 then
+				anim.frame = 1
+				anim.finished = true
+				if anim.animationFinished then anim.animationFinished:emit(anim.name) end
+			elseif anim.frame > #anim.quads then
+				anim.frame = #anim.quads
+				anim.finished = true
+				if anim.animationFinished then anim.animationFinished:emit(anim.name) end
+			end
+		end
+
+		if not anim.finished then
+			frameDur = anim:getCurrentFrameDuration()
+		end
 	end
 end
 
@@ -75,10 +113,10 @@ function AnimatedSprite:draw()
 	local rot = 0
 
 	if curAnim and #curAnim.quads ~= 0 then
-		local frame = curAnim.quads[self.frame]
+		local frame = curAnim.quads[curAnim.frame]
 		if frame then
 			if frame.texture then -- quad specific textures
-				tex = curAnim.quads[self.frame].texture
+				tex = curAnim.quads[curAnim.frame].texture
 			end
 			quad = frame.quad
 
@@ -142,18 +180,19 @@ function AnimatedSprite:findAnimation(name)
 	return self.animations[name]
 end
 
-function AnimatedSprite:play(name, speed, force)
+function AnimatedSprite:play(name, force, speed, reverse)
 	local anim = self:findAnimation(name)
 	if not anim then
 		Log.warn("Animation \"" .. tostring(name) .. "\" doesn't exist!")
 		return
 	end
-	anim.speed = speed or anim.speed
 	self.currentAnimation = anim
-	if force or _latestAnimation ~= name then
+	anim.speed = type(reverse) == "number" and speed or (anim.speed or 1.0)
+	anim.reverse = type(reverse) == "boolean" and reverse or false
+	if force or self._latestAnimation ~= name then
 		self:seek(0.0)
 	end
-	_latestAnimation = name
+	self._latestAnimation = name
 end
 
 function AnimatedSprite:seek(time)
@@ -161,8 +200,15 @@ function AnimatedSprite:seek(time)
 		Log.warn("Tried to seek(), but no animation is set.")
 		return
 	end
-	self.currentAnimation.time = time or 0.0
-	self.currentAnimation.finished = false
+	local curAnim = self.currentAnimation
+	curAnim.time = time or 0.0
+	curAnim.finished = false
+	curAnim.frame = curAnim.loopPoint
+end
+
+-- returns the current animation.
+function AnimatedSprite:peek()
+	return self.currentAnimation
 end
 
 function AnimatedSprite:pause()

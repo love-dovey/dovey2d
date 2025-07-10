@@ -33,9 +33,18 @@ function Object:dispose()
 	--Log.warn("Method `dispose` must be implemented by a subclass.", true)
 end
 
-local function implement(self, feature)
+local function implement(self, feature, ignores)
+	if type(ignores) ~= "table" then ignores = {} end
+
+	local ignoreSet = {}
+	if type(ignores) == "table" then
+		for _, key in ipairs(ignores) do
+			ignoreSet[key] = true
+		end
+	end
+
 	for k, v in pairs(feature or {}) do
-		if self[k] == nil then
+		if self[k] == nil and not ignoreSet[k] then
 			if type(v) == "table" then
 				if v.clone then
 					self[k] = getmetatable(v) and v:clone() or v.clone()
@@ -116,7 +125,6 @@ local function extend(from, defaults)
 		end,
 	}
 	setmetatable(derivation, super)
-	derivation.super = super
 	derivation.exists = true
 
 	function derivation:new(...)
@@ -126,6 +134,7 @@ local function extend(from, defaults)
 			__newindex = devmt.__newindex,
 			__upclass = derivation
 		})
+		current.super = super
 		for k, v in pairs(derivation) do
 			if k ~= "__index" and k ~= "__newindex" and k ~= "__upclass" and k ~= "super" then
 				current[k] = table.copy(v, true)
