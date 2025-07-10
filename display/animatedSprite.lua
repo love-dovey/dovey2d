@@ -71,6 +71,7 @@ function AnimatedSprite:draw()
 	local curAnim = self.currentAnimation
 	local framex, framey = 0, 0
 	local scalx, scaly = 1, 1
+	local offx, offy = 0, 0
 	local rot = 0
 
 	if curAnim and #curAnim.quads ~= 0 then
@@ -89,9 +90,9 @@ function AnimatedSprite:draw()
 			framey = applyDirectionalOffset(frameOffset.y or 0, self.scale.y, scaly < 0)
 			rot = frameOffset.r or 0
 		end
+		offx, offy = curAnim.offset.x or 0, curAnim.offset.y or 0
 	end
 
-	local offx, offy = curAnim.offset.x or 0, curAnim.offset.y or 0
 	local px, py = self.position.x + offx, self.position.y + offy
 	love.graphics.translate(px, py)                                        -- Positioning
 	love.graphics.rotate(self.rotation + rot)                              -- Rotation
@@ -124,6 +125,7 @@ function AnimatedSprite:addAnimation(name, quads, frameRate, length)
 		for i = 1, #quads do animation.quads[i] = quads[i] end
 	end
 	self.animations[name] = animation
+	self:setAnimationOffset(name, 0, 0)
 	return self
 end
 
