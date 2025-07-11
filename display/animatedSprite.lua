@@ -189,7 +189,7 @@ function AnimatedSprite:play(name, force, speed, reverse)
 	self.currentAnimation = anim
 	anim.speed = type(reverse) == "number" and speed or (anim.speed or 1.0)
 	anim.reverse = type(reverse) == "boolean" and reverse or false
-	if force or self._latestAnimation ~= name then
+	if force or self._latestAnimation ~= name or self.currentAnimation.finished then
 		self:seek(0.0)
 	end
 	self._latestAnimation = name
