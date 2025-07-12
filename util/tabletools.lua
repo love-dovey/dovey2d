@@ -33,6 +33,37 @@ function table.freeze(tbl)
 	})
 end
 
+function table.attachgetset(tbl)
+	local function getterF(t, k)
+		local mt = t
+		while mt do
+			local g = rawget(mt, "pget_" .. k)
+			if type(g) == "function" then return g end
+			mt = getmetatable(mt)
+		end
+	end
+	local function setterF(t, k)
+		local mt = t
+		while mt do
+			local g = rawget(mt, "pset_" .. k)
+			if type(g) == "function" then return g end
+			mt = getmetatable(mt)
+		end
+	end
+	return setmetatable(tbl, {
+		__index = function(t, k)
+			local getter = getterF(t, k)
+			if getter then return getter(t) end
+			return rawget(t, k)
+		end,
+		__newindex = function(t, k, v)
+			local setter = setterF(t, k)
+			if setter then return setter(t, v) end
+			rawset(t, k, v)
+		end
+	})
+end
+
 function table.find(tbl, val)
 	for i, v in pairs(tbl) do
 		if v == val then return i end

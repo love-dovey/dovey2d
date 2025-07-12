@@ -42,7 +42,7 @@ function Sprite:loadTexture(tex)
 	elseif type(tex) == "userdata" then
 		self.texture = tex
 	else
-		error("Invalid texture provided to Sprite:loadTexture. Must be a path string or love.Image.")
+		error("Invalid texture provided to Sprite:loadTexture("..tostring(tex).."). Must be a path string or love.Image.")
 	end
 	return self
 end

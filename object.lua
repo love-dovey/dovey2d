@@ -89,49 +89,47 @@ local function extend(from, defaults)
 	--	tbl.__private[k] = v
 	--end
 
-	local devmt = {
-		__index = function(self, key)
-			--if string.starts(key, "__") == true then
-			--	error("Internal value (" .. tostring(key) .. ") cannot be accessed from ANY class.")
-			--	return nil
-			--end
-			local getter = rawget(self, "pget_" .. key)
-			if type(getter) == "function" then
-				print('found getter at ' .. key)
-				return getter()
-			else
+	setmetatable(derivation, super)
+	derivation.exists = true
+
+	local function getterF(t, k)
+		local mt = t
+		while mt do
+			local g = rawget(mt, "pget_" .. k)
+			if type(g) == "function" then return g end
+			mt = getmetatable(mt)
+		end
+	end
+	local function setterF(t, k)
+		local mt = t
+		while mt do
+			local g = rawget(mt, "pset_" .. k)
+			if type(g) == "function" then return g end
+			mt = getmetatable(mt)
+		end
+	end
+
+	function derivation:new(...)
+		local current = {}
+		setmetatable(current, {
+			__index = function(self, key)
+				local getter = getterF(self, key)
+				if getter then return getter(self) end
 				local value = rawget(self, key)
 				if value ~= nil then return value end
 				local upclass = getmetatable(self).__upclass
 				while upclass do
 					local val = rawget(upclass, key)
 					if val ~= nil then return val end
-					upclass = getmetatable(upclass) -- recursion
+					upclass = getmetatable(upclass)
 				end
-			end
-			--Log.warn("Attempt to find property " .. tostring(key) .. ", not found anywhere!", true)
-			return nil
-		end,
-		__newindex = function(self, key, value)
-			--if string.starts(key, "__") == true then
-			--	error("Internal value (" .. tostring(key) .. ") cannot be modified from ANY class.")
-			--	return
-			--end
-			local setter = rawget(self, "pset_" .. key)
-			if type(setter) == "function" then
-				return setter(value)
-			end
-			rawset(self, key, value)
-		end,
-	}
-	setmetatable(derivation, super)
-	derivation.exists = true
-
-	function derivation:new(...)
-		local current = {}
-		setmetatable(current, {
-			__index = devmt.__index,
-			__newindex = devmt.__newindex,
+				return nil
+			end,
+			__newindex = function(tbl, key, value)
+				local setter = setterF(tbl, key)
+				if setter then return setter(tbl, value) end
+				rawset(tbl, key, value)
+			end,
 			__upclass = derivation
 		})
 		current.super = super
