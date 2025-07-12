@@ -7,14 +7,10 @@ local Sprite = dovey.Object:extend {
 	texture = nil, --- Texture to render the Sprite with.
 }:implement(Caps2D)
 
-local function resetTransform(self)
-	return self.position:get(), self.rotation, self.scale:get(), self.origin:get(), self.shear:get()
-end
-
 --- Creates a Sprite (must be added to a Canvas to be displayed).
 --- @param x number		(Initial) X Coordinates to Display the Sprite at.
 --- @param y number		(Initial) Y Coordinates to Display the Sprite at.
---- @param texture love.Texture	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
+--- @param texture string|love.Image	Texture to render the Sprite, you can set it at anytime with Sprite:loadTexture()
 function Sprite:init(x, y, texture)
 	self.position:set(x or self.position.x, y or self.position.y)
 	if texture then self:loadTexture(texture) end
@@ -39,9 +35,15 @@ end
 --- Loads a Texture to The Sprite in order to render it.
 ---
 --- Caching the texture beforehand is recommended if you're not doing it frequently.
---- @param tex String|love.graphics.Image
+--- @param tex string|love.Image
 function Sprite:loadTexture(tex)
-	self.texture = love.graphics.newTexture(tex)
+	if type(tex) == "string" then
+		self.texture = love.graphics.newImage(tex)
+	elseif type(tex) == "userdata" then
+		self.texture = tex
+	else
+		error("Invalid texture provided to Sprite:loadTexture. Must be a path string or love.Image.")
+	end
 	return self
 end
 
