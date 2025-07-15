@@ -1,5 +1,4 @@
 local Sound = {
-	_instanceCount = 0,
 	_playedSources = {
 		--[[
 		format = {
@@ -45,17 +44,16 @@ function Sound.playSound(src, volume, startPoint, loopPoint)
 		table.insert(Sound._playedSources, {
 			looped = loopPoint >= 0.0,
 			startPoint = startPoint or 0.0,
-			loopPoint = loopPoint,
+			startVolume = volume or 1.0,
 			source = audioSrc:clone(),
+			loopPoint = loopPoint,
 		})
 		Sound._playedSources[#Sound._playedSources].source:play()
-		Sound._instanceCount = Sound._instanceCount + 1
 	end
 end
 
-
-function Sound.finishPlaying()
-	Sound._instanceCount = Sound._instanceCount - 1
+function Sound.getPlayingSoundCount()
+	return #Sound._playedSources
 end
 
 function Sound.update(_)
@@ -72,6 +70,8 @@ function Sound.update(_)
 				source:seek(data.startPoint)
 				source:play()
 			else
+				-- call event here when possible, Signal maybe.
+				-- Sound.sourceFinished:emit(source, data)
 				if source and source.release then source:release() end
 				table.remove(Sound._playedSources, _)
 			end
