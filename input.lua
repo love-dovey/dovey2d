@@ -25,12 +25,20 @@ function Input.update(_)
 	released = {}
 end
 
-function Input.keyDown(_, scancode, _)
-	Input.onKeyDown:emit(true, scancode, Input.getActionFromKey(scancode))
+function Input.keyDown(key, scancode, isrepeat)
+	local action = Input.getActionFromKey(scancode)
+	Input.onKeyDown:emit(true, scancode, action)
+	if Engine.activeCanvas and Engine.activeCanvas.onKeyPressed then
+		Engine.activeCanvas:onKeyPressed(key, action, isrepeat)
+	end
 end
 
-function Input.keyUp(_, scancode, _)
-	Input.onKeyUp:emit(false, scancode, Input.getActionFromKey(scancode))
+function Input.keyUp(key, scancode, isrepeat)
+	local action = Input.getActionFromKey(scancode)
+	Input.onKeyUp:emit(false, scancode, action)
+	if Engine.activeCanvas and Engine.activeCanvas.onKeyReleased then
+		Engine.activeCanvas:onKeyReleased(key, action, isrepeat)
+	end
 end
 
 --- Checks if one of the action keys is being held down.

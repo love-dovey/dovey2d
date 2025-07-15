@@ -11,6 +11,7 @@ dovey = {
 	animation = {},
 	display = {},
 	math = {},
+	sound = {},
 	util = {},
 }
 
@@ -28,6 +29,7 @@ dovey.display.TintRectangle = require("dovey.display.tintRectangle")
 dovey.display.ProgressShape = require("dovey.display.progressShape")
 dovey.display.AnimatedSprite = require("dovey.display.animatedSprite")
 dovey.display.TextDisplay = require("dovey.display.textDisplay")
+dovey.sound.Sound = require("dovey.sound.sound")
 
 -- make it read-only to avoid issues with people overriding it by accident.
 dovey = table.freeze(dovey)
@@ -169,6 +171,7 @@ function Engine.begin(startingCanvas)
 	love.update = function(delta)
 		dovey.Input.update(delta)
 		dovey.util.Timer.updateAll(delta)
+		dovey.sound.Sound.update(delta)
 		--dovey.util.Tween.updateAll(delta)
 		if Engine.activeCanvas then Engine.activeCanvas:update(delta) end
 		for _, v in pairs(Engine.layeredObjects) do
