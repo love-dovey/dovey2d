@@ -60,9 +60,17 @@ function Signal:emit(...)
 		if func then
 			func(...)
 		else
-			table.remove(self.func, _)
+			table.remove(self.funcs, _)
 		end
 	end
+end
+
+function Signal:dispose()
+	for i = 1, #self.funcs do
+		local fun = self.funcs[i]
+		if fun then fun = nil end
+	end
+	self.funcs = nil
 end
 
 return Signal

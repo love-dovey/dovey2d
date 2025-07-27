@@ -7,13 +7,23 @@ local asciiCodes = {
 }
 local _warned = {}
 local _errored = {}
-local function printRich(msg, level)
-	local isTbl = type(msg) == "table"
-	msg = isTbl and string.table(msg) or tostring(msg)
+
+local function formatMessage(...)
+	local args = {...}
+	local parts = {}
+	for i = 1, select('#', ...) do
+		local v = args[i]
+		table.insert(parts, type(v) == "table" and string.table(msg) or tostring(v))
+	end
+	return table.concat(parts, "\t")
+end
+
+local function printRich(level, ...)
+	local msg = formatMessage(...)
 	level = LogLevel.resolve(level)
-	local info = debug.getinfo(2, "Sl")
+	local info = debug.getinfo(3, "Sl")  -- Go one level deeper
 	local line = info.short_src .. ":" .. info.currentline
-	if arg[#arg] == "-subl" then -- no colours in sublime text.
+	if arg[#arg] == "-subl" then
 		io.stderr:write("[" .. (Engine.engineName or "dövey") ..
 			":" .. LogLevel.str(level) .. "] " .. msg .. " (at: " .. line .. ")\n")
 		return
@@ -34,29 +44,35 @@ end
 
 --- Class for logging messages to standard output.
 --- @type table
-local Log = { _name = "Log" }
+local Log = {
+	_name = "Log",
+	nativePrint = print
+}
 
-function Log.info(msg)
-	return printRich(msg, LogLevel.INFO)
+function Log.info(...)
+	printRich(LogLevel.INFO, ...)
 end
 
-function Log.warn(msg, once)
+function Log.warn(...)
+	local once = select(1, ...) == true
+	local msg = formatMessage(select(once and 2 or 1, ...))
 	if once then
-		if _warned[msg] == true then return end
+		if _warned[msg] then return end
 		_warned[msg] = true
 	end
-	return printRich(msg, LogLevel.WARN)
+	printRich(LogLevel.WARN, msg)
 end
 
-function Log.error(msg, once)
+function Log.error(...)
+	local once = select(1, ...) == true
+	local msg = formatMessage(select(once and 2 or 1, ...))
 	if once then
-		if _errored[msg] == true then return end
+		if _errored[msg] then return end
 		_errored[msg] = true
 	end
-	return printRich(msg, LogLevel.ERROR)
+	printRich(LogLevel.ERROR, msg)
 end
 
-luaPrint = print
 print = Log.info
 
 return Log

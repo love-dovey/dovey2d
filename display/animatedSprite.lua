@@ -97,6 +97,24 @@ function AnimatedSprite:update(delta)
 	end
 end
 
+function AnimatedSprite:dispose()
+	for i = 1, #self.animations do
+		local anim = self.animations[i]
+		if anim.animationFinished then anim.animationFinished:dispose() end
+		if anim.animationLooped then anim.animationLooped:dispose() end
+		if anim.texture and anim.texture.release then anim.texture:release() end
+		-- beating a dead horse:
+		anim.animationFinished = nil
+		anim.animationLooped = nil
+		anim.texture = nil
+		anim = nil
+	end
+	if self.texture and self.texture.release then
+		self.texture:release()
+	end
+	self.texture = nil
+end
+
 local function applyDirectionalOffset(off, scal, flip)
 	return off * ((scal >= 0) and 1 or -1) * (flip and -1 or 1)
 end

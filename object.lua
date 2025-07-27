@@ -18,6 +18,19 @@ function Object:initFields(fields)
 	end
 end
 
+--- Binds a method name to the object, returning a callable that retains self.
+--- @param methodName string
+--- @return function
+function Object:bind(methodName)
+	local method = self[methodName]
+	if type(method) ~= "function" then
+		error(("Cannot bind non-function '%s' from %s"):format(tostring(methodName), tostring(self:type())), 2)
+	end
+	return function(...)
+		return method(self, ...)
+	end
+end
+
 --- Happens every frame.
 function Object:update(delta)
 	--Log.warn("Method `update` must be implemented by a subclass.", true)

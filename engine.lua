@@ -151,8 +151,11 @@ local function limitedRun()
 			_lastFocus = love.window.hasFocus()
 			Engine.mainWindow.hasFocus = _lastFocus
 			if Engine.activeCanvas then
-				if _lastFocus and Engine.activeCanvas.onFocus then Engine.activeCanvas:onFocus()
-				elseif _lastFocus and Engine.activeCanvas.onFocusLost then Engine.activeCanvas:onFocusLost() end
+				if _lastFocus and Engine.activeCanvas.onFocus then
+					Engine.activeCanvas:onFocus()
+				elseif _lastFocus and Engine.activeCanvas.onFocusLost then
+					Engine.activeCanvas:onFocusLost()
+				end
 			end
 		end
 
@@ -216,7 +219,7 @@ function Engine.begin(startingCanvas)
 	end
 end
 
-local function _makeCanvas(input)
+local function _makeCanvas(input, args)
 	local ___ = input
 	if type(input) == "string" then ___ = require(input) end
 	--elseif Canvas:is(next) then ___ = next end
@@ -225,17 +228,17 @@ local function _makeCanvas(input)
 		return
 	end
 	if ___ and ___.new then
-		return ___:new()
+		return ___:new(table.unpack(args))
 	end
 	return nil
 end
 
-function Engine.changeCanvas(next)
+function Engine.changeCanvas(next, ...)
 	-- emit a signal before the previous canvas gets deleted and after we switch to a new one.
 	if Engine.activeCanvas and Engine.activeCanvas.dispose then
 		Engine.activeCanvas:dispose()
 	end
-	Engine.activeCanvas = _makeCanvas(next)
+	Engine.activeCanvas = _makeCanvas(next, { ... })
 end
 
 local _layerIndexes = {}

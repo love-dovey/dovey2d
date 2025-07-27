@@ -76,7 +76,7 @@ function Canvas:dispose()
 		self.objects[k] = nil
 		count = count + 1
 	end
-	print(string.format("Canvas(%s) disposed %i objects cleared", self._name, count))
+	--print(string.format("Canvas(%s) disposed %i objects cleared", self._name, count))
 end
 
 --- Adds an object to the Canvas.

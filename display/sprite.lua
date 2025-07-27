@@ -47,6 +47,13 @@ function Sprite:loadTexture(tex)
 	return self
 end
 
+function Sprite:dispose()
+	if self.texture and self.texture.release then
+		self.texture:release()
+	end
+	self.texture = nil
+end
+
 --- Returns the dimensions (width and height) of the Sprite's texture.
 function Sprite:getDimensions()
 	local w, h = 1, 1
