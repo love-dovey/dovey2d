@@ -62,7 +62,8 @@ function TextDisplay:draw()
 	love.graphics.rotate(self.rotation)                    -- Rotation
 	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-	love.graphics.translate(-self.origin.x, -self.origin.y) -- Origin
+	local marginX, marginY = self:getMarginOffset(self.margin)
+	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
 	love.graphics.setFont(self.font)
 
 	self:drawCurrentText(self.text, self.tint, self.stroke)

@@ -113,3 +113,8 @@ function table.has(tbl, element)
 	end
 	return false
 end
+
+---
+--- Shortcut to table.has
+---
+function table.contains(tbl, element) return table.has(tbl, element) end

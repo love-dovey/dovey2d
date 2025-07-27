@@ -30,13 +30,29 @@ function Canvas:update(delta)
 	end)
 end
 
+function Canvas:getDimensions()
+	local w, h = 1, 1
+	-- this should TECHNICALLY be fine?
+	for _, v in pairs(self.objects) do
+		if v and v.getDimensions then
+			-- don't do anything if its tiny.
+			local objW, objH = v:getDimensions()
+			if objW > 1 then w = w + objW end
+			if objH > 1 then h = h + objH end
+		end
+	end
+	return w, h
+end
+
 function Canvas:draw()
+	if self.visible == false then return end
 	love.graphics.push("all")
 	love.graphics.translate(self.position.x, self.position.y) -- Positioning
 	love.graphics.rotate(self.rotation)                    -- Rotation
 	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
+	local marginX, marginY = self:getMarginOffset(self.margin, self:getDimensions())
+	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
 	love.graphics.setColor(self.tint)                      -- Colouring
 
 	self:forEach(function(o)

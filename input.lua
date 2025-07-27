@@ -110,6 +110,7 @@ function Input.addAction(actionName, key)
 	else
 		error("Key must be a string or table of strings!")
 	end
+	--print(actionName, key)
 end
 
 --- Shortcut to Input.addAction

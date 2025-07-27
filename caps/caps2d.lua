@@ -1,3 +1,7 @@
+CenterMargin = Enum(
+	"CenterMargin", "TOP_LEFT", "TOP_CENTER", "TOP_RIGHT",
+	"CENTER_LEFT", "CENTER", "CENTER_RIGHT",
+	"BOTTOM_LEFT", "BOTTOM_CENTER", "BOTTOM_RIGHT")
 --- Basic 2D Capabilities
 --- @type table
 local Caps2D = {
@@ -10,6 +14,9 @@ local Caps2D = {
 	--- Tranformation origin
 	--- @class Vec2(x, y)
 	origin = dovey.math.Vec2(0, 0),
+	--- Where should origin affect the object.
+	--- @enum CenterMargin
+	margin = CenterMargin.TOP_LEFT,
 	--- Skew/Shear Factor.
 	--- @class Vec2(0, 0)
 	shear = dovey.math.Vec2(0, 0),
@@ -97,6 +104,39 @@ function Caps2D:setShear(x, y)
 	x, y = x or 0, y or 0
 	self.shear:set(self.shear.x + x, self.shear.y + y)
 	return self
+end
+
+--- Returns the dimensions (width and height) of this 2D Object.
+---
+--- Default is (1, 1), Please override.
+--- @return number, number
+function Caps2D:getDimensions()
+	return 1, 1
+end
+
+--- Returns margin offsets based on the given enum value (or self.margin).
+--- @return number, number
+function Caps2D:getMarginOffset(marginType, width, height)
+	local x, y = 0, 0
+	if marginType == CenterMargin.TOP_CENTER or 
+	   marginType == CenterMargin.CENTER or 
+	   marginType == CenterMargin.BOTTOM_CENTER then
+		x = width / 2
+	elseif marginType == CenterMargin.TOP_RIGHT or 
+		   marginType == CenterMargin.CENTER_RIGHT or 
+		   marginType == CenterMargin.BOTTOM_RIGHT then
+		x = width
+	end
+	if marginType == CenterMargin.CENTER_LEFT or 
+	   marginType == CenterMargin.CENTER or 
+	   marginType == CenterMargin.CENTER_RIGHT then
+		y = height / 2
+	elseif marginType == CenterMargin.BOTTOM_LEFT or 
+		   marginType == CenterMargin.BOTTOM_CENTER or 
+		   marginType == CenterMargin.BOTTOM_RIGHT then
+		y = height
+	end
+	return x, y
 end
 
 return Caps2D

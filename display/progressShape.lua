@@ -72,7 +72,9 @@ function ProgressShape:draw()
 	love.graphics.rotate(self.rotation)                    -- Rotation
 	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
 	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-	love.graphics.translate(-self.origin.x, -self.origin.y) -- Pivot Offset
+
+	local marginX, marginY = self:getMarginOffset(self.margin, self.size.x, self.size.y)
+	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
 
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)

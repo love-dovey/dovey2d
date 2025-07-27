@@ -115,6 +115,14 @@ function AnimatedSprite:dispose()
 	self.texture = nil
 end
 
+function AnimatedSprite:getDimensions()
+	local w, h = 1, 1
+	if self.texture then
+		w, h = self.texture:getDimensions()
+	end
+	return w, h
+end
+
 local function applyDirectionalOffset(off, scal, flip)
 	return off * ((scal >= 0) and 1 or -1) * (flip and -1 or 1)
 end
@@ -125,8 +133,9 @@ function AnimatedSprite:draw()
 	local quad = nil
 	local tex = self.texture
 	local curAnim = self.currentAnimation
-	local framex, framey = 0, 0
-	local scalx, scaly = 1, 1
+	local frameW, frameH = self:getDimensions()
+	local frameX, frameY = 0, 0
+	local frameScalX, frameScalY = 1, 1
 	local offx, offy = 0, 0
 	local rot = 0
 
@@ -134,27 +143,36 @@ function AnimatedSprite:draw()
 		local frame = curAnim.quads[curAnim.frame]
 		if frame then
 			if frame.texture then -- quad specific textures
-				tex = curAnim.quads[curAnim.frame].texture
+				tex = frame.texture
 			end
 			quad = frame.quad
+			if quad then
+				local _, _, w, h = quad:getViewport()
+				frameW, frameH = w, h
+			end
 
 			local frameOffset = frame.frameOffset or DEFAULT_FRAME_OFFSET
 			if frame.scale then
-				scalx, scaly = frame.scale.x, frame.scale.y
+				frameScalX, frameScalY = frame.scale.x, frame.scale.y
 			end
-			framex = applyDirectionalOffset(frameOffset.x or 0, self.scale.x, scalx < 0)
-			framey = applyDirectionalOffset(frameOffset.y or 0, self.scale.y, scaly < 0)
+			frameX = applyDirectionalOffset(frameOffset.x or 0, self.scale.x, frameScalX < 0)
+			frameY = applyDirectionalOffset(frameOffset.y or 0, self.scale.y, frameScalY < 0)
 			rot = frameOffset.r or 0
 		end
 		offx, offy = curAnim.offset.x or 0, curAnim.offset.y or 0
 	end
 
 	local px, py = self.position.x + offx, self.position.y + offy
-	love.graphics.translate(px, py)                                        -- Positioning
-	love.graphics.rotate(self.rotation + rot)                              -- Rotation
-	love.graphics.shear(self.shear.x, self.shear.y)                        -- Skewing
-	love.graphics.scale(self.scale.x * scalx, self.scale.y * scaly)        -- Scale
-	love.graphics.translate(-self.origin.x - framex, -self.origin.y - framey) -- Pivot + Frame Offset
+	love.graphics.translate(px, py)                                        			 -- Positioning
+	love.graphics.rotate(self.rotation + rot)                              			 -- Rotation
+	love.graphics.scale(self.scale.x * frameScalX, self.scale.y * frameScalY)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)                        			 -- Skewing
+
+	local marginX, marginY = self:getMarginOffset(self.margin, frameW, frameH)
+	love.graphics.translate(
+		-(marginX + self.origin.x) - frameX,
+		-(marginY + self.origin.y) - frameY
+	) -- Pivot + Frame Offset
 	love.graphics.setColor(self.tint)                                      -- Colouring
 
 	if tex then
