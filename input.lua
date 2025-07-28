@@ -103,6 +103,10 @@ end
 --- @param actionName string		Self-explanatory.
 --- @param key string|table 		A keycode string or table with keycodes.
 function Input.addAction(actionName, key)
+	if Input.actions[actionName] == nil then
+		Input.actions[actionName] = {}
+	end
+
 	if type(key) == "string" then
 		table.insert(Input.actions[actionName], key)
 	elseif type(key) == "table" then
