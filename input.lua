@@ -25,19 +25,23 @@ function Input.update(_)
 	released = {}
 end
 
-function Input.keyDown(key, scancode, isrepeat)
-	local action = Input.getActionFromKey(scancode)
-	Input.onKeyDown:emit(true, scancode, action)
-	if Engine.activeCanvas and Engine.activeCanvas.onKeyPressed then
-		Engine.activeCanvas:onKeyPressed(key, action, isrepeat)
+function Input.keyUp(key, scancode, isrepeat)
+	local actions = Input.getActionFromKey(scancode)
+	for _, action in ipairs(actions) do
+		Input.onKeyUp:emit(false, scancode, action)
+		if Engine.activeCanvas and Engine.activeCanvas.onKeyReleased then
+			Engine.activeCanvas:onKeyReleased(key, action, isrepeat)
+		end
 	end
 end
 
-function Input.keyUp(key, scancode, isrepeat)
-	local action = Input.getActionFromKey(scancode)
-	Input.onKeyUp:emit(false, scancode, action)
-	if Engine.activeCanvas and Engine.activeCanvas.onKeyReleased then
-		Engine.activeCanvas:onKeyReleased(key, action, isrepeat)
+function Input.keyDown(key, scancode, isrepeat)
+	local actions = Input.getActionFromKey(scancode)
+	for _, action in ipairs(actions) do
+		Input.onKeyDown:emit(true, scancode, action)
+		if Engine.activeCanvas and Engine.activeCanvas.onKeyPressed then
+			Engine.activeCanvas:onKeyPressed(key, action, isrepeat)
+		end
 	end
 end
 
@@ -88,13 +92,9 @@ end
 --- @param negativeAction string The action to return -1 for
 --- @return number -1, 0, or 1 depending on which action is pressed
 function Input.axis(positiveAction, negativeAction)
-	if Input.isDown(positiveAction) then
-		return 1
-	elseif Input.isDown(negativeAction) then
-		return -1
-	else
-		return 0
-	end
+	if Input.isDown(positiveAction) then return 1
+	elseif Input.isDown(negativeAction) then return -1
+	else return 0 end
 end
 
 --- Adds a new action to the actions table.
@@ -134,12 +134,16 @@ function Input.hasAction(actionName)
 end
 
 function Input.getActionFromKey(key)
-	for __, actions in pairs(Input.actions) do
-		for i = 1, #actions do
-			if key == actions[i] then return __ end
+	local matches = {}
+	for actionName, keys in pairs(Input.actions) do
+		for i = 1, #keys do
+			if key == keys[i] then
+				table.insert(matches, actionName)
+			end
 		end
 	end
-	return UNKNOWN_ACTION
+	if #matches > 0 then return matches
+	else return { UNKNOWN_ACTION } end
 end
 
 return Input
