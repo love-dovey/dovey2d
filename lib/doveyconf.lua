@@ -5,15 +5,12 @@ local NO_QUOTE_PATTERN = "[\"']"
 local function first(str, pat) return string.sub(str, 1, #pat) == pat end
 local function last(str, pat) return string.sub(str, #str - #pat + 1, #str) == pat end
 local function trim(str) return string.match(str, TRIM_PATTERN) end
-
-function split(x, delimiter, seen)
-	if #x == 0 then return {} end
-	local function gsplit(s)
-		table.insert(out, s)
+local function split(str, sep)
+	local result = {}
+	for part in str:gmatch("([^" .. sep .. "]+)") do
+		table.insert(result, trim(part))
 	end
-	out = seen or {}
-	x = string.gsub(x, (delimiter and delimiter ~= "") and "([^" .. delimiter .. "]+)" or ".", gsplit)
-	return out
+	return result
 end
 
 local function tovalue(x)
@@ -26,16 +23,14 @@ local function tovalue(x)
 	elseif x == "false" then
 		return false
 	elseif first(x, "[") and last(x, "]") then
-		-- Handles plain arrays (key=[value1, value2, value3])
-		local xm = string.gsub(x, "[%[%]]", "")
-		local tbl = split(xm, ",") or {}
+		local inner = x:sub(2, -2)
+		if inner == "" then return {} end
+		local tbl = split(inner, ",")
 		local t = {}
-		for _, valueString in pairs(tbl) do
-			table.insert(t, tovalue(valueString))
+		for _, v in ipairs(tbl) do
+			table.insert(t, tovalue(v))
 		end
 		return t
-	elseif x == nil then
-		return "nil"
 	end
 	return x
 end
@@ -53,9 +48,9 @@ local function stripInlineComment(x)
 		x = x:sub(1, cstart - 1)
 	end
 	if comment then
-		return comment
+		return comment, cstart
 	end
-	return nil
+	return nil, -1
 end
 
 local doveyconf = {
@@ -115,19 +110,26 @@ function doveyconf.parse(content)
 				end
 			end
 		elseif trimmed:find("=") then
-			local keyv = split(trimmed, "=")
-			local k = trim(keyv[1])
-			local v = trim(keyv[2] or "")
-			local inlinecomment = stripInlineComment(keyv[2] or "")
-			if inlinecomment ~= nil then
+			local rawLine = trimmed
+			local inlinecomment, commentIndex = stripInlineComment(rawLine)
+			if inlinecomment then
 				if not file.comments then file.comments = {} end
-				table.insert(file.comments, stripInlineComment(keyv[2] or ""))
+				table.insert(file.comments, inlinecomment)
 			end
+			if commentIndex > -1 then
+				rawLine = rawLine:sub(1, commentIndex - 1)
+			end
+			local eqPos = rawLine:find("=")
+			if not eqPos then
+				error(string.format("[line %d] Syntax error: missing '=' in line '%s'", i, trimmed))
+			end
+			local k = trim(rawLine:sub(1, eqPos - 1))
+			local v = trim(rawLine:sub(eqPos + 1))
 			-- trim away comments.
 			v = v:match("([^#;]+)") or v
 			v = trim(v:gsub("//.*", ""))
 			-- throw errors
-			if k == "" or #keyv == 1 then
+			if k == "" then
 				error(string.format("[line %d] Syntax error: empty key in line '%s'", i, trimmed))
 			end
 			if v == "" and trimmed:find("=") then

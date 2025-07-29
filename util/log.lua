@@ -13,7 +13,7 @@ local function formatMessage(...)
 	local parts = {}
 	for i = 1, select('#', ...) do
 		local v = args[i]
-		table.insert(parts, type(v) == "table" and string.table(msg) or tostring(v))
+		table.insert(parts, type(v) == "table" and string.table(v) or tostring(v))
 	end
 	return table.concat(parts, "\t")
 end
