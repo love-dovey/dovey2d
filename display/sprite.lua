@@ -31,7 +31,7 @@ end
 --- @param tex string|love.Image
 function Sprite:loadTexture(tex)
 	if type(tex) == "string" then
-		self.texture = love.graphics.newImage(tex)
+		self.texture = dovey.Assets.getTexture(tex)
 	elseif type(tex) == "userdata" then
 		self.texture = tex
 	else
@@ -41,9 +41,7 @@ function Sprite:loadTexture(tex)
 end
 
 function Sprite:dispose()
-	if self.texture and self.texture.release then
-		self.texture:release()
-	end
+	dovey.Assets.releaseResource(self.texture)
 	self.texture = nil
 end
 

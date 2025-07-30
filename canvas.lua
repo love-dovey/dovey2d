@@ -74,14 +74,14 @@ function Canvas:dispose()
 				count = count + 1
 			else
 				for i = 1, #v do
-					if v.release then v:release() end
+					if v.release then dovey.Assets.releaseResource(v) end
 					if v ~= nil then v[i] = nil end
 					count = count + 1
 				end
 			end
 		end
 		local nv = self.objects[k]
-		if self.objects[k].release then self.objects[k]:release() end
+		if self.objects[k].release then dovey.Assets.releaseResource(self.objects[k]) end
 		self.objects[k] = nil
 		count = count + 1
 	end

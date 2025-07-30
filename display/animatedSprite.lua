@@ -102,16 +102,14 @@ function AnimatedSprite:dispose()
 		local anim = self.animations[i]
 		if anim.animationFinished then anim.animationFinished:dispose() end
 		if anim.animationLooped then anim.animationLooped:dispose() end
-		if anim.texture and anim.texture.release then anim.texture:release() end
+		if anim.texture and anim.texture.release then dovey.Assets.releaseResource(anim.texture) end
 		-- beating a dead horse:
 		anim.animationFinished = nil
 		anim.animationLooped = nil
 		anim.texture = nil
 		anim = nil
 	end
-	if self.texture and self.texture.release then
-		self.texture:release()
-	end
+	self.texture = dovey.Assets.releaseResource(self.texture)
 	self.texture = nil
 end
 

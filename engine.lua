@@ -15,6 +15,7 @@ dovey = {
 	util = {},
 }
 
+dovey.Assets = require("dovey.assets")
 dovey.Object = require("dovey.object")
 dovey.math.Rect2 = require("dovey.math.rect2")
 dovey.math.Vec2 = require("dovey.math.vec2")
