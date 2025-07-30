@@ -111,13 +111,24 @@ function Input.wasKeyUp(key)
 	return false
 end
 
+--- Returns a value between -1 and 1 based on two opposing actions (if held)
+--- @param positiveAction string The action to return 1 for
+--- @param negativeAction string The action to return -1 for
+--- @return number -1, 0, or 1 depending on which action is pressed
+function Input.axisHeld(positiveAction, negativeAction)
+	if Input.isDown(positiveAction) then return 1
+	elseif Input.isDown(negativeAction) then return -1
+	else return 0 end
+end
+
+
 --- Returns a value between -1 and 1 based on two opposing actions
 --- @param positiveAction string The action to return 1 for
 --- @param negativeAction string The action to return -1 for
 --- @return number -1, 0, or 1 depending on which action is pressed
 function Input.axis(positiveAction, negativeAction)
-	if Input.isDown(positiveAction) then return 1
-	elseif Input.isDown(negativeAction) then return -1
+	if Input.wasDown(positiveAction) then return 1
+	elseif Input.wasDown(negativeAction) then return -1
 	else return 0 end
 end
 
