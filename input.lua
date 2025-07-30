@@ -104,7 +104,7 @@ end
 --- Checks if one keycode was released in the current frame.
 --- @return boolean true/false depending on if the key was released in this frame.
 function Input.wasKeyUp(key)
-	if not love.keyboard.isDown(key) and not released[key] then
+	if not love.keyboard.isDown(key) and not keyReleased[key] then
 		keyReleased[key] = { keyCode = key }
 		return true
 	end
