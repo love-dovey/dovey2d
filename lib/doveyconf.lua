@@ -7,7 +7,7 @@ local function last(str, pat) return string.sub(str, #str - #pat + 1, #str) == p
 local function trim(str) return string.match(str, TRIM_PATTERN) end
 local function split(str, sep)
 	local result = {}
-	for part in str:gmatch("([^" .. sep .. "]+)") do
+	for part in string.gmatch(str, "([^" .. sep .. "]+)") do
 		table.insert(result, trim(part))
 	end
 	return result
@@ -15,7 +15,7 @@ end
 
 local function tovalue(x)
 	x = trim(string.gsub(string.gsub(x, "\"", ""), "'", ""))
-	x = x:match("^%s*(.-)%s*$")
+	x = string.match(x, "^%s*(.-)%s*$")
 	if tonumber(x) then
 		return tonumber(x)
 	elseif x == "true" then

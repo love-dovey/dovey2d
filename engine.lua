@@ -107,8 +107,19 @@ local function limitedRun()
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 	if love.timer then love.timer.step() end
 
-	local targetFPS = love.window.hasFocus() and Engine.maxFPS or Engine.inactiveFPS
-	local nextTime = love.timer.getTime()
+    local getTime = love.timer.getTime
+    local sleep = love.timer.sleep
+    local hasFocus = love.window.hasFocus
+    local eventPump = love.event.pump
+    local eventPoll = love.event.poll
+    local handlers = love.handlers
+    local timerStep = love.timer.step
+    local graphicsPresent = love.graphics.present
+    local graphicsIsActive = love.graphics.isActive
+    local graphicsOrigin = love.graphics.origin
+
+	local targetFPS = hasFocus() and Engine.maxFPS or Engine.inactiveFPS
+	local nextTime = getTime()
 	local minDelta = 1 / targetFPS
 	local curDelta = 0
 
@@ -122,46 +133,54 @@ local function limitedRun()
 				nextTime = curTime
 			end
 			if nextTime > curTime then
-				love.timer.sleep(nextTime - curTime)
+				sleep(nextTime - curTime)
 			end
 		end
 		if love.event then
-			love.event.pump()
-			for e, a, b, c, d in love.event.poll() do
+			eventPump	()
+			for e, a, b, c, d in eventPoll() do
 				if e == "quit" and (not love.quit or not love.quit()) then
 					return a or 0
 				end
-				local handler = love.handlers[e]
+				local handler = handlers[e]
 				if handler then handler(e, a, b, c, d) end
 			end
 		end
-		if love.timer then curDelta = love.timer.step() end
+		if love.timer then curDelta = timerStep() end
 		if love.update then love.update(curDelta) end
-		if love.graphics and love.graphics.isActive() then
-			love.graphics.origin()
+		if love.graphics and graphicsIsActive() then
+			graphicsOrigin()
 			--love.graphics.clear(Engine.clearTint)
 			if love.draw then love.draw() end
-			love.graphics.present()
-		end
-		nextTime = nextTime + minDelta
-		if targetFPS <= 0 then
+			graphicsPresent()
+		elseif targetFPS > 0 then
 			love.timer.sleep(0.001)
 		end
+		nextTime = nextTime + minDelta
 
-		if _lastFocus ~= love.window.hasFocus() then
-			_lastFocus = love.window.hasFocus()
-			Engine.mainWindow.hasFocus = _lastFocus
+		local currentFocus = hasFocus()
+		if _lastFocus ~= currentFocus then
+			_lastFocus = currentFocus
+			Engine.mainWindow.hasFocus = currentFocus
 			if Engine.activeCanvas then
-				if _lastFocus and Engine.activeCanvas.onFocus then
-					Engine.activeCanvas:onFocus()
-				elseif _lastFocus and Engine.activeCanvas.onFocusLost then
-					Engine.activeCanvas:onFocusLost()
+				if _lastFocus then
+					if Engine.activeCanvas.onFocus then
+						Engine.activeCanvas:onFocus()
+					end
+				else
+					if Engine.activeCanvas.onFocusLost then
+						Engine.activeCanvas:onFocusLost()
+					end
 				end
 			end
 		end
 
-		targetFPS = _lastFocus and Engine.maxFPS or Engine.inactiveFPS
-		if minDelta ~= (1 / targetFPS) then minDelta = 1 / targetFPS end
+        targetFPS = currentFocus and Engine.maxFPS or Engine.inactiveFPS
+        local newMinDelta = 1 / targetFPS
+        if minDelta ~= newMinDelta then 
+            minDelta = newMinDelta 
+            nextTime = getTime() + minDelta
+        end
 	end
 end
 
