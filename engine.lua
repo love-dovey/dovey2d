@@ -219,16 +219,21 @@ function Engine.begin(startingCanvas)
 	end
 end
 
-local function _makeCanvas(input, args)
-	local ___ = input
-	if type(input) == "string" then ___ = require(input) end
-	--elseif Canvas:is(next) then ___ = next end
-	if type(___) ~= "table" or not getmetatable(___) then
-		error("Unable to switch to Canvas " .. tostring(input) .. ", make sure it's a Metatable/Canvas object.")
+local function _makeCanvas(canvasInput, args)
+	-- avoid issues with using slashes instead of dots for file paths.
+	canvasInput = canvasInput:gsub("/", ".")
+	local canvasObject = getmetatable(canvasInput)
+	if type(canvasInput) == "string" then
+		canvasObject = require(canvasInput)
+	end
+	if not canvasObject or type(canvasObject) ~= "table" then
+		local msg = "Unable to switch to Canvas %s(Type:%s), make sure it's a Metatable/Canvas object."
+		local _name, _type = tostring(canvasInput), type(canvasObject)
+		error(string.format(msg, _name, _type))
 		return
 	end
-	if ___ and ___.new then
-		return ___:new(table.unpack(args))
+	if canvasObject and canvasObject.new then
+		return canvasObject:new(table.unpack(args))
 	end
 	return nil
 end

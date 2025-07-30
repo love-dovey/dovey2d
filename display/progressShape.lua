@@ -67,21 +67,12 @@ function ProgressShape:isEmpty() return self.current <= self.minimum end
 function ProgressShape:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
-
-	love.graphics.translate(self.position.x, self.position.y) -- Positioning
-	love.graphics.rotate(self.rotation)                    -- Rotation
-	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-
-	local marginX, marginY = self:getMarginOffset(self.margin, self.size.x, self.size.y)
-	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
-
+	self:apply2DTransform()
 	if border.thickness > 0 and border.tint[4] > 0 then
 		love.graphics.setColor(border.tint)
 		love.graphics.setLineWidth(border.thickness or 1)
 		love.graphics.rectangle("line", 0, 0, self.size.x, self.size.y)
 	end
-
 	love.graphics.setColor(tints[1] or _defaultTint[1])                         -- Draw Background
 	love.graphics.rectangle("fill", 0, 0, self.size.x, self.size.y)
 	local sizeProg = (self.current - self.minimum) / (self.maximum - self.minimum) -- I think, i hope.

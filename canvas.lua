@@ -47,14 +47,7 @@ end
 function Canvas:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
-	love.graphics.translate(self.position.x, self.position.y) -- Positioning
-	love.graphics.rotate(self.rotation)                    -- Rotation
-	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-	local marginX, marginY = self:getMarginOffset(self.margin, self:getDimensions())
-	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
-	love.graphics.setColor(self.tint)                      -- Colouring
-
+	self:apply2DTransform()
 	self:forEach(function(o)
 		if o.draw and o.exists then
 			if getmetatable(o) then

@@ -19,10 +19,14 @@ local Input = {
 }
 local pressed = {}
 local released = {}
+local keyPressed = {}
+local keyReleased = {}
 
 function Input.update(_)
 	pressed = {}
 	released = {}
+	keyPressed = {}
+	keyReleased = {}
 end
 
 function Input.keyUp(key, scancode, isrepeat)
@@ -83,6 +87,26 @@ function Input.wasUp(actionName)
 				return true
 			end
 		end
+	end
+	return false
+end
+
+--- Checks if one keycode was pressed in the current frame.
+--- @return boolean true/false depending on if the key was pressed in this frame.
+function Input.wasKeyDown(key)
+	if love.keyboard.isDown(key) and not keyPressed[key] then
+		keyPressed[key] = { keyCode = key }
+		return true
+	end
+	return false
+end
+
+--- Checks if one keycode was released in the current frame.
+--- @return boolean true/false depending on if the key was released in this frame.
+function Input.wasKeyUp(key)
+	if not love.keyboard.isDown(key) and not released[key] then
+		keyReleased[key] = { keyCode = key }
+		return true
 	end
 	return false
 end

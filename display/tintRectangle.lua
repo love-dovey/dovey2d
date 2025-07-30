@@ -32,13 +32,7 @@ end
 function TintRectangle:draw()
 	if self.visible == false then return end
 	love.graphics.push("all")
-	love.graphics.translate(self.position.x, self.position.y) -- Positioning
-	love.graphics.rotate(self.rotation)                    -- Rotation
-	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
-	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
-	local marginX, marginY = self:getMarginOffset(self.margin)
-	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
-	love.graphics.setColor(self.tint)                      -- Colouring
+	self:apply2DTransform()
 	love.graphics.setLineWidth(self.thickness or 1)        -- Line Thickness
 	local mode = RectangleRenderMode.str(self.mode):lower()
 	love.graphics.rectangle(mode, 0, 0, self.size.x, self.size.y)

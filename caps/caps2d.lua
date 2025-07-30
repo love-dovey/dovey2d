@@ -139,4 +139,24 @@ function Caps2D:getMarginOffset(marginType, width, height)
 	return x, y
 end
 
+--- Applies every value set in the 2D Capabilities table.
+---
+--- This is a generic implementation so you might wanna override this if needed.
+---
+--- This also does NOT push and pop the transform stack, so make sure to call it like this:
+--- ```lua
+--- love.graphics.push("all")
+--- self:apply2DTransform()
+--- love.graphics.pop()
+--- ```
+function Caps2D:apply2DTransform()
+	love.graphics.translate(self.position.x, self.position.y) -- Positioning
+	love.graphics.rotate(self.rotation)                    -- Rotation
+	love.graphics.scale(self.scale.x, self.scale.y)        -- Scale
+	love.graphics.shear(self.shear.x, self.shear.y)        -- Skewing
+	local marginX, marginY = self:getMarginOffset(self.margin, self:getDimensions())
+	love.graphics.translate(-(marginX + self.origin.x), -(marginY + self.origin.y)) -- Pivot Offset
+	love.graphics.setColor(self.tint)                      -- Colouring
+end
+
 return Caps2D
