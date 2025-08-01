@@ -106,17 +106,46 @@ local function limitedRun()
 	-- yeah, yeah we're doing this.
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 	if love.timer then love.timer.step() end
+	local onWindows = love.system.getOS() == "Windows"
 
-    local getTime = love.timer.getTime
-    local sleep = love.timer.sleep
-    local hasFocus = love.window.hasFocus
-    local eventPump = love.event.pump
-    local eventPoll = love.event.poll
-    local handlers = love.handlers
-    local timerStep = love.timer.step
-    local graphicsPresent = love.graphics.present
-    local graphicsIsActive = love.graphics.isActive
-    local graphicsOrigin = love.graphics.origin
+	if onWindows then
+		_cffi = require("ffi")
+		_cffi.cdef([[
+			int timerBeginPeriod(unsigned int uPeriod);
+			int timerEndPeriod(unsigned int uPeriod);
+		]])
+		_cffi.C.timerBeginPeriod(1)
+		local ogQuit = love.quit
+		love.quit = function(...)
+			ffi.C.timeEndPeriod(1)
+			if ogQuit then return ogQuit(...) end
+		end
+		getTime = windowsSleep
+	end
+
+	local BUSY_WAIT_THRESHOLD = 0.002
+	local getTime = love.timer.getTime
+	local sleep = love.timer.sleep
+	if onWindows then
+		sleep = function(duration)
+			if duration <= BUSY_WAIT_THRESHOLD then
+				local target = getTime() + duration
+				while getTime() < target do end -- we're busy-waiting in this household
+			else
+				love.timer.sleep(duration * 0.5)
+				love.event.pump()
+			end
+		end
+	end
+
+	local hasFocus = love.window.hasFocus
+	local eventPump = love.event.pump
+	local eventPoll = love.event.poll
+	local handlers = love.handlers
+	local timerStep = love.timer.step
+	local graphicsPresent = love.graphics.present
+	local graphicsIsActive = love.graphics.isActive
+	local graphicsOrigin = love.graphics.origin
 
 	local targetFPS = hasFocus() and Engine.maxFPS or Engine.inactiveFPS
 	local nextTime = getTime()
@@ -175,12 +204,12 @@ local function limitedRun()
 			end
 		end
 
-        targetFPS = currentFocus and Engine.maxFPS or Engine.inactiveFPS
-        local newMinDelta = 1 / targetFPS
-        if minDelta ~= newMinDelta then 
-            minDelta = newMinDelta 
-            nextTime = getTime() + minDelta
-        end
+		targetFPS = currentFocus and Engine.maxFPS or Engine.inactiveFPS
+		local newMinDelta = 1 / targetFPS
+		if minDelta ~= newMinDelta then 
+			minDelta = newMinDelta 
+			nextTime = getTime() + minDelta
+		end
 	end
 end
 
