@@ -88,7 +88,16 @@ function table.copy(tbl, deep, been)
 	been[tbl] = copied
 	for k, v in pairs(tbl) do
 		local key = deep and table.copy(k, deep, been) or k
-		local val = deep and table.copy(v, deep, been) or v
+		local val
+		if type(v) == "table" then
+			if type(v.clone) == "function" then
+				val = getmetatable(v) and v:clone() or v.clone()
+			else
+				val = deep and table.copy(v, deep, been) or v
+			end
+		else
+			val = v
+		end
 		copied[key] = val
 	end
 	local mt = getmetatable(tbl)

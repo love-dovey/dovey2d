@@ -102,7 +102,7 @@ function Engine.getVersion()
 	return Engine._NAME .. " " .. Engine._VERSION .. " (on LÖVE " .. love.getVersion() .. ")"
 end
 
-local function limitedRun()
+local function doveyRun()
 	-- yeah, yeah we're doing this.
 	if love.load then love.load(love.arg.parseGameArguments(arg), arg) end
 	if love.timer then love.timer.step() end
@@ -213,13 +213,13 @@ local function limitedRun()
 	end
 end
 
-function love.run() return limitedRun() end
+function love.run()
+	doveyRun()
+end
 
 function Engine.begin(startingCanvas)
 	Engine.mainWindow.reset()
-
 	Engine.loveVer = tostring(love.getVersion())
-
 	love.update = function(delta)
 		dovey.Input.update(delta)
 		dovey.util.Timer.updateAll(delta)
@@ -232,6 +232,10 @@ function Engine.begin(startingCanvas)
 				if getmetatable(v) then
 					v:update(delta)
 				else
+					if type(v.init) == "function" and not v._INITIALIZED then
+						v.init()
+						v._INITIALIZED = true
+					end
 					v.update(delta)
 				end
 			end
@@ -252,17 +256,15 @@ function Engine.begin(startingCanvas)
 			end
 		end
 	end
-
 	love.keypressed = function(key, scancode, isrepeat)
 		dovey.Input.keyDown(key, scancode, isrepeat)
 	end
 	love.keyreleased = function(key, scancode, isrepeat)
 		dovey.Input.keyUp(key, scancode, isrepeat)
 	end
-	love.errorhandler = function(msg)
-		return Engine.errorhandler(msg)
+	love.errorhandler = function(...)
+		return Engine.errorhandler(...)
 	end
-
 	if startingCanvas then
 		Engine.changeCanvas(startingCanvas)
 	end
@@ -288,6 +290,9 @@ local function _makeCanvas(canvasInput, args)
 end
 
 function Engine.changeCanvas(next, ...)
+	if firstCanvas == nil then
+		firstCanvas = { path = next, args = {...} }
+	end
 	-- emit a signal before the previous canvas gets deleted and after we switch to a new one.
 	if Engine.activeCanvas and Engine.activeCanvas.dispose then
 		Engine.activeCanvas:dispose()
@@ -375,35 +380,39 @@ function Engine.errorhandler(msg)
 		for e, a, b, c in love.event.poll() do
 			if e == "quit" then
 				return 1
-			elseif e == "keypressed" and a == "escape" then
-				return 1
+			else
+				if e == "keypressed" then
+					if a == "escape" then
+						return 1
+					end
+				end
 			end
 		end
-		love.graphics.clear(0.2, 0.2, 0.2, 1)
 
+		love.graphics.clear(0.2, 0.2, 0.2, 1)
 		love.graphics.push("all")
 
 		-- draw error screen --
 		love.graphics.setColor(0.1, 0.1, 0.5, 0.8)
 		love.graphics.rectangle("fill", 0, 0, width, height)
 
-		-- fancy line around screen
-		love.graphics.setLineWidth(3)
-		love.graphics.setColor(1, 1, 1, 0.5)
-		love.graphics.rectangle("line", 5, 5, width - 10, height - 10)
+			-- fancy line around screen
+			love.graphics.setLineWidth(3)
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.rectangle("line", 5, 5, width - 10, height - 10)
 
-		-- header
-		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.setFont(love.graphics.newFont(24))
-		love.graphics.printf("[ Crash Report ]", 0, 5, width - 10, "center")
-		-- error
-		love.graphics.setFont(love.graphics.newFont(16))
-		love.graphics.printf(msg, 50, 15 + 24, width - 10, "left")
-		-- stack
-		love.graphics.printf(tostring(stack), 50, height / 8, width - 10, "left")
+			-- header
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.setFont(love.graphics.newFont(24))
+			love.graphics.printf("[ Crash Report ]", 0, 5, width - 10, "center")
+			-- error
+			love.graphics.setFont(love.graphics.newFont(16))
+			love.graphics.printf(msg, 50, 15 + 24, width - 10, "left")
+			-- stack
+			love.graphics.printf(tostring(stack), 50, height / 8, width - 10, "left")
 
-		-- instructions
-		love.graphics.printf("\n\nPress ESCAPE to close", 0, height - 80, width - 10, "center")
+			-- instructions
+			love.graphics.printf("\nPress R to restart\nPress ESCAPE to close", 0, height - 80, width - 10, "center")
 
 		love.graphics.present()
 		love.graphics.pop()

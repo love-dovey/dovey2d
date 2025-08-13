@@ -80,4 +80,26 @@ function Rect2:overlaps(other)
 	return ax < bx + bw and ax + aw > bx and ay < by + bh and ay + ah > by
 end
 
+--- Limits the position fo the Rectangle to a certain minimum and maximum.
+--- @param minx number 		minimum x position
+--- @param maxx number 		maximum x position
+--- @param miny number 		minimum y position
+--- @param maxy number 		maximum y position
+function Rect2:clampPosition(minx, maxx, miny, maxy)
+	self.x = math.clamp(self.x, minx, maxx)
+	self.y = math.clamp(self.y, miny, maxy)
+	return self
+end
+
+--- Limits the size of the Rectangle to a certain minimum and maximum.
+--- @param minw number 		minimum width
+--- @param maxw number 		maximum width
+--- @param minh number 		minimum height
+--- @param maxh number 		maximum height
+function Rect2:clampSize(minw, maxw, minh, maxh)
+	self.w = math.clamp(self.w, minw, maxw)
+	self.h = math.clamp(self.h, minh, maxh)
+	return self
+end
+
 return function(x, y, w, h) return Rect2:new(x, y, w, h) end

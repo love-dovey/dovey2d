@@ -4,7 +4,7 @@ local Object = {}
 
 --- Initializes an empty object.
 function Object:init(...)
-	Log.error("Method `init` must be implemented by a subclass.", 2)
+	Log.error("Method `init` must be implemented by a subclass.")
 	return self
 end
 
